@@ -1428,7 +1428,7 @@ TCP/IP套接字；
 
 
 
-<p>正常实例化后会执行**<code>normal</code><strong>类里面的</strong><code>action</code><strong>方法，但是<code>unserialize</code>函数是可控的，我们就可以对其进行攻击，思路就是改变</strong><code>index</code>**类里面<code>test</code>属性的值，让它实例化<code>evil</code>类，从而执行<code>evil</code>里面的<code>action</code>方法，同时我们也要修改<code>evil</code>类里面的<code>test2</code>属性的值</p>
+<p>正常实例化后会执行<code>normal</code>类里面的<code>action</code>方法，但是<code>unserialize</code>函数是可控的，我们就可以对其进行攻击，思路就是改变<code>index</code>类里面<code>test</code>属性的值，让它实例化<code>evil</code>类，从而执行<code>evil</code>里面的<code>action</code>方法，同时我们也要修改<code>evil</code>类里面的<code>test2</code>属性的值</p>
 <hr>
 <p>因为<code>类不同于函数</code>，<code>定义完之后无法直接使用</code>，因为类<code>只是一个抽象的概念</code>，<u><strong>需要通过关键字new来实例化类，才可以使用</strong></u>。类实例化的语法格式如下：<strong>变量名=new 类名（[构造函数]）</strong>。</p>
 <p>其中，变量名可以为<strong>任何PHP变量的名称</strong>，构造参数取决于<strong>类的构造函数</strong>，若<strong>无构造函数，则圆括号中为空</strong>。</p>
