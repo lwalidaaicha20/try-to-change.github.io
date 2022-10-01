@@ -50,7 +50,7 @@
 <meta property="og:image" content="https://pic3.zhimg.com/80/v2-a24770cd727d793d93abd89d5025ad41_hd.jpg">
 <meta property="og:image" content="https://pic4.zhimg.com/80/v2-bddead1f721c42eed678d9db9527c0e7_hd.jpg">
 <meta property="article:published_time" content="2022-05-28T08:01:29.902Z">
-<meta property="article:modified_time" content="2022-09-28T02:42:54.101Z">
+<meta property="article:modified_time" content="2022-09-29T13:10:56.314Z">
 <meta property="article:author" content="Ttoc">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://img-blog.csdnimg.cn/20210601210954715.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NfcHJvZ3JhbWo=,size_16,color_FFFFFF,t_70">
@@ -243,7 +243,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-09-28 10:42:54" itemprop="dateModified" datetime="2022-09-28T10:42:54+08:00">2022-09-28</time>
+                <time title="修改时间：2022-09-29 21:10:56" itemprop="dateModified" datetime="2022-09-29T21:10:56+08:00">2022-09-29</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -750,7 +750,7 @@ TCP/IP套接字；
 
 
 <hr>
-<h5 id="construct"><a href="#construct" class="headerlink" title="__construct()"></a>__construct()</h5><p><code>__construct()</code>被称为构造方法，也就是在创造一个对象时候，首先会去执行的一个方法。但是在序列化和反序列化过程是不会触发的。</p>
+<h5 id="construct"><a href="#construct" class="headerlink" title="__construct()"></a>__construct()</h5><p><code>__construct()</code>被称为构造方法，也就是在创造一个对象时候，首先会去执行的一个方法。但是在<code>序列化</code>和<code>反序列化</code>过程是不会触发的。</p>
 <div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">User</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$username</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"><span class="variable">$username</span></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;username = <span class="variable">$username</span>;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;__construct test&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$test</span> = <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;F0rmat&quot;</span>);</span><br><span class="line"><span class="variable">$ser</span> = <span class="title function_ invoke__">serialize</span>(<span class="variable">$test</span>);</span><br><span class="line"><span class="title function_ invoke__">unserialize</span>(<span class="variable">$ser</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure></div>
 
 <p>运行结果：</p>
@@ -1133,13 +1133,13 @@ handler 指向RequestHandler
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">156k</span>
+    <span title="站点总字数">158k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">2:22</span>
+    <span title="站点阅读时长">2:24</span>
 </div>
 
 <script>

