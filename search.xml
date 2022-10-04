@@ -675,7 +675,8 @@ TCP/IP套接字；
 <p>就实现了我们的目的操作</p>
 <p>当然其实还可能有的情况后面不是<code>eval()</code>的命令执行，可能是文件包含，或者其他操作，按这种思路走大都是没有问题的</p>
 <hr>
-<h3 id="十二、ssti"><a href="#十二、ssti" class="headerlink" title="十二、ssti"></a>十二、ssti</h3><p>根据下图，推测不同的模板注入，然后使用不同的注入方法</p>
+<h3 id="十二、ssti"><a href="#十二、ssti" class="headerlink" title="十二、ssti"></a>十二、ssti</h3><p><a href="https://www.cnblogs.com/20175211lyz/p/11425368.html">参考文章</a></p>
+<p>根据下图，推测不同的模板注入，然后使用不同的注入方法</p>
 <p><img src="/2022/05/28/Web-study/image-20220903123146044.png" alt="image-20220903123146044"></p>
 <p><img src="/2022/05/28/Web-study/image-20220903123047693.png" alt="image-20220903123047693"></p>
 <p><a href="https://blog.csdn.net/weixin_51353029/article/details/111503731">原文链接1</a></p>
