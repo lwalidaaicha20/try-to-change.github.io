@@ -1747,6 +1747,48 @@ handler 指向RequestHandler
 <p><code>吐血了，果然是中级，顺便提醒一下大家，非必要不要更新</code></p>
 <p><strong>一个旗子找完，游戏结束【吐血了】</strong></p>
 <hr>
+<h1 id="六、DC-6-初级"><a href="#六、DC-6-初级" class="headerlink" title="六、DC-6[初级]"></a>六、DC-6[初级]</h1><p><strong>only one flag</strong></p>
+<p>先抬手扫描一下</p>
+<p><img src="/2022/08/29/vulnhub/image-20221006214334035.png" alt="image-20221006214334035"></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="LIVECODESERVER"><figure class="iseeu highlight /livecodeserver"><table><tr><td class="code"><pre><span class="line">发现</span><br><span class="line"><span class="number">22</span>端口：运行着ssh【默认端口】</span><br><span class="line"><span class="number">80</span>端口：运行着<span class="keyword">http</span>【默认端口】</span><br></pre></td></tr></table></figure></div>
+
+<p>看来可能是需要<code>ssh</code>连接拿<code>shell</code></p>
+<hr>
+<p>这个靶机好像需要配置<code>hosts</code>文件，不然通过<code>ip</code>是访问不了网站的</p>
+<p><img src="/2022/08/29/vulnhub/image-20221006215651658.png" alt="image-20221006215651658"></p>
+<p>然后访问试试</p>
+<p>好了【但是好像有点卡】</p>
+<p>界面和DC2一样【梦回DC2，操作应该差不多】</p>
+<p><img src="/2022/08/29/vulnhub/image-20221006220758221.png" alt="image-20221006220758221"></p>
+<hr>
+<p>习惯看看<code>wappalyzer</code></p>
+<p><img src="/2022/08/29/vulnhub/image-20221006221445685.png" alt="image-20221006221445685"></p>
+<p>看到<code>CMS</code>是<code>WordPress 5.1.1</code></p>
+<p>想到可以利用一下这个版本的漏洞，拿到一些敏感信息</p>
+<p>再习惯<code>dirsearch</code>扫一下地</p>
+<p><img src="/2022/08/29/vulnhub/image-20221006224657736.png" alt="image-20221006224657736"></p>
+<p>发现有个<code>文件包含</code>目录，而且内容大小还有点东西</p>
+<p><img src="/2022/08/29/vulnhub/image-20221006224959855.png" alt="image-20221006224959855"></p>
+<p>【思考，不应该在这里查看到<code>flag</code>文件，因为这些靶机不是一般要提权拿权限吗，我现在状态的权限肯定是不够的】鼠鼠翻了一下就放弃了，大部分文件都没权限查看</p>
+<hr>
+<p>我们再看看网站上有没有可以利用的信息</p>
+<p><code>about us</code>里似乎全是文本内容没啥提示</p>
+<p>看到有个<code>concact us</code>，可能有交互利用的地方</p>
+<p><img src="/2022/08/29/vulnhub/image-20221006222942930.png" alt="image-20221006222942930"></p>
+<p>但实际是没有的</p>
+<hr>
+<h2 id="1-wpscan爆破出用户名【dc2里搞过】"><a href="#1-wpscan爆破出用户名【dc2里搞过】" class="headerlink" title="1.wpscan爆破出用户名【dc2里搞过】"></a>1.wpscan爆破出用户名【dc2里搞过】</h2><p>看到<code>wordpress</code>先用<code>wpscan</code>搞一下</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="ADA"><figure class="iseeu highlight /ada"><table><tr><td class="code"><pre><span class="line">wpscan <span class="comment">--url wordy -e u</span></span><br></pre></td></tr></table></figure></div>
+
+<p><img src="/2022/08/29/vulnhub/image-20221006235057457.png" alt="image-20221006235057457"></p>
+<p>得到用户名</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="CSS"><figure class="iseeu highlight /css"><table><tr><td class="code"><pre><span class="line">admin</span><br><span class="line"><span class="selector-tag">mark</span></span><br><span class="line">graham</span><br><span class="line">sarah</span><br><span class="line">jens</span><br></pre></td></tr></table></figure></div>
+
+<p>我们创建一个<code>user.txt</code></p>
+<p>我们再找一个密码表，这里用cewl命令爬一下网站，看看能不能利用其中有没有密码</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="FORTRAN"><figure class="iseeu highlight /fortran"><table><tr><td class="code"><pre><span class="line">cewl wordy &gt; <span class="keyword">pass</span>.txt  </span><br></pre></td></tr></table></figure></div>
+
+<p>然后就得到一个密码【擦，难道和<code>dc2</code>一样的】</p>
 ]]></content>
       <categories>
         <category>网络安全学习</category>
@@ -1856,7 +1898,7 @@ handler 指向RequestHandler
 <h3 id="5-关于源码获取相关途径"><a href="#5-关于源码获取相关途径" class="headerlink" title="5.关于源码获取相关途径"></a>5.关于源码获取相关途径</h3><p>搜索，咸鱼淘宝，第三方源码站，各种行业对应，一些源码可能就可以找到源码，但一般是大众型的，而一些小型（或者灰色的网站）网站可能搜不到的，咸鱼等一些第三方源码可能找到的</p>
 <h3 id="总结"><a href="#总结" class="headerlink" title="#总结"></a>#总结</h3><p>关注应用分类及脚本类型估摸出可能存在的漏洞(其中框架类例外)，在获取源码后可进行本地安全测试或代码审计，也可以分析其目录工作原理(数据库备份，bak文件等)，未获取到的源码采用各种方法想办法获取!</p>
 <hr>
-<h3 id="asp网站"><a href="#asp网站" class="headerlink" title="asp网站"></a>asp网站</h3><p>有一个mdb文件【表格文件】，存放数据，相当于数据库，后台的账号密码一般在上面</p>
+<h3 id="asp网站"><a href="#asp网站" class="headerlink" title="asp网站"></a>asp网站</h3><p>有一个<code>mdb</code>文件【表格文件】，存放数据，相当于数据库，后台的账号密码一般在上面</p>
 <p>如果网站是直接套用的网站源码结构，没有进行修改，其中就包括数据库路径，那么我们就可以尝试把数据库的路径防止物联网网上尝试下载【一般是进行过滤了，几乎不可能下载成功】，</p>
 <p>比如知道<code>www.hahaha.com</code>这个网站的数据库在<code>/admin/schema/</code>这个路径里，数据库文件名为<code>flag.mdb</code></p>
 <p>那我们访问<code>www.hahaha.com/admin/schema/flag.mdb</code>就可能下载下来数据库文件，查看里面的后台的账号和密码【密码一般加密了的(md5)】</p>
