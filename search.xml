@@ -1772,7 +1772,12 @@ handler 指向RequestHandler
 <p><code>about us</code>里似乎全是文本内容没啥提示</p>
 <p>看到有个<code>concact us</code>，可能有交互利用的地方</p>
 <p><img src="/2022/08/29/vulnhub/image-20221006222942930.png" alt="image-20221006222942930"></p>
-<p>但实际是没有的</p>
+<p>虽然看起来没有但是其实是有的</p>
+<p>通过<code>concact us</code>页面的url，在后面加上用户的名字就可以</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AWK"><figure class="iseeu highlight /awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span>xxx/admin  </span><br><span class="line"></span><br><span class="line"><span class="regexp">//</span>当然其实并不太重要，不过可以试试看，能不能留言xss然后挟持管理员账户，不过这并不是实际情况，所以可以自己留言，然后登录看看</span><br></pre></td></tr></table></figure></div>
+
+
+
 <hr>
 <h2 id="1-wpscan爆破出用户名【dc2里搞过】"><a href="#1-wpscan爆破出用户名【dc2里搞过】" class="headerlink" title="1.wpscan爆破出用户名【dc2里搞过】"></a>1.wpscan爆破出用户名【dc2里搞过】</h2><p>看到<code>wordpress</code>先用<code>wpscan</code>搞一下</p>
 <div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="ADA"><figure class="iseeu highlight /ada"><table><tr><td class="code"><pre><span class="line">wpscan <span class="comment">--url wordy -e u</span></span><br></pre></td></tr></table></figure></div>
