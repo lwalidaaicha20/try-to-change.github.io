@@ -1988,6 +1988,11 @@ handler 指向RequestHandler
 
 <p><strong>一个旗子找完，游戏结束</strong></p>
 <hr>
+<h1 id="七、DC-7-中级"><a href="#七、DC-7-中级" class="headerlink" title="七、DC-7[中级]"></a>七、DC-7[中级]</h1><p><strong>only one flag</strong></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="VBNET"><figure class="iseeu highlight /vbnet"><table><tr><td class="code"><pre><span class="line">hint：</span><br><span class="line"><span class="keyword">While</span> it<span class="comment">&#x27;s kind of a logical progression from an earlier DC release (I won&#x27;t tell you which one), there are some new concepts involved, but you will need to figure those out for yourself. :-) If you need to resort to brute forcing or dictionary attacks, you probably won&#x27;t succeed.</span></span><br><span class="line"></span><br><span class="line">What you will need <span class="keyword">to</span> <span class="keyword">do</span>, <span class="built_in">is</span> <span class="keyword">to</span> think <span class="string">&quot;outside&quot;</span> <span class="keyword">of</span> the box.</span><br><span class="line"></span><br><span class="line">Waaaaaay <span class="string">&quot;outside&quot;</span> <span class="keyword">of</span> the box. :-)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">虽然这是较早的 DC 版本的一种合乎逻辑的进展（我不会告诉你是哪一个），但其中涉及到一些新概念，但你需要自己弄清楚这些。:-) 如果您需要使用暴力破解或字典攻击，您可能不会成功。</span><br><span class="line"></span><br><span class="line">您需要做的是跳出框框思考。</span><br><span class="line"></span><br><span class="line">Waaaaaay“在盒子外面”。:-)</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+
+
 ]]></content>
       <categories>
         <category>网络安全学习</category>
