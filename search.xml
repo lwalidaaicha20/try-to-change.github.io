@@ -2091,16 +2091,17 @@ handler 指向RequestHandler
 
 <p><img src="/2022/08/29/vulnhub/image-20221018203146128.png" alt="image-20221018203146128"></p>
 <p>发现是<code>root</code>用户命令执行的记录</p>
-<p>关键发现了</p>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AWK"><figure class="iseeu highlight /awk"><table><tr><td class="code"><pre><span class="line">Database dump saved to <span class="regexp">/home/</span>dc7user<span class="regexp">/backups/</span>website.sql </span><br><span class="line"><span class="regexp">//</span>数据库信息存入website.sql文件</span><br></pre></td></tr></table></figure></div>
+<p>发现了</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AWK"><figure class="iseeu highlight /awk"><table><tr><td class="code"><pre><span class="line">Database dump saved to <span class="regexp">/home/</span>dc7user<span class="regexp">/backups/</span>website.sql </span><br><span class="line"><span class="regexp">//</span>数据库信息存入website.sql文件</span><br><span class="line"><span class="regexp">//</span>然后root执行了加密脚本加密数据库文件</span><br></pre></td></tr></table></figure></div>
 
 <p><img src="/2022/08/29/vulnhub/image-20221018203403493.png" alt="image-20221018203403493"></p>
-<h3 id="定时任务【cron（crond）】"><a href="#定时任务【cron（crond）】" class="headerlink" title="*定时任务【cron（crond）】"></a>*定时任务【cron（crond）】</h3><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AWK"><figure class="iseeu highlight /awk"><table><tr><td class="code"><pre><span class="line">这是个定时任务 用root 运行<span class="regexp">/opt/</span>scripts/backups.sh</span><br></pre></td></tr></table></figure></div>
+<h3 id="定时任务【cron（crond）】"><a href="#定时任务【cron（crond）】" class="headerlink" title="*定时任务【cron（crond）】"></a>*定时任务【cron（crond）】</h3><p>我们发现在<code>root</code>用户执行加密脚本之前有一个<code>Cron</code></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AWK"><figure class="iseeu highlight /awk"><table><tr><td class="code"><pre><span class="line">Cron发现是定时任务，代表过一段时间就执行一次，以来更新数据库备份文件【backups】</span><br><span class="line"></span><br><span class="line">这是个定时任务 用root 运行<span class="regexp">/opt/</span>scripts/backups.sh</span><br></pre></td></tr></table></figure></div>
 
 <p><img src="/2022/08/29/vulnhub/image-20221018203434313.png" alt="image-20221018203434313"></p>
-<p>查看下权限什么的，发现<code>www-data</code>拥有执行和写的权限，我们当前权限没有写权限，看来没办法动手脚了。</p>
+<h3 id="关键思路"><a href="#关键思路" class="headerlink" title="*关键思路"></a>*关键思路</h3><p>查看下权限什么的，发现<code>www-data</code>拥有执行和写的权限，我们当前权限没有写权限，看来没办法动手脚了。</p>
 <p><img src="/2022/08/29/vulnhub/image-20221018234503615.png" alt="image-20221018234503615"></p>
-<p>但是如果我们获得了<code>www-data</code>的<code>shell</code> 那就可以写点东西进去，然后依靠<strong>计划任务</strong>，用<code>root</code>去运行，然后反弹<code>shell</code>，那么我们可以获得了<code>root</code>权限的<code>shell</code>了。</p>
+<h3 id><a href="#" class="headerlink" title></a></h3><p>但是如果我们获得了<code>www-data</code>的<code>shell</code> 那就可以写点东西进去，然后依靠<strong>计划任务</strong>，用<code>root</code>去运行，然后反弹<code>shell</code>，那么我们可以获得了<code>root</code>权限的<code>shell</code>了。</p>
 <h2 id="3-drush命令对drupal修改用户名和密码"><a href="#3-drush命令对drupal修改用户名和密码" class="headerlink" title="3.drush命令对drupal修改用户名和密码"></a>3.<code>drush</code>命令对<code>drupal</code>修改用户名和密码</h2><p>我们按路径查看该脚本内容</p>
 <p><img src="/2022/08/29/vulnhub/image-20221018203742731.png" alt="image-20221018203742731"></p>
 <p>我们发现果然是个加密数据库文件的脚本，但是我们仍然不知道密码</p>
