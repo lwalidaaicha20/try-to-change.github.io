@@ -1086,7 +1086,7 @@ handler 指向RequestHandler
 <p><img src="/2022/08/29/vulnhub/image-20220830161808584.png" alt="image-20220830161808584"></p>
 <p>得到flag3</p>
 <p><img src="/2022/08/29/vulnhub/image-20220830161837967.png" alt="image-20220830161837967"></p>
-<h3 id="2）利用drupal脚本添加管理员用户"><a href="#2）利用drupal脚本添加管理员用户" class="headerlink" title="2）利用drupal脚本添加管理员用户"></a>2）利用drupal脚本添加管理员用户</h3><p>优点是更加方便，快捷，<strong>但是脚本不是万能的，只有自己明白原理才是真正掌握</strong></p>
+<h3 id="2）利用drupal脚本添加管理员用户"><a href="#2）利用drupal脚本添加管理员用户" class="headerlink" title="2）利用drupal脚本添加管理员用户"></a>2）利用drupal脚本添加管理员用户</h3><p>优点是更加方便，快捷，<strong>但是脚本不是万能的，只有自己明白原理才是真正掌握</strong>，这个的本质也是利用<code>sql</code>注入</p>
 <div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AWK"><figure class="iseeu highlight /awk"><table><tr><td class="code"><pre><span class="line">https:<span class="regexp">//</span>www.exploit-db.com<span class="regexp">/exploits/</span><span class="number">34992</span></span><br></pre></td></tr></table></figure></div>
 
 <p>该网站在kali里面浏览器书签自带的，这个脚本适用于drupal，直接下载下来用即可</p>
