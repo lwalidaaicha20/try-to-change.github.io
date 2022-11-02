@@ -2535,8 +2535,8 @@ handler 指向RequestHandler
 <h4 id="2-1、binwalk-分离："><a href="#2-1、binwalk-分离：" class="headerlink" title="2.1、binwalk 分离："></a>2.1、binwalk 分离：</h4><p>还是使用binwalk工具，使用dd命令分离出隐藏文件：</p>
 <div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="ROUTEROS"><figure class="iseeu highlight /routeros"><table><tr><td class="code"><pre><span class="line">dd <span class="attribute">if</span>=1.jpg <span class="attribute">of</span>=1.zip <span class="attribute">skip</span>=48221 <span class="attribute">bs</span>=1</span><br></pre></td></tr></table></figure></div>
 
-
-<p>解释：if 指定输入文件，of 指定输出文件，skip 指定从输入文件开头跳过48221个块后开始复制，bs设<br>置每次读写块的大小为1字节</p>
+<p>解释：if 指定输入文件，of 指定输出文件，skip 指定从输入文件开头跳过48221个块后开始复制，</p>
+<p>bs设置每次读写块的大小为1字节</p>
 <p>执行后会得到一个1.zip文件。</p>
 <p><img src="/2022/09/27/crypto+misc/image-20220927165740304.png" alt="image-20220927165740304"></p>
 <h4 id="2-2、foremost-工具分离："><a href="#2-2、foremost-工具分离：" class="headerlink" title="2.2、foremost 工具分离："></a>2.2、foremost 工具分离：</h4><p>foremost是一个基于文件文件头和尾部信息以及文件的内建数据结构恢复文件的命令行工具，win可以下载使用，Linux可以通过下面命令安装使用：</p>
@@ -4656,6 +4656,23 @@ file_get_contents() 函数是用于将文件的内容读入到一个字符串中
 <div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="LLVM"><figure class="iseeu highlight /llvm"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">ereg()函数用指定的模式搜索一个字符串中指定的字符串<span class="punctuation">,</span>如果匹配成功返回<span class="keyword">true</span><span class="punctuation">,</span>否则<span class="punctuation">,</span>则返回<span class="keyword">false</span>。搜索字母的字符是大小写敏感的。 </span><br><span class="line"></span><br><span class="line">ereg函数存在NULL截断漏洞，导致了正则过滤被绕过<span class="punctuation">,</span>所以可以使用<span class="variable">%00</span>截断正则匹配</span><br><span class="line"></span><br><span class="line">比如</span><br><span class="line">ereg (<span class="string">&quot;^[a-zA-Z]+$&quot;</span><span class="punctuation">,</span> $_GET[&#x27;<span class="keyword">c</span>&#x27;])</span><br><span class="line"></span><br><span class="line">当<span class="keyword">c</span><span class="operator">=</span>a<span class="variable">%00123</span>时</span><br><span class="line">ereg只会检测到第一个a为止，后面的数据都被<span class="variable">%00</span>截断了，从而绕过匹配</span><br></pre></td></tr></table></figure></div>
 
 <p>所以现在一般不再使用<code>ereg</code>，只是做为<code>preg_match</code>替代函数使用</p>
+<h3 id="3-php函数sleep"><a href="#3-php函数sleep" class="headerlink" title="3)php函数sleep"></a>3)php函数sleep</h3><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AUTOIT"><figure class="iseeu highlight /autoit"><table><tr><td class="code"><pre><span class="line">当遇到这种需要我们输入参数，但是让参数值必须很大，</span><br><span class="line"></span><br><span class="line">而且最后又以这个参数执行<span class="built_in">sleep</span>函数，就会让我们等很久</span><br><span class="line"></span><br><span class="line"><span class="built_in">sleep</span>((<span class="built_in">int</span>)$time)</span><br></pre></td></tr></table></figure></div>
+
+<p><code>sleep()</code>要延缓其程序执行的时间。</p>
+<p>但是我们又不能等太久，可以构造php中的科学计数法绕过，就构造一个  </p>
+<p><code>time=0.3e7 （等价于0.3乘10的7次方）</code> </p>
+<p>这样它的值达到了判断的标准。</p>
+<p>而且当它强制转化为整数型(<code>int</code>)的时候就会因为开头为<code>0.3</code>是小数变成零，这样可以满足条件。</p>
+<h3 id="4-php函数is-numeric"><a href="#4-php函数is-numeric" class="headerlink" title="4)php函数is_numeric()"></a>4)php函数is_numeric()</h3><p>当遇到类似</p>
+<p><code>0e..;1e;..2e..;...</code></p>
+<p>函数会把其当作科学计数法</p>
+<p>这样当遇到</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="STYLUS"><figure class="iseeu highlight /stylus"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="variable">$num</span> == <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="built_in">if</span>(<span class="variable">$num</span>)&#123;</span><br><span class="line">            <span class="built_in">if</span>(!<span class="built_in">is_numeric</span>(<span class="variable">$time</span>))</span><br></pre></td></tr></table></figure></div>
+
+<p>这种</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="AUTOHOTKEY"><figure class="iseeu highlight /autohotkey"><table><tr><td class="code"><pre><span class="line">第一个要弱类型为`0`</span><br><span class="line"></span><br><span class="line">第二个要不为`0`才能执行真的判断</span><br><span class="line"></span><br><span class="line">第三个要求其为数字</span><br></pre></td></tr></table></figure></div>
+
+<p>就可以用类似<code>0e2</code>，绕过这三个</p>
 <h2 id="5-特殊权限位"><a href="#5-特殊权限位" class="headerlink" title="5.特殊权限位"></a>5.特殊权限位</h2><p><a href="https://mp.weixin.qq.com/s?__biz=MzAxMjcxMjkyOA==&mid=2247484922&idx=1&sn=ba666d73dc1ed57385eda7210afca433&chksm=9baceb75acdb62634d94269e2052f2856bcebac7e1b0962f30132cbda7494813ae6ad2c0f88c&mpshare=1&scene=23&srcid=0830y3hzCRRlcsleoKEyGZr8&sharer_sharetime=1661831991788&sharer_shareid=30776e1834041fdca5e0b68533a2427e#rd">参考文章</a></p>
 <h3 id="1）利用SUID提权"><a href="#1）利用SUID提权" class="headerlink" title="1）利用SUID提权"></a>1）利用SUID提权</h3><h4 id="什么是suid？"><a href="#什么是suid？" class="headerlink" title="什么是suid？"></a>什么是suid？</h4><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="CRMSH"><figure class="iseeu highlight /crmsh"><table><tr><td class="code"><pre><span class="line">Set <span class="keyword">User</span>   <span class="title">ID</span>的一种权限类型，允许用户使用指定的用户权限执行文件。那些具用suid权限的文件以最高的权限运行。假设我们以非root用户身份访问目标系统，并且我们发现二进制文件启用了suid位，那么</span><br><span class="line">这些文件/程序/命令可以以root权限运行</span><br><span class="line"></span><br><span class="line">SUID的目的就是：让本来没有相应权限的用户运行这个程序时，可以访问他没有权限的资源</span><br></pre></td></tr></table></figure></div>
 
