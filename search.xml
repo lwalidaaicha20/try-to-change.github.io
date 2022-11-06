@@ -1449,7 +1449,10 @@ handler 指向RequestHandler
 <h2 id="john"><a href="#john" class="headerlink" title="john"></a>john</h2><p>然后我们就需要用一个解密工具<code>john</code></p>
 <p><code>John</code>是一个破解系统密码的工具</p>
 <p>使用很简单</p>
-<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">输入john --show passwd.txt<span class="regexp">//</span>后面接的是密码文本文件</span><br></pre></td></tr></table></figure>
+<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">输入john passwd.txt<span class="regexp">//</span>后面接的是密码文本文件</span><br></pre></td></tr></table></figure>
+
+<p>然后输入</p>
+<figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">john <span class="attr">--show</span> passwd<span class="selector-class">.txt</span> <span class="comment">//查看爆破成功的密码，发现爆破成功</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/29/vulnhub/image-20220903140126704.png" alt="image-20220903140126704"></p>
 <p>得到密码<code>snoopy</code></p>
@@ -2404,13 +2407,13 @@ handler 指向RequestHandler
 <figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">admin <span class="variable">$S</span><span class="variable">$D2tRcYRyqVFNSc0NvYUrYeQbLQg5koMKtihYTIDC9QQqJi3ICg5z</span></span><br><span class="line">john <span class="variable">$S</span><span class="variable">$DqupvJbxVmqjr6cYePnx2A891ln7lsuku</span><span class="regexp">/3if/</span>oRVZJaz5mKC2vF</span><br></pre></td></tr></table></figure>
 
 <p>但是密码是加密的，我们用<code>john</code>爆破一下</p>
-<p>先把密码写入密码文本pass.txt</p>
+<p>先把密码写入密码文本<code>pass.txt</code></p>
 <p><img src="/2022/08/29/vulnhub/image-20221103133656691.png" alt="image-20221103133656691"></p>
 <p><img src="/2022/08/29/vulnhub/image-20221103133745514.png" alt="image-20221103133745514"></p>
 <p>然后就用<code>john</code>自带的密码本就行</p>
-<figure class="highlight mipsasm"><table><tr><td class="code"><pre><span class="line"><span class="keyword">john </span>--<span class="keyword">show </span>pass.txt</span><br></pre></td></tr></table></figure>
+<figure class="highlight fortran"><table><tr><td class="code"><pre><span class="line">john <span class="keyword">pass</span>.txt</span><br></pre></td></tr></table></figure>
 
-<p>但是再这里我用了johny</p>
+<p>但是再这里我用了<code>johny</code></p>
 <p><img src="/2022/08/29/vulnhub/image-20221103134419589.png" alt="image-20221103134419589"></p>
 <p>一个图形化的爆破工具</p>
 <p>这里只得到<code>john</code>用户的密码</p>
@@ -2750,7 +2753,7 @@ handler 指向RequestHandler
 <p>【dc系列结束，阅读到本文的朋友，希望对你们有所帮助】</p>
 <hr>
 <h1 id="ELSE"><a href="#ELSE" class="headerlink" title="ELSE"></a>ELSE</h1><h1 id="一、DEATHNOTE-1-初级"><a href="#一、DEATHNOTE-1-初级" class="headerlink" title="一、DEATHNOTE: 1[初级]"></a>一、DEATHNOTE: 1[初级]</h1><p>基拉好帅，必须拿这个开头，直接提权进他的心【不是南通】</p>
-<p><img src="/2022/08/29/vulnhub/Users\Ttoc\AppData\Roaming\Typora\typora-user-images\image-20221106151711523.png" alt="image-20221106151711523"></p>
+<p><img src="/2022/08/29/vulnhub/image-20221106151711523.png" alt="image-20221106151711523"></p>
 <figure class="highlight avrasm"><table><tr><td class="code"><pre><span class="line"><span class="symbol">hint:</span></span><br><span class="line">不要浪费太多时间跳出框框思考。这是一个直截了当的盒子。</span><br></pre></td></tr></table></figure>
 
 ]]></content>
@@ -5352,27 +5355,27 @@ file_get_contents() 函数是用于将文件的内容读入到一个字符串中
 <p>普通用户执行即可获取root权限，这里注意需要加上p参数，否则权限还是当前用户的。</p>
 <p>p参数说明：不提供的情况下，打开bash权限是当前实际用户，提供的情况下，会打开特权模式，像上继承euid，因为bash有suid权限，所以这里是root。</p>
 <p><img src="/2022/05/31/daily/image-20220901231410196.png" alt="image-20220901231410196"></p>
-<p>使用场景：这个和suid提权很像，给程序赋予suid权限然后利用。不同的是前两篇suid提权是当前用户使用sudo  chmod自己修改的，在sudoers禁用sudo命令等情况下，就行不通了。而nfs配置利用，是客户端挂载到本地赋权的，目标机的普通用户只需执行就可以。</p>
-<p>同理，之前总结的suid提权的那些程序也同样适用，这里就不再记了。</p>
-<h4 id="其它命令"><a href="#其它命令" class="headerlink" title="其它命令"></a><strong>其它命令</strong></h4><p>除了可以直接得到shell的，还有其他一些程序不能直接获取，例如nano、vi等。</p>
+<p>使用场景：这个和<code>suid</code>提权很像，给程序赋予<code>suid</code>权限然后利用。不同的是前两篇<code>suid</code>提权是当前用户使用<code>sudo  chmod</code>自己修改的，在<code>sudoers</code>禁用<code>sudo</code>命令等情况下，就行不通了。而<code>nfs</code>配置利用，是客户端挂载到本地赋权的，目标机的普通用户只需执行就可以。</p>
+<p>同理，之前总结的<code>suid</code>提权的那些程序也同样适用，这里就不再记了。</p>
+<h4 id="其它命令"><a href="#其它命令" class="headerlink" title="其它命令"></a><strong>其它命令</strong></h4><p>除了可以直接得到<code>shell</code>的，还有其他一些程序不能直接获取，例如<code>nano、vi</code>等。</p>
 <p><img src="/2022/05/31/daily/image-20220901231423093.png" alt="image-20220901231423093"></p>
-<p>然后使用nano -p来读取shadow文件，这里读取时把相关记录复制出来，使用john破解，测试不能重定向，需要权限，所以只能复制。</p>
+<p>然后使用<code>nano -p</code>来读取<code>shadow</code>文件，这里读取时把相关记录复制出来，使用<code>john</code>破解，测试不能重定向，需要权限，所以只能复制。</p>
 <p><img src="/2022/05/31/daily/image-20220901231435125.png" alt="image-20220901231435125"></p>
-<p>复制后使用john破解获取相关用户密码，以root为例，密码是root。</p>
+<p>复制后使用<code>john</code>破解获取相关用户密码，以<code>root</code>为例，密码是<code>root</code>。</p>
 <p><img src="/2022/05/31/daily/image-20220901231451129.png" alt="image-20220901231451129"></p>
-<p>如果密码太复杂，破解不了，则可以尝试其它用户，例如我这里目标机是aaa用户，破解aaa密码为aaa。</p>
+<p>如果密码太复杂，破解不了，则可以尝试其它用户，例如我这里目标机是<code>aaa</code>用户，破解<code>aaa</code>密码为<code>aaa</code>。</p>
 <p><img src="/2022/05/31/daily/image-20220901231505353.png" alt="image-20220901231505353"></p>
-<p>这时候不确定aaa是否为root权限，则可以继续使用nano去编辑passwd文件，给aaa赋权。</p>
-<p>把原来的1001换成0.</p>
+<p>这时候不确定<code>aaa</code>是否为<code>root</code>权限，则可以继续使用<code>nano</code>去编辑<code>passwd</code>文件，给<code>aaa</code>赋权。</p>
+<p>把原来的<code>1001</code>换成<code>0</code>.</p>
 <p><img src="/2022/05/31/daily/image-20220901231516388.png" alt="image-20220901231516388"></p>
-<p>然后切换aaa用户即可。</p>
+<p>然后切换<code>aaa</code>用户即可。</p>
 <p><img src="/2022/05/31/daily/image-20220901231524654.png" alt="image-20220901231524654"></p>
-<p>利用这种机制，也可以用来修改sudoers文件，添加或修改为以下内容。</p>
+<p>利用这种机制，也可以用来修改<code>sudoers</code>文件，添加或修改为以下内容。</p>
 <figure class="highlight ada"><table><tr><td class="code"><pre><span class="line">aaa     <span class="keyword">ALL</span>=(<span class="keyword">ALL</span>:<span class="keyword">ALL</span>) NOPASSWD:<span class="keyword">ALL</span></span><br></pre></td></tr></table></figure>
 
 
 
-<p>然后使用sudo bash或sudo su获取root权限。</p>
+<p>然后使用<code>sudo bash</code>或<code>sudo su</code>获取<code>root</code>权限。</p>
 <p><img src="/2022/05/31/daily/image-20220901231537204.png" alt="image-20220901231537204"></p>
 <hr>
 <h2 id="6-记录一下打靶场的时候，一些kali工具的使用"><a href="#6-记录一下打靶场的时候，一些kali工具的使用" class="headerlink" title="6.记录一下打靶场的时候，一些kali工具的使用"></a>6.记录一下打靶场的时候，一些kali工具的使用</h2><h3 id="1）msf"><a href="#1）msf" class="headerlink" title="1）msf"></a>1）msf</h3><h4 id="（1）msf基本使用"><a href="#（1）msf基本使用" class="headerlink" title="（1）msf基本使用"></a>（1）msf基本使用</h4><p><code>一个漏洞利用框架,对计算机软件漏洞进行攻击</code></p>
@@ -5553,7 +5556,11 @@ msfvenom -l encoders #列出所有的编码器
 <p>但是jerry和tom用户的密码知道了</p>
 <h3 id="5）John"><a href="#5）John" class="headerlink" title="5）John"></a>5）John</h3><p>John是一个破解系统密码的工具</p>
 <p>使用很简单</p>
-<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">john --show passwd.txt<span class="regexp">//</span>后面接的是密码文本文件</span><br></pre></td></tr></table></figure>
+<figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">john passwd<span class="selector-class">.txt</span> <span class="comment">//这里是直接利用john自带的密码本，后面接的是需要爆破的密码文本文件</span></span><br><span class="line"></span><br><span class="line">john <span class="attr">--wordlist</span>=字典路径 passwd<span class="selector-class">.txt</span> <span class="comment">//这里是指定密码本，后面接的是需要爆破的密码文本文件</span></span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">john <span class="attr">--show</span> passwd<span class="selector-class">.txt</span> <span class="comment">//这是查看该密码文本中已经被爆破成功过的密码</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/05/31/daily/image-20220903140126704.png" alt="image-20220903140126704"></p>
 <p>就可以看到明文为<code>snoopy</code></p>
