@@ -161,7 +161,7 @@
 <h4 id="2-危害-10"><a href="#2-危害-10" class="headerlink" title="2.危害"></a>2.危害</h4><p><u><strong>未对用户输入的序列化字符串进行检测</strong></u>，导致<u><strong>攻击者可以控制反序列化过程</strong></u>，从而<u><strong>导致代码执行，SQL注入，目录遍历等不可控后果</strong></u>。在反序列化的过程中自动触发了某些魔术方法。</p>
 <h4 id="3-防御-10"><a href="#3-防御-10" class="headerlink" title="3.防御"></a>3.防御</h4><h5 id="1-签名与认证"><a href="#1-签名与认证" class="headerlink" title="1)签名与认证"></a>1)签名与认证</h5><p>如果序列化的内容没有用户可控参数，仅仅是服务端存储和应用，则可以通过签名认证，来避免应用接受黑客的异常输入。   </p>
 <h5 id="2-限制序列化与反序列化的类"><a href="#2-限制序列化与反序列化的类" class="headerlink" title="2)限制序列化与反序列化的类"></a>2)限制序列化与反序列化的类</h5><p>增加一层序列化和反序列化接口类。这就相当于允许提供了一个白名单的过滤：只允许某些类可以被反序列化。只要你在反序列化的过程中，避免接受处理任何类型（包括类成员中的接口、泛型等），黑客其实很难控制应用反序列化过程中所使用的类，也就没有办法构造出调用链，自然也就很难利用反序列化漏洞了</p>
-<h5 id="3-RASP检测"><a href="#3-RASP检测" class="headerlink" title="3)RASP检测"></a>3)RASP检测</h5><p>（Runtime Application Self-Protection，实时程序自我保护）。RASP 通过 hook 等方式，在这些关键函数（例如：序列化，反序列化)的调用中，增加一道规则的检测。这个规则会判断应用是否执行了非应用本身的逻辑，能够在不修改代码的情况下对反序列化漏洞攻击实现拦截.</p>
+<h5 id="3-RASP检测"><a href="#3-RASP检测" class="headerlink" title="3)RASP检测"></a>3)RASP检测</h5><p>（<code>Runtime Application Self-Protection</code>，实时程序自我保护）。RASP 通过 hook 等方式，在这些关键函数（例如：序列化，反序列化)的调用中，增加一道规则的检测。这个规则会判断应用是否执行了非应用本身的逻辑，能够在不修改代码的情况下对反序列化漏洞攻击实现拦截.</p>
 <h4 id="4-利用"><a href="#4-利用" class="headerlink" title="4.利用"></a>4.利用</h4><h5 id="1-wakeup-绕过"><a href="#1-wakeup-绕过" class="headerlink" title="1)__wakeup( )绕过"></a>1)__wakeup( )绕过</h5><p>(CVE-2016-7124)</p>
 <p>反序列化时，如果表示对象属性个数的值大于真实的属性个数时就会跳过__wakeup( )的执行。</p>
 <h5 id="2-注入对象构造方法"><a href="#2-注入对象构造方法" class="headerlink" title="2)注入对象构造方法"></a>2)注入对象构造方法</h5><p>当目标对象被private、protected修饰时的构造方法。</p>
