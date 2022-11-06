@@ -991,7 +991,7 @@ handler 指向RequestHandler
 <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>官网下载地址</p>
 <figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span>www.vulnhub.com/</span><br></pre></td></tr></table></figure>
 
-<p>这里提一下靶场机ip怎么看</p>
+<p>这里提一下靶场机<code>ip</code>怎么看</p>
 <figure class="highlight css"><table><tr><td class="code"><pre><span class="line">ip <span class="selector-tag">a</span> </span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/29/vulnhub/image-20220829153949360.png" alt="image-20220829153949360"></p>
@@ -1005,7 +1005,7 @@ handler 指向RequestHandler
 <p><img src="/2022/08/29/vulnhub/image-20220829154322453.png" alt="image-20220829154322453"></p>
 <hr>
 <h1 id="DC系列【1-9】-完"><a href="#DC系列【1-9】-完" class="headerlink" title="DC系列【1~9】(完)"></a>DC系列【1~9】(完)</h1><h1 id="一、DC-1-初级"><a href="#一、DC-1-初级" class="headerlink" title="一、DC-1[初级]"></a>一、DC-1[初级]</h1><p><strong>five flags</strong></p>
-<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><p>浏览器访问靶机ip</p>
+<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><p>浏览器访问靶机<code>ip</code></p>
 <figure class="highlight accesslog"><table><tr><td class="code"><pre><span class="line"><span class="number">192.168.133.136</span></span><br></pre></td></tr></table></figure>
 
 <p>这是开始界面</p>
@@ -1014,8 +1014,8 @@ handler 指向RequestHandler
 <p><img src="/2022/08/29/vulnhub/image-20220830094043837.png" alt="image-20220830094043837"></p>
 <p>可以看到网站是用<code>php</code>语言编写的，<code>CMS</code>是<code>Drupal</code></p>
 <hr>
-<h2 id="Flag1"><a href="#Flag1" class="headerlink" title="Flag1"></a>Flag1</h2><h3 id="msf"><a href="#msf" class="headerlink" title="msf"></a>msf</h3><p>先用msf看看有没有<code>drupal</code>相应的攻击脚本</p>
-<p>终端输入<code>msfconsole</code>，进入msf界面，或者菜单也可以打开</p>
+<h2 id="Flag1"><a href="#Flag1" class="headerlink" title="Flag1"></a>Flag1</h2><h3 id="msf"><a href="#msf" class="headerlink" title="msf"></a>msf</h3><p>先用<code>msf</code>看看有没有<code>drupal</code>相应的攻击脚本</p>
+<p>终端输入<code>msfconsole</code>，进入<code>msf</code>界面，或者菜单也可以打开</p>
 <p><img src="/2022/08/29/vulnhub/image-20220830094506049.png" alt="image-20220830094506049"></p>
 <figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">输入search drupal，找一下有没有drupal可以利用的脚本</span><br><span class="line"><span class="regexp">/*对于其他命令，可以用help查询*/</span></span><br></pre></td></tr></table></figure>
 
@@ -1027,7 +1027,7 @@ handler 指向RequestHandler
 <figure class="highlight pgsql"><table><tr><td class="code"><pre><span class="line">输入<span class="keyword">show</span> <span class="keyword">options</span>,查看脚本运行的所需要配置的项目</span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/29/vulnhub/image-20220830105519336.png" alt="image-20220830105519336"></p>
-<p><code>Required</code>是要求填的，yes是必填项，no是非必填项</p>
+<p><code>Required</code>是要求填的，<code>yes</code>是必填项，<code>no</code>是非必填项</p>
 <p>这里的<code>RHOSTS</code>没有填，这里是要求填入<code>target hosts</code>也就是目标地址，也就是我们靶机的地址</p>
 <figure class="highlight gams"><table><tr><td class="code"><pre><span class="line">输入<span class="keyword">set</span> RHOSTS <span class="comment">192.168.133.136</span></span><br></pre></td></tr></table></figure>
 
@@ -1351,7 +1351,7 @@ handler 指向RequestHandler
 <figure class="highlight applescript"><table><tr><td class="code"><pre><span class="line">Good <span class="keyword">to</span> see <span class="keyword">that</span> you&#x27;ve made <span class="keyword">it</span> this far - <span class="keyword">but</span> you&#x27;re <span class="keyword">not</span> home yet. </span><br><span class="line"></span><br><span class="line">You still need <span class="keyword">to</span> <span class="keyword">get</span> <span class="keyword">the</span> final flag (<span class="keyword">the</span> only flag <span class="keyword">that</span> really counts!!!).  </span><br><span class="line"></span><br><span class="line">No hints here - you&#x27;re <span class="keyword">on</span> your own now.  :-)</span><br><span class="line"></span><br><span class="line">Go <span class="keyword">on</span> - git outta here!!!!</span><br><span class="line">意思是：</span><br><span class="line">很高兴看到你走了这么远，但你还没回家。</span><br><span class="line">你仍然需要得到最后的标志（唯一真正重要的标志！！！）。</span><br><span class="line">这里没有提示-你现在只能靠自己了。：-）</span><br><span class="line">去吧-滚出去！！！！</span><br><span class="line"><span class="comment">--</span></span><br><span class="line">看到git，就是提示我们用git命令</span><br></pre></td></tr></table></figure>
 
 <hr>
-<h2 id="Flag5-1"><a href="#Flag5-1" class="headerlink" title="Flag5"></a>Flag5</h2><figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">输入sudo -l</span><br><span class="line"><span class="regexp">//</span>列出目前用户可执行与无法执行的指令。</span><br></pre></td></tr></table></figure>
+<h2 id="Flag5-1"><a href="#Flag5-1" class="headerlink" title="Flag5"></a>Flag5</h2><h3 id="git缓存区溢出漏洞"><a href="#git缓存区溢出漏洞" class="headerlink" title="git缓存区溢出漏洞"></a>git缓存区溢出漏洞</h3><figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">输入sudo -l</span><br><span class="line"><span class="regexp">//</span>列出目前用户可执行与无法执行的指令。</span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/29/vulnhub/image-20220901112624228.png" alt="image-20220901112624228"></p>
 <p><u>就可以发现root以<code>nopasswd</code>【不需要密码】运行<code>git</code>命令</u></p>
@@ -1364,15 +1364,15 @@ handler 指向RequestHandler
 <figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">sudo git -p     </span><br><span class="line"><span class="regexp">//</span>-p是分页查看，这个原理就是终端的窗口大小不够显示，所以下方会出现冒号，等待输入命令</span><br></pre></td></tr></table></figure>
 
 <p>下面可以看看区别</p>
-<h3 id="注意窗口大小"><a href="#注意窗口大小" class="headerlink" title="*注意窗口大小"></a>*注意窗口大小</h3><h4 id="1-窗口足够大"><a href="#1-窗口足够大" class="headerlink" title="1.窗口足够大"></a>1.窗口足够大</h4><p><img src="/2022/08/29/vulnhub/image-20220901113721300.png" alt="image-20220901113721300"></p>
+<h4 id="注意窗口大小"><a href="#注意窗口大小" class="headerlink" title="*注意窗口大小"></a>*注意窗口大小</h4><h5 id="1-窗口足够大"><a href="#1-窗口足够大" class="headerlink" title="1.窗口足够大"></a>1.窗口足够大</h5><p><img src="/2022/08/29/vulnhub/image-20220901113721300.png" alt="image-20220901113721300"></p>
 <p>可以看到显示完了，就又回到原处了【不行】</p>
-<h4 id="2-窗口小一些"><a href="#2-窗口小一些" class="headerlink" title="2.窗口小一些"></a>2.窗口小一些</h4><p><img src="/2022/08/29/vulnhub/image-20220901113851826.png" alt="image-20220901113851826"></p>
+<h5 id="2-窗口小一些"><a href="#2-窗口小一些" class="headerlink" title="2.窗口小一些"></a>2.窗口小一些</h5><p><img src="/2022/08/29/vulnhub/image-20220901113851826.png" alt="image-20220901113851826"></p>
 <p>下方就显示出:，等待输入</p>
 <figure class="highlight asciidoc"><table><tr><td class="code"><pre><span class="line">**:是自带有的，不是输入的</span><br><span class="line">:!/bin/sh    //感叹号!是shell转义字符，所以要避免sudo授权用户使用vi，vim，ftp，lee，more，git</span><br><span class="line">进入root</span><br><span class="line"><span class="section">cd /root</span></span><br><span class="line"><span class="section">--</span></span><br><span class="line">当然也可以执行:!passwd root</span><br><span class="line">修改其密码</span><br><span class="line">然后su root登录也可</span><br></pre></td></tr></table></figure>
 
-<h3 id="1-执行命令，拿到root的shell"><a href="#1-执行命令，拿到root的shell" class="headerlink" title="1.执行命令，拿到root的shell"></a>1.执行命令，拿到root的shell</h3><p><code>$</code>变成<code>#</code>成功</p>
+<h3 id="法-1-执行命令，拿到root的shell"><a href="#法-1-执行命令，拿到root的shell" class="headerlink" title="法 1.执行命令，拿到root的shell"></a>法 1.执行命令，拿到root的shell</h3><p><code>$</code>变成<code>#</code>成功</p>
 <p><img src="/2022/08/29/vulnhub/image-20220901114902493.png" alt="image-20220901114902493"></p>
-<h3 id="2-修改密码，登录"><a href="#2-修改密码，登录" class="headerlink" title="2.修改密码，登录"></a>2.修改密码，登录</h3><p><img src="/2022/08/29/vulnhub/image-20220901114453769.png" alt="image-20220901114453769"></p>
+<h3 id="法-2-修改密码，登录"><a href="#法-2-修改密码，登录" class="headerlink" title="法 2.修改密码，登录"></a>法 2.修改密码，登录</h3><p><img src="/2022/08/29/vulnhub/image-20220901114453769.png" alt="image-20220901114453769"></p>
 <p><code>$</code>变成<code>#</code>，成功登录</p>
 <p><img src="/2022/08/29/vulnhub/image-20220901114726423.png" alt="image-20220901114726423"></p>
 <p>然后到<code>/root</code>目录下，找到最后的 <code>flag</code></p>
@@ -2749,7 +2749,11 @@ handler 指向RequestHandler
 <p><strong>一个旗子找完，游戏结束</strong></p>
 <p>【dc系列结束，阅读到本文的朋友，希望对你们有所帮助】</p>
 <hr>
-<h1 id="ELSE"><a href="#ELSE" class="headerlink" title="ELSE"></a>ELSE</h1><h1 id="一、"><a href="#一、" class="headerlink" title="一、"></a>一、</h1>]]></content>
+<h1 id="ELSE"><a href="#ELSE" class="headerlink" title="ELSE"></a>ELSE</h1><h1 id="一、DEATHNOTE-1-初级"><a href="#一、DEATHNOTE-1-初级" class="headerlink" title="一、DEATHNOTE: 1[初级]"></a>一、DEATHNOTE: 1[初级]</h1><p>基拉好帅，必须拿这个开头，直接提权进他的心【不是南通】</p>
+<p><img src="/2022/08/29/vulnhub/Users\Ttoc\AppData\Roaming\Typora\typora-user-images\image-20221106151711523.png" alt="image-20221106151711523"></p>
+<figure class="highlight avrasm"><table><tr><td class="code"><pre><span class="line"><span class="symbol">hint:</span></span><br><span class="line">不要浪费太多时间跳出框框思考。这是一个直截了当的盒子。</span><br></pre></td></tr></table></figure>
+
+]]></content>
       <categories>
         <category>网络安全学习</category>
       </categories>
