@@ -4100,6 +4100,22 @@ msfvenom -l encoders #列出所有的编码器
       </tags>
   </entry>
   <entry>
+    <title>红日靶场</title>
+    <url>/2022/11/13/%E7%BA%A2%E6%97%A5%E9%9D%B6%E5%9C%BA/</url>
+    <content><![CDATA[<p><code>经典靶场，虽然老，但是还是值得学习</code></p>
+<span id="more"></span>
+
+<h1 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">红队实战系列，主要以真实企业环境为实例搭建一系列靶场，通过练习、视频教程、博客三位一体学习。另外本次实战完全模拟ATT<span class="operator">&amp;</span>CK攻击链路进行搭建，开成完整闭环。后续也会搭建真实APT实战环境，从实战中成长。关于环境可以模拟出各种各样实战路线，目前给出作者实战的一套攻击实战路线如下，虚拟机所有统一密码：hongrisec<span class="variable">@2019</span>：</span><br><span class="line"></span><br><span class="line">一、环境搭建</span><br><span class="line"><span class="number">1.</span>环境搭建测试</span><br><span class="line"><span class="number">2.</span>信息收集</span><br><span class="line"></span><br><span class="line">二、漏洞利用</span><br><span class="line"><span class="number">3.</span>漏洞搜索与利用</span><br><span class="line"><span class="number">4.</span>后台Getshell上传技巧</span><br><span class="line"><span class="number">5.</span>系统信息收集</span><br><span class="line"><span class="number">6.</span>主机密码收集</span><br><span class="line"></span><br><span class="line">三、内网搜集</span><br><span class="line"><span class="number">7.</span>内网<span class="comment">--继续信息收集</span></span><br><span class="line"><span class="number">8.</span>内网攻击姿势<span class="comment">--信息泄露</span></span><br><span class="line"><span class="number">9.</span>内网攻击姿势<span class="operator">-</span>MS08<span class="number">-067</span></span><br><span class="line"><span class="number">10.</span>内网攻击姿势<span class="operator">-</span>SMB远程桌面口令猜测</span><br><span class="line"><span class="number">11.</span>内网攻击姿势<span class="operator">-</span>Oracle数据库TNS服务漏洞</span><br><span class="line"><span class="number">12.</span>内网攻击姿势<span class="operator">-</span>RPC DCOM服务漏洞</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">四、横向移动</span><br><span class="line"><span class="number">13.</span>内网其它主机端口<span class="operator">-</span>文件读取</span><br><span class="line"><span class="number">14.</span>内网其它主机端口<span class="operator">-</span>redis</span><br><span class="line"><span class="number">15.</span>内网其它主机端口<span class="operator">-</span>redis Getshell</span><br><span class="line"><span class="number">16.</span>内网其它主机端口<span class="operator">-</span>MySQL数据库</span><br><span class="line"><span class="number">17.</span>内网其它主机端口<span class="operator">-</span>MySQL提权</span><br><span class="line"></span><br><span class="line">五、构建通道</span><br><span class="line"><span class="number">18.</span>内网其它主机端口<span class="operator">-</span>代理转发</span><br><span class="line"></span><br><span class="line">六、持久控制</span><br><span class="line"><span class="number">19.</span>域渗透<span class="operator">-</span>域成员信息收集</span><br><span class="line"><span class="number">20.</span>域渗透<span class="operator">-</span>基础服务弱口令探测及深度利用之powershell</span><br><span class="line"><span class="number">21.</span>域渗透<span class="operator">-</span>横向移动[wmi利用]</span><br><span class="line"><span class="number">22.</span>域渗透<span class="operator">-</span>C2命令执行</span><br><span class="line"><span class="number">23.</span>域渗透<span class="operator">-</span>利用DomainFronting实现对beacon的深度隐藏</span><br><span class="line"><span class="number">24.</span>域渗透<span class="operator">-</span>域控实现与利用</span><br><span class="line"></span><br><span class="line">七、痕迹清理</span><br><span class="line"><span class="number">25</span>、日志清理</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>网络安全学习</category>
+      </categories>
+      <tags>
+        <tag>实战</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>WHO AM I</title>
     <url>/2022/11/04/admin/</url>
     <content><![CDATA[<p>我是一名普通的大学生，只追求学到更多的技术，能够让自己不断优秀</p>
