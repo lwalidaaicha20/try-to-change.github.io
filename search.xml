@@ -2991,6 +2991,8 @@ handler 指向RequestHandler
 <figure class="highlight applescript"><table><tr><td class="code"><pre><span class="line">描述：</span><br><span class="line">This <span class="keyword">is</span> <span class="keyword">the</span> <span class="keyword">second</span> <span class="keyword">in</span> <span class="keyword">the</span> Matrix-Breakout series, subtitled Morpheus:<span class="number">1.</span> It’s themed <span class="keyword">as</span> a throwback <span class="keyword">to</span> <span class="keyword">the</span> <span class="keyword">first</span> Matrix movie. You play Trinity, trying <span class="keyword">to</span> investigate a computer <span class="keyword">on</span> <span class="keyword">the</span> Nebuchadnezzar <span class="keyword">that</span> Cypher has locked everyone <span class="keyword">else</span> out <span class="keyword">from</span>, which holds <span class="keyword">the</span> key <span class="keyword">to</span> a mystery.</span><br><span class="line">Difficulty: Medium-Hard</span><br><span class="line"></span><br><span class="line">这是 Matrix-Breakout 系列中的第二部，副标题为 Morpheus:<span class="number">1</span>。它的主题是回归第一部 Matrix 电影。您扮演 Trinity，试图调查 Nebuchadnezzar 上的一台计算机，Cypher 已将其他人拒之门外，而这台计算机掌握着解开谜团的钥匙。</span><br><span class="line">难度：中等难度</span><br></pre></td></tr></table></figure>
 
 <p><img src="https://i0.wp.com/xnfood.com.tw/wp-content/uploads/20211012094553_22.jpeg" alt="懶人包》『駭客任務』系列電影回顧，1 ~ 4 集詳細劇情、心得 ..."></p>
+<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">wc确实有东西</span><br><span class="line">实在不懂可以看这个研讨会视频</span><br><span class="line">https:<span class="regexp">//</span>www.beyondtrust.com<span class="regexp">/webinars/</span>attacking-and-defending-linux-breaking-out-of-the-matrix-edition<span class="comment">#video-container</span></span><br><span class="line">虽然这个不是这个靶机的wp，但是我还是从其中获得很多思路</span><br></pre></td></tr></table></figure>
+
 <h2 id="信息收集-10"><a href="#信息收集-10" class="headerlink" title="信息收集"></a>信息收集</h2><p>先扫描一下端口</p>
 <p><img src="/2022/08/29/vulnhub/image-20221117130716527.png" alt="image-20221117130716527"></p>
 <figure class="highlight livecodeserver"><table><tr><td class="code"><pre><span class="line">发现<span class="number">22</span>端口开放，运行着sshh</span><br><span class="line"><span class="number">80</span>，<span class="number">81</span>两个端口都运行着<span class="keyword">http</span></span><br><span class="line">但是两者名字不同，可以判断出</span><br><span class="line">但是<span class="number">80</span>端口可以任意访问，<span class="number">81</span>端口访问需要一定权限</span><br></pre></td></tr></table></figure>
@@ -3013,8 +3015,31 @@ handler 指向RequestHandler
 <p><img src="/2022/08/29/vulnhub/image-20221117131405964.png" alt="image-20221117131405964"></p>
 <figure class="highlight livescript"><table><tr><td class="code"><pre><span class="line">Welcome <span class="keyword">to</span> the Boot2Root CTF, Morpheus:<span class="number">1.</span></span><br><span class="line"></span><br><span class="line">You play Trinity, trying <span class="keyword">to</span> investigate a computer <span class="literal">on</span> the Nebuchadnezzar <span class="literal">that</span> Cypher has locked everyone <span class="keyword">else</span> out <span class="keyword">of</span>, at least <span class="keyword">for</span> ssh.</span><br><span class="line"></span><br><span class="line">Good luck! - @jaybeale <span class="keyword">from</span> @inguardians</span><br><span class="line">意思是： </span><br><span class="line">欢迎来到Boot2Root CTF，墨菲斯:<span class="number">1.</span></span><br><span class="line"></span><br><span class="line">你扮演Trinity，试图调查尼布甲尼撒半岛上的一台电脑，Cypher把所有人都锁在外面，至少对于ssh。</span><br><span class="line"></span><br><span class="line">祝你好运！ -@jaybealefrom@inguardians </span><br><span class="line"></span><br><span class="line"><span class="comment">#Cypher电影中反抗组织的一个叛徒，他把反抗组织锁在门外，我们又要用到ssh</span></span><br><span class="line">那看来ssh登录的用户名为Cypher</span><br></pre></td></tr></table></figure>
 
-<h2 id="ssh登录"><a href="#ssh登录" class="headerlink" title="ssh登录"></a>ssh登录</h2><p>对于密码的思路，可以用<code>cewl</code>爬一下网站看看密码是不是外露的</p>
-<p><img src="/2022/08/29/vulnhub/image-20221119212351049.png" alt="image-20221119212351049"></p>
+<p>信息还是太少了，<code>dirsearch</code>只扫到两个可以访问，实在利用太少</p>
+<p>所以我们换个扫描工具</p>
+<h3 id="dirbuster"><a href="#dirbuster" class="headerlink" title="dirbuster"></a>dirbuster</h3><figure class="highlight"><table><tr><td class="code"><pre><span class="line">DirBuster支持全部的Web目录扫描方式，用来探测web服务器上的目录和隐藏文件</span><br></pre></td></tr></table></figure>
+
+<p>这里我利用的是</p>
+<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line"><span class="regexp">/usr/</span>share<span class="regexp">/dirbuster/</span>wordlists/</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/08/29/vulnhub/image-20221119232447671.png" alt="image-20221119232447671"></p>
+<p>我通过<code>dirbuster</code>工具扫描到</p>
+<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">192.168</span>.<span class="number">80.131</span>/graffiti.php</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/08/29/vulnhub/image-20221119232601421.png" alt="image-20221119232601421"></p>
+<p>访问</p>
+<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">192.168</span>.<span class="number">80.131</span>/graffiti.php</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/08/29/vulnhub/image-20221119234606473.png" alt="image-20221119234606473"></p>
+<p>发现是个留言信息的一个网站</p>
+<p>而且我们评论的信息被包含在了<code>graffiti.php</code>文件中</p>
+<p>所以我的开始思路是包含一句话🐎</p>
+<p>但是插入常规的<code>php</code>🐎，会被破坏</p>
+<p><img src="/2022/08/29/vulnhub/image-20221119234929786.png" alt="image-20221119234929786"></p>
+<p>故我们插入<code>jsp</code>一句话🐎试试</p>
+<p><img src="/2022/08/29/vulnhub/image-20221119235019960.png" alt="image-20221119235019960"></p>
+<p>发现插入成功，但是不知道能不能连上</p>
+<p>用蚁剑试试</p>
 ]]></content>
       <categories>
         <category>网络安全学习</category>
