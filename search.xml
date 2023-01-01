@@ -1207,8 +1207,6 @@ handler 指向RequestHandler
 <p><u><code>信息收集的能力决定了能否渗透成功，以及自己会浪费自己多少时间</code></u></p>
 <span id="more"></span>
 
-
-
 <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>官网下载地址</p>
 <figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span>www.vulnhub.com/</span><br></pre></td></tr></table></figure>
 
@@ -4387,7 +4385,7 @@ msfvenom -l encoders #列出所有的编码器
   <entry>
     <title>goland</title>
     <url>/2022/12/23/goland_learning/</url>
-    <content><![CDATA[]]></content>
+    <content><![CDATA[<h1 id="Day1"><a href="#Day1" class="headerlink" title="Day1"></a>Day1</h1>]]></content>
       <categories>
         <category>语言学习</category>
       </categories>
@@ -4396,18 +4394,7 @@ msfvenom -l encoders #列出所有的编码器
       </tags>
   </entry>
   <entry>
-    <title>AWD比赛记录</title>
-    <url>/2022/12/13/AWD/</url>
-    <content><![CDATA[]]></content>
-      <categories>
-        <category>网络安全学习</category>
-      </categories>
-      <tags>
-        <tag>比赛</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>CMS代码审计</title>
+    <title>CMS分析</title>
     <url>/2022/11/22/SYC/</url>
     <content><![CDATA[<h1 id="漫城CMS"><a href="#漫城CMS" class="headerlink" title="漫城CMS"></a>漫城CMS</h1><h2 id="环境搭建phpstudy"><a href="#环境搭建phpstudy" class="headerlink" title="环境搭建phpstudy"></a>环境搭建<code>phpstudy</code></h2><figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">Apache</span> <span class="number">2</span>.<span class="number">4</span>.<span class="number">43</span></span><br><span class="line"><span class="attribute">MySQL</span> <span class="number">8</span>.<span class="number">0</span>.<span class="number">12</span></span><br><span class="line"><span class="attribute">php</span> <span class="number">7</span>.<span class="number">3</span>.<span class="number">4</span></span><br></pre></td></tr></table></figure>
 
@@ -4717,19 +4704,14 @@ msfvenom -l encoders #列出所有的编码器
       </tags>
   </entry>
   <entry>
-    <title>WHO AM I</title>
-    <url>/2022/11/04/admin/</url>
-    <content><![CDATA[<p>我是一名普通的大学生，只追求学到更多的技术，能够让自己不断优秀</p>
-<p>在大一下我才开始入门，比很多大佬慢了不知道多少，但我能耐心和努力尽量追赶上他们</p>
-<p>如果你是一名小白，我的建议是</p>
-<figure class="highlight lasso"><table><tr><td class="code"><pre><span class="line"><span class="number">1.</span>学会用搜索工具，解决自己的问题，在没有自己搜一天没找到的前提之前，就放弃去到处问人，大都没人理或者说一个你仍然不懂得答案</span><br><span class="line"></span><br><span class="line"><span class="number">2.</span>虚心、低调，学了这些东西，成为”大黑阔“当然很帅，但要明白，这些技术不是什么高科技技术，让大佬点赞的结果才是值得稍微炫耀的，如果学这些只是为了向不懂这些的朋友或者同学炫耀的话，也就没必要耗时间在这上面了</span><br><span class="line"></span><br><span class="line"><span class="number">3.</span>不要三天打鱼两天晒网，无论学习什么都是一个长期的过程，如果学个两天基础知识就休息去耍几天，你自己能感受到自己的进度</span><br><span class="line"></span><br><span class="line"><span class="number">4.</span>如果你是大学生，适当游戏可以，但过多，就丧志了，如果每周的空闲时间百分之<span class="number">50</span>都是游戏来填充，那就废了</span><br><span class="line"></span><br><span class="line">**<span class="number">5.</span>【无奈】如果是高中生或者初中生<span class="params">...</span><span class="params">...</span>，放过大学畜吧，考个好的高中和大学，比整天像个劳工在电脑前敲代码更好</span><br></pre></td></tr></table></figure>
-
-]]></content>
+    <title>AWD比赛记录</title>
+    <url>/2022/12/13/AWD/</url>
+    <content><![CDATA[<h1 id="2022安洵杯决赛AWD"><a href="#2022安洵杯决赛AWD" class="headerlink" title="2022安洵杯决赛AWD"></a>2022安洵杯决赛AWD</h1>]]></content>
       <categories>
-        <category>我是谁</category>
+        <category>网络安全学习</category>
       </categories>
       <tags>
-        <tag>随记</tag>
+        <tag>比赛</tag>
       </tags>
   </entry>
   <entry>
@@ -4936,18 +4918,6 @@ msfvenom -l encoders #列出所有的编码器
       </categories>
       <tags>
         <tag>misc</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>个人生活琐事</title>
-    <url>/2022/09/24/life/</url>
-    <content><![CDATA[<p><code>随便写写</code></p>
-<span id="more"></span>]]></content>
-      <categories>
-        <category>生活</category>
-      </categories>
-      <tags>
-        <tag>随记</tag>
       </tags>
   </entry>
   <entry>
@@ -5736,42 +5706,6 @@ ctfshow[]=ctfshow&amp;ctfshow[]=getFlag   #POST
       </categories>
       <tags>
         <tag>比赛</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>疑问记录</title>
-    <url>/2022/06/21/Qusetion/</url>
-    <content><![CDATA[<p><u><code>以下的问题，有的已经解决，有的还存在，如果有大佬方便讲解指点，或者我的解决内容不完善或有问题，欢迎通过邮箱或QQ私信我，不胜感激</code></u></p>
-<span id="more"></span>
-
-<h2 id="1-dirsearch的原理，有没有局限？"><a href="#1-dirsearch的原理，有没有局限？" class="headerlink" title="1.dirsearch的原理，有没有局限？"></a>1.dirsearch的原理，有没有局限？</h2><p>就是一个脚本，利用字典不断向网站发出请求，在返回状态码，以确定网站下是否有对应的目录或文件</p>
-<p>局限就是同一时间向网站发出大量请求，容易把对方网站搞崩或者自己ip被封，不能再访问了</p>
-<h2 id="2-蚁剑的原理，连接文件后，为什么可以直接访问目录下其他文件？"><a href="#2-蚁剑的原理，连接文件后，为什么可以直接访问目录下其他文件？" class="headerlink" title="2.蚁剑的原理，连接文件后，为什么可以直接访问目录下其他文件？"></a>2.蚁剑的原理，连接文件后，为什么可以直接访问目录下其他文件？</h2><p>这里是我个人的猜想，上传shell文件后，其实可以在网页中直接利用shell读取文件内容和目录</p>
-<p>这是上传了一个shell，以post方式查看phpinfo()发现成功，就是连接上了</p>
-<p><img src="/2022/06/21/Qusetion/image-20220827111701261.png" alt="image-20220827111701261"></p>
-<p>还可以查看根目录内容</p>
-<p><img src="/2022/06/21/Qusetion/image-20220827112313891.png" alt="image-20220827112313891"></p>
-<p>其他目录也可以</p>
-<p><img src="/2022/06/21/Qusetion/image-20220827112544385.png" alt="image-20220827112544385"></p>
-<p>并且还可以读取内容</p>
-<p><img src="/2022/06/21/Qusetion/image-20220827112626617.png" alt="image-20220827112626617"></p>
-<p>而蚁剑也可以实现这些功能，可能是把这些代码命令转化成图像化，方便操作</p>
-<p>但是蚁剑操作更加简单一些，并且可以进行一些删除或修改的操作，虽然按上面的原理也可以实现，但明显不方便，但可以学习一一下</p>
-<h2 id="3-为什么我的-htacess无法发挥作用-把其他文件解读为php-，但是还会影响它所在文件夹下的文件（php）与蚁剑连接？"><a href="#3-为什么我的-htacess无法发挥作用-把其他文件解读为php-，但是还会影响它所在文件夹下的文件（php）与蚁剑连接？" class="headerlink" title="3.为什么我的.htacess无法发挥作用(把其他文件解读为php)，但是还会影响它所在文件夹下的文件（php）与蚁剑连接？"></a>3.为什么我的.htacess无法发挥作用(把其他文件解读为php)，但是还会影响它所在文件夹下的文件（php）与蚁剑连接？</h2><p>这个问题也不能算完全解决，但是我用菜刀的时候，就可以正常使用，所以应该是蚁剑版本问题，但是蚁剑也是最新版，反正现在能用就行了</p>
-<hr>
-<p>现在又发现线上的利用.htacess文件的题用蚁剑也可以做，麻了</p>
-<h2 id="4-什么是webshell"><a href="#4-什么是webshell" class="headerlink" title="4.什么是webshell?"></a>4.什么是webshell?</h2><h3 id="1）webshell简介"><a href="#1）webshell简介" class="headerlink" title="1）webshell简介"></a>1）webshell简介</h3><p>Webshell是通过服务器开放的端口获取服务器的某些权限。</p>
-<p>webshell又称脚本木马，一般分为大马、小马、一句话木马。</p>
-<p>大马，体积大、功能齐全、能够管理数据库、文件管理、对站点进行快速的信息收集，甚至能够提权。</p>
-<p>小马，一般而言，我们在上传文件的时候，会被限制上传的文件大小或是拦截的情况，那么我通过小马来上传大马，实现我们想要的功能。</p>
-<p>一句话木马，短小精悍、功能强大、隐蔽性好、使用客户端可以快速管理webshell。</p>
-<h3 id="2）原理"><a href="#2）原理" class="headerlink" title="2）原理"></a>2）原理</h3><p>利用<u>文件上传漏洞、SQL注入漏洞、RCE漏洞</u>等，将<u>恶意文件放到web服务器</u>中，也就是常说的”<strong>后门</strong>”，之后可以<u>进行文件管理、数据库管理、远程命令执行、提权等恶意操作</u>。</p>
-]]></content>
-      <categories>
-        <category>网络安全学习</category>
-      </categories>
-      <tags>
-        <tag>daily</tag>
       </tags>
   </entry>
   <entry>
