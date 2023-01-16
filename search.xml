@@ -3855,21 +3855,25 @@
 <p>然后把我们的压缩包放在目录下</p>
 <p><img src="/2022/08/29/vulnhub/image-20220904112832628.png" alt="image-20220904112832628"></p>
 <p>然后返回<code>msf</code></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">输入<span class="built_in">ls</span></span><br></pre></td></tr></table></figure>
-
+<blockquote>
+<p>输入<code>ls</code></p>
+</blockquote>
 <p><img src="/2022/08/29/vulnhub/image-20220904112929091.png" alt="image-20220904112929091"></p>
 <p>发现压缩包已经在里面了</p>
 <p>然后解压缩</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">输入unzip <span class="number">39772.</span><span class="built_in">zip</span></span><br></pre></td></tr></table></figure>
-
+<blockquote>
+<p>输入<code>unzip 39772.zip</code></p>
+</blockquote>
 <p><img src="/2022/08/29/vulnhub/image-20220904113114803.png" alt="image-20220904113114803"></p>
 <p>发现目录下多了个<code>39772</code>的目录</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">输入<span class="built_in">cd</span> 39772</span><br></pre></td></tr></table></figure>
-
+<blockquote>
+<p>输入<code>cd 39772</code></p>
+</blockquote>
 <p><img src="/2022/08/29/vulnhub/image-20220904113213562.png" alt="image-20220904113213562"></p>
 <p>发现有两个压缩包，我们利用<code>exploit.tar</code></p>
-<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">输入tar -xvf exploit.tar <span class="regexp">//</span>解压缩</span><br></pre></td></tr></table></figure>
-
+<blockquote>
+<p>输入<code>tar -xvf exploit.tar</code> &#x2F;&#x2F;解压缩</p>
+</blockquote>
 <p><img src="/2022/08/29/vulnhub/image-20220904113439714.png" alt="image-20220904113439714"></p>
 <p>发现多了个<code>ebpf_mapfd_doubleput_exploit</code>目录</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">输入<span class="built_in">cd</span> ebpf_mapfd_doubleput_exploit</span><br></pre></td></tr></table></figure>
@@ -3877,13 +3881,15 @@
 <p><img src="/2022/08/29/vulnhub/image-20220904113541560.png" alt="image-20220904113541560"></p>
 <p>发现有个<code>compile.sh</code></p>
 <p>运行</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">输入./compile.sh</span><br></pre></td></tr></table></figure>
-
+<blockquote>
+<p>输入<code>./compile.sh</code></p>
+</blockquote>
 <p>发现目录下有多了一个<code>doubleput</code></p>
 <p><img src="/2022/08/29/vulnhub/image-20220904113730537.png" alt="image-20220904113730537"></p>
 <p>这就是提权文件，运行一下</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">输入./doupleput</span><br></pre></td></tr></table></figure>
-
+<blockquote>
+<p>输入<code>./doupleput</code></p>
+</blockquote>
 <p><img src="/2022/08/29/vulnhub/image-20220904114028987.png" alt="image-20220904114028987"></p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">输入<span class="built_in">whoami</span>，看看提权成功没</span><br></pre></td></tr></table></figure>
 
@@ -3892,8 +3898,23 @@
 <p>然后我们到<code>/root</code>目录下查看 <code>flag</code></p>
 <p><img src="/2022/08/29/vulnhub/image-20220904114212223.png" alt="image-20220904114212223"></p>
 <hr>
-<figure class="highlight gherkin"><table><tr><td class="code"><pre><span class="line"> \ \      / /__|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string">  _ \  ___  _ __   ___</span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> </span>|</span><br><span class="line">  \ \ /\ / / _ \ |<span class="string"> </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string">/ _ \</span>|<span class="string"> &#x27;_ \ / _ \ </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> </span>|</span><br><span class="line">   \ V  V /  __/ |<span class="string"> </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string">_</span>|<span class="string"> </span>|<span class="string"> (_) </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string">  __/_</span>|<span class="string">_</span>|<span class="string">_</span>|<span class="string">_</span>|</span><br><span class="line">    \_/\_/ \___|<span class="string">_</span>|<span class="string">_</span>|<span class="string"> </span>|<span class="string">____/ \___/</span>|<span class="string">_</span>|<span class="string"> </span>|<span class="string">_</span>|<span class="string">\___(_</span>|<span class="string">_</span>|<span class="string">_</span>|<span class="string">_)</span></span><br><span class="line"><span class="string">                                                     </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Congratulations are in order.  :-)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">I hope you&#x27;ve enjoyed this challenge as I enjoyed making it.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">If there are any ways that I can improve these little challenges,</span></span><br><span class="line"><span class="string">please let me know.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">As per usual, comments and complaints can be sent via Twitter to @DCAU7</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Have a great day!!!!</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">意思是：</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">恭喜你，一切正常。：-）</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">我希望你和我一样喜欢这个挑战。</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">如果有任何方法可以改善这些小挑战，</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">请让我知道。</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">如往常一样，评论和投诉可以通过Twitter发送到@DCAU7</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">祝你有美好的一天！！！！ </span></span><br></pre></td></tr></table></figure>
+<figure class="highlight gherkin"><table><tr><td class="code"><pre><span class="line">\ \      / /__|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string">  _ \  ___  _ __   ___</span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> </span>|</span><br><span class="line"> \ \ /\ / / _ \ |<span class="string"> </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string">/ _ \</span>|<span class="string"> &#x27;_ \ / _ \ </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> </span>|</span><br><span class="line">  \ V  V /  __/ |<span class="string"> </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string">_</span>|<span class="string"> </span>|<span class="string"> (_) </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string">  __/_</span>|<span class="string">_</span>|<span class="string">_</span>|<span class="string">_</span>|</span><br><span class="line">   \_/\_/ \___|<span class="string">_</span>|<span class="string">_</span>|<span class="string"> </span>|<span class="string">____/ \___/</span>|<span class="string">_</span>|<span class="string"> </span>|<span class="string">_</span>|<span class="string">\___(_</span>|<span class="string">_</span>|<span class="string">_</span>|<span class="string">_)</span></span><br><span class="line"><span class="string">                                              </span></span><br></pre></td></tr></table></figure>
 
+<p>​      </p>
+<blockquote>
+<p><code>Congratulations are in order.  :-)</code></p>
+<p><code>I hope you&#39;ve enjoyed this challenge as I enjoyed making it.</code></p>
+<p><code>If there are any ways that I can improve these little challenges,</code><br><code>please let me know.</code></p>
+<p><code>As per usual, comments and complaints can be sent via Twitter to @DCAU7</code></p>
+<p><code>Have a great day!!!!</code></p>
+<p>意思是：</p>
+<p>恭喜你，一切正常。：-）</p>
+<p>我希望你和我一样喜欢这个挑战。</p>
+<p>如果有任何方法可以改善这些小挑战，</p>
+<p>请让我知道。</p>
+<p>如往常一样，评论和投诉可以通过Twitter发送到@DCAU7</p>
+<p>祝你有美好的一天！！！！</p>
+</blockquote>
 <p><strong>一个旗子找完，游戏结束</strong></p>
 <h3 id="法2"><a href="#法2" class="headerlink" title="法2"></a>法2</h3><h4 id="反弹shell"><a href="#反弹shell" class="headerlink" title="反弹shell"></a><strong>反弹shell</strong></h4><figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line">反弹<span class="keyword">shell</span><span class="language-bash">，就是控制端监听在某TCP/UDP端口，被控端发起请求到该端口，并将其命令行的输入输出转到控制端。</span></span><br><span class="line"></span><br><span class="line">通俗点说，反弹<span class="keyword">shell</span><span class="language-bash">就是一种反向链接，与正向的ssh等不同，它是在对方电脑执行命令连接到我方的攻击模式，并且这种攻击模式必须搭配远程执行命令漏洞来使用。</span></span><br><span class="line"></span><br><span class="line">由于防火墙等限制，对方机器只能发送请求，不能接收请求</span><br><span class="line"></span><br><span class="line">对于病毒，木马，受害者什么时候能中招，对方的网络环境是什么样的，什么时候开关机，都是未知，建立一个服务端，让恶意程序主动连接，才是上策。</span><br></pre></td></tr></table></figure>
 
