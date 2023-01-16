@@ -517,8 +517,8 @@
 </blockquote>
 <p>我们平常打<code>mysql</code>最常用的就是打<strong>无密码</strong>的<code>mysql</code></p>
 <p>但是我们在用<code>gopher</code>还是需要用<code>dict</code>协议去得到<code>mysql</code>的端口(默认是**<code>3306</code>**)</p>
-<p>直接使用的<code>gopherus</code>工具,直接快速生成<code>payload</code><br><img src="/2022/05/28/Web-study/image-20220815234910350.png" alt="image-20220815234910350"></p>
-<hr>
+<p>直接使用的<code>gopherus</code>工具,直接快速生成<code>payload</code></p>
+<p><img src="/2022/05/28/Web-study/image-20220815234910350.png" alt="image-20220815234910350"></p>
 <h2 id="六、文件上传"><a href="#六、文件上传" class="headerlink" title="六、文件上传"></a>六、文件上传</h2><h3 id="1-多重过滤绕过"><a href="#1-多重过滤绕过" class="headerlink" title="1.多重过滤绕过"></a>1.多重过滤绕过</h3><p><u><strong>下面是以攻防世界的一道easyupload的wp讲解一些情形的绕过方式</strong></u></p>
 <p>这里需要绕过的点如下</p>
 <blockquote>
@@ -785,7 +785,7 @@
 <p>要截断后缀，只需要在末尾添加 <code>?</code> 即可，这样后缀就会变成 URL 的参数</p>
 </blockquote>
 <hr>
-<h3 id="八、逻辑漏洞"><a href="#八、逻辑漏洞" class="headerlink" title="八、逻辑漏洞"></a>八、逻辑漏洞</h3><blockquote>
+<h2 id="八、逻辑漏洞"><a href="#八、逻辑漏洞" class="headerlink" title="八、逻辑漏洞"></a>八、逻辑漏洞</h2><blockquote>
 <p>一般在支付购买处代码，对数据处理出现逻辑错误，对用户输入的数据没有进行严格审查，导致逻辑漏洞，使得用户获取不属于他的权限或者信息内容</p>
 </blockquote>
 <hr>
@@ -5670,6 +5670,14 @@
 <p>Go语言是谷歌2009年发布的第二款开源编程语言,它专门针对多处理器系统应用程序的编程进行了优化，它是一种系统语言其非常有用和强大,其程序可以媲美C或C++代码的速度，而且更加安全、支持并行进程。</p>
 <p>Go支持面向对象，而且具有真正的闭包(closures)和反射 (reflection)等功能。</p>
 <p>Go可以在不损失应用程序性能的情况下降低代码的复杂性。</p>
+<p>Go是是静态强类型语言</p>
+</blockquote>
+<h2 id="Go语言特色"><a href="#Go语言特色" class="headerlink" title="Go语言特色"></a>Go语言特色</h2><blockquote>
+<ul>
+<li>简洁、快速、安全</li>
+<li>并行、有趣、开源</li>
+<li>内存管理、数组安全、编译迅速</li>
+</ul>
 </blockquote>
 <h2 id="文档信息"><a href="#文档信息" class="headerlink" title="文档信息"></a>文档信息</h2><blockquote>
 <p>官网:<br><a href="https://golang.google.cn/">https://golang.google.cn/</a><br>API文档:<br><a href="https://golang.google.cn/doc/">https://golang.google.cn/doc/</a><br>教程:<br><a href="http://www.w3cschool.cn/go/go-tutorial.html">http://www.w3cschool.cn/go/go-tutorial.html</a><br>下载:<br><a href="https://golang.google.cn/dl/">https://golang.google.cn/dl/</a></p>
@@ -5684,7 +5692,22 @@
 <p>导入包时，只能使用&#x2F;访问名称以大写字母开头的实体（函数、类型、变量、常量）。Go 中推荐的命名风格是标识符将使用 命名<code>camelCase</code>，除了那些意味着可以跨包访问的标识符应该是<code>PascalCase</code></p>
 </blockquote>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> lasagna</span><br></pre></td></tr></table></figure>
-]]></content>
+
+<h3 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h3><p>Go 是静态类型的，这意味着所有变量在编译时都<a href="https://en.wikipedia.org/wiki/Type_system">必须具有定义的类型。</a></p>
+<p>可以通过显式指定类型来定义变量：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> explicit <span class="type">int</span> <span class="comment">// 显式声明</span></span><br></pre></td></tr></table></figure>
+
+<p>您还可以使用初始化器，编译器将分配变量类型以匹配初始化器的类型。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">implicit := <span class="number">10</span>   <span class="comment">// 隐式声明为int，自动分配类型</span></span><br></pre></td></tr></table></figure>
+
+<p>声明后，可以使用运算符为变量赋值<code>=</code>。一旦声明，变量的类型就永远不会改变。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">count := <span class="number">1</span> <span class="comment">// 赋初值</span></span><br><span class="line">count = <span class="number">2</span>  <span class="comment">// 更新新值</span></span><br><span class="line"></span><br><span class="line">count = <span class="literal">false</span> <span class="comment">// 由于分配了非“int”类型，这会引发编译器错误</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="常量"><a href="#常量" class="headerlink" title="常量"></a>常量</h3><p>常量就像变量一样保存一段数据，但它们的值在程序执行过程中不能改变。</p>
+<p>常量使用<code>const</code>关键字定义，可以是数字、字符、字符串或布尔值：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> Age = <span class="number">21</span> <span class="comment">// 定义一个值为 21 的数值常量 &#x27;Age&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h3>]]></content>
       <categories>
         <category>语言学习</category>
       </categories>
