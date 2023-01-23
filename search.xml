@@ -2555,7 +2555,7 @@
 <p><code>;</code>后的数据不解析</p>
 <p>即可<code>http://127.0.0.1/index;123.ico</code>，读取时只视为<code>http://127.0.0.1/index</code></p>
 </blockquote>
-<h1 id="22"><a href="#22" class="headerlink" title="22."></a>22.</h1>]]></content>
+<h1 id="22-Java表达式注入之OGNL"><a href="#22-Java表达式注入之OGNL" class="headerlink" title="22.Java表达式注入之OGNL"></a>22.Java表达式注入之OGNL</h1>]]></content>
       <categories>
         <category>知识点笔记</category>
       </categories>
@@ -2934,6 +2934,11 @@
 <p>虽然显示<code>500</code>，但其实是成功了的</p>
 </blockquote>
 <p>然后就需要考虑如何进行<code>xxe</code>注入</p>
+<p>在<code>com.example.demo.controller.DemoController</code>中，正好有个名为<code>xxe</code>的函数</p>
+<p><img src="/2022/06/26/Game-wp/image-20230123153904078.png" alt="image-20230123153904078"></p>
+<p>同样在该类中，底下就是过滤黑名单</p>
+<p><img src="/2022/06/26/Game-wp/image-20230123154032645.png" alt="image-20230123154032645"></p>
+<p>可以看到将<code>!DOCTYPE</code>进行了过滤</p>
 <h2 id="PrettierOnline"><a href="#PrettierOnline" class="headerlink" title="PrettierOnline"></a>PrettierOnline</h2><h2 id="filecheacker-mini"><a href="#filecheacker-mini" class="headerlink" title="filecheacker_mini"></a>filecheacker_mini</h2><h2 id="filecheacker-pro"><a href="#filecheacker-pro" class="headerlink" title="filecheacker_pro"></a>filecheacker_pro</h2><h2 id="filecheacker-pro-max"><a href="#filecheacker-pro-max" class="headerlink" title="filecheacker_pro_max"></a>filecheacker_pro_max</h2>]]></content>
       <categories>
         <category>网络安全学习</category>
