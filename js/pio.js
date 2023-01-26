@@ -80,7 +80,6 @@ var Paul_Pio = function (prop) {
         info: modules.create("span", { class: "pio-info" }),
         night: modules.create("span", { class: "pio-night" }),
         close: modules.create("span", { class: "pio-close" }),
-
         show: modules.create("div", { class: "pio-show" })
     };
 
@@ -175,7 +174,7 @@ var Paul_Pio = function (prop) {
             // 夜间模式
             if (prop.night) {
                 elements.night.onclick = function () {
-                    eval(prop.night);
+                    switchNightMode();
                 };
                 elements.night.onmouseover = function () {
                     modules.render("夜间点击这里可以保护眼睛呢");

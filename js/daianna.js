@@ -50,7 +50,8 @@
     '/js/cubism4.min.js',
     '/js/pio_sdk4.js',
     '/js/pio.js',
-    '/js/load.js'
+    '/js/load.js',
+    '/js/sun_moon.js'
   ]
 
   const reqArr = LIBS.map(src => loadSource(src))
