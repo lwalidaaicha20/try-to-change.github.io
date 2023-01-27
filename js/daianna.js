@@ -92,8 +92,8 @@
     },
     model: [
       // 待加载的模型列表
-      "https://cdn.jsdelivr.net/gh/journey-ad/blog-img/live2d/Diana/Diana.model3.json",
-      "https://cdn.jsdelivr.net/gh/journey-ad/blog-img/live2d/Ava/Ava.model3.json",
+      "Diana/Diana.model3.json",
+      "Ava/Ava.model3.json",
     ],
     tips: true, // 时间问好
     onModelLoad: onModelLoad // 模型加载完成回调

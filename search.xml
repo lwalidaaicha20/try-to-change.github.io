@@ -6451,6 +6451,43 @@
 <h5 id="freerdp"><a href="#freerdp" class="headerlink" title="freerdp"></a>freerdp</h5><blockquote>
 <p>FreeRDP是一个Remote Desktop Protocol（协议）的一个实现，遵循Apache开源协议，<code>支持3D功能，并有较高刷新率，也支持RemoteFX，H264编解码，用户管理，音频以及外设重定向</code>等功能。</p>
 </blockquote>
+<h2 id="Preignition"><a href="#Preignition" class="headerlink" title="Preignition"></a>Preignition</h2><h3 id="Tags-5"><a href="#Tags-5" class="headerlink" title="Tags"></a>Tags</h3><blockquote>
+<p><code>Web</code></p>
+<p><code>Custom Applications</code></p>
+<p><code>Apache</code></p>
+<p><code>Penetration Tester Level 1</code></p>
+<p><code>Reconnaissance</code></p>
+<p><code>Web Site Structure Discovery</code></p>
+<p><code>Default Credentials</code></p>
+</blockquote>
+<h3 id="知识点-5"><a href="#知识点-5" class="headerlink" title="知识点"></a>知识点</h3><blockquote>
+<p>目录暴力破解是一种用于检查 Web 服务器上的许多路径以查找隐藏页面的技术。另叫做？:<code>dir busting</code></p>
+<p>nmap的扫描用什么switch来指定我们要进行版本检测：<code>-sV</code></p>
+<p>我们使用什么开关来指定我们要专门执行 dir busting 的 Gobuster？：<code>dir</code></p>
+<p>当使用 gobuster 到 dir bust 时，我们添加什么开关以确保它找到 PHP 页面？：<code>-x php</code></p>
+</blockquote>
+<h4 id="命令gobuster"><a href="#命令gobuster" class="headerlink" title="命令gobuster"></a>命令gobuster</h4><figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">gobuster dir -w <span class="regexp">/usr/</span>share<span class="regexp">/wordlists/</span>dirb<span class="regexp">/common.txt -u http:/</span><span class="regexp">/10.129.158.233/</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/09/23/Hackthebox/image-20230127211339954.png" alt="image-20230127211339954"></p>
+<p>【下面是由于我用的wsl，没用vm，无法启动chrome，于是用curl传post登录数据，没有要求直接弱密码】</p>
+<figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="attribute">curl</span> http://10.129.158.233/admin.php -X POST -d <span class="string">&quot;username=admin&amp;password=adm</span></span><br><span class="line"><span class="string">in&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/09/23/Hackthebox/image-20230127211215675.png" alt="image-20230127211215675"></p>
+<h4 id="什么是Gobuster"><a href="#什么是Gobuster" class="headerlink" title="什么是Gobuster"></a>什么是Gobuster</h4><blockquote>
+<p>Gobuster是Kali Linux默认安装的一款暴力扫描工具。 它是使用Go语言编写的命令行工具，具备优异的执行效率和并发性能。 该工具支持对子域名和Web目录进行基于字典的暴力扫描。</p>
+</blockquote>
+<h2 id="Mongod"><a href="#Mongod" class="headerlink" title="Mongod"></a>Mongod</h2><h3 id="Tags-6"><a href="#Tags-6" class="headerlink" title="Tags"></a>Tags</h3><blockquote>
+<p><code>MongoDB</code></p>
+<p><code>Penetration Tester Level 1</code></p>
+<p><code>Web</code></p>
+<p><code>Databases</code></p>
+<p><code>Reconnaissance</code></p>
+<p><code>Misconfiguration</code></p>
+<p><code>Anonymous/Guest Access</code></p>
+</blockquote>
+<h3 id="知识点-6"><a href="#知识点-6" class="headerlink" title="知识点"></a>知识点</h3><blockquote>
+<p>MongoDB 是什么类型的数据库？：</p>
+</blockquote>
 ]]></content>
       <categories>
         <category>网络安全学习</category>

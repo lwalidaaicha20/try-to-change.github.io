@@ -9,9 +9,9 @@
 
 .pio-container .pio-show {
     left: -1.2em;
-    bottom: -0.3em;
-    width: 7.2em;
-    height: 6.98em;
+    bottom: -0.2em;
+    width: 6em;
+    height: 6.8em;
     display: none;
     cursor: pointer;
     position: absolute;
