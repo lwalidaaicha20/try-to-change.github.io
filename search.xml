@@ -6442,10 +6442,9 @@
 <li>什么用户名使用空白密码成功返回桌面投影给我们？： <code>administrator</code>（windows用户的最高权限）</li>
 </ol>
 </blockquote>
-<h4 id="命令xfreerdp"><a href="#命令xfreerdp" class="headerlink" title="命令xfreerdp"></a>命令xfreerdp</h4><figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">xfreerdp <span class="regexp">/v:10.129.31.107 /u</span>:administra</span><br></pre></td></tr></table></figure>
+<h4 id="命令xfreerdp"><a href="#命令xfreerdp" class="headerlink" title="命令xfreerdp"></a>命令xfreerdp</h4><figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">xfreerdp <span class="regexp">/v:10.129.31.107 /u</span>:administrator</span><br></pre></td></tr></table></figure>
 
-
-
+<p><img src="/2022/09/23/Hackthebox/image-20230127174214417.png" alt="image-20230127174214417"></p>
 <h4 id="什么是RDP"><a href="#什么是RDP" class="headerlink" title="什么是RDP"></a>什么是RDP</h4><blockquote>
 <p><strong>远程桌面</strong>协议 ( <strong>RDP</strong> ) 是 Microsoft 开发的专有协议，它<code>为用户提供图形界面以通过网络连接到另一台计算机</code>。用户为此目的使用<strong>RDP客户端软件，而另一台计算机必须运行</strong> <strong>RDP</strong>服务器软件</p>
 </blockquote>
