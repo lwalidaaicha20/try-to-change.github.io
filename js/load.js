@@ -37,8 +37,8 @@ const initConfig = {
   },
   night: "toggleNightMode()",
   model: [
-    "js/Diana/Diana.model3.json",
-    "js/Ava/Ava.model3.json",
+    "https://try-to-change.github.io/js/Diana/Diana.model3.json",
+    "https://try-to-change.github.io/js/Ava/Ava.model3.json",
   ],
   tips: true,
   onModelLoad: onModelLoad
