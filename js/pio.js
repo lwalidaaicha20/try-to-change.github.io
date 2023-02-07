@@ -76,11 +76,11 @@ var Paul_Pio = function (prop) {
 
     var elements = {
         home: modules.create("span", { class: "pio-home" }),
-        skin: modules.create("span", { class: "pio-skin" }),
-        info: modules.create("span", { class: "pio-info" }),
         night: modules.create("span", { class: "pio-night" }),
         close: modules.create("span", { class: "pio-close" }),
-        show: modules.create("div", { class: "pio-show" })
+        show: modules.create("div", { class: "pio-show" }),
+        // info: modules.create("span", { class: "pio-info" }),
+        skin: modules.create("span", { class: "pio-skin" }),
     };
 
     var dialog = modules.create("div", { class: "pio-dialog" });
@@ -163,13 +163,13 @@ var Paul_Pio = function (prop) {
             if (prop.model.length > 1) current.menu.appendChild(elements.skin);
 
             // 关于我
-            elements.info.onclick = function () {
-                window.open(prop.content.link || "https://paugram.com/coding/add-poster-girl-with-plugin.html");
-            };
-            elements.info.onmouseover = function () {
-                modules.render("想了解更多关于我的信息吗？");
-            };
-            current.menu.appendChild(elements.info);
+            // elements.info.onclick = function () {
+            //     window.open(prop.content.link || "https://paugram.com/coding/add-poster-girl-with-plugin.html");
+            // };
+            // elements.info.onmouseover = function () {
+            //     modules.render("想了解更多关于我的信息吗？");
+            // };
+            // current.menu.appendChild(elements.info);
 
             // 夜间模式
             if (prop.night) {
