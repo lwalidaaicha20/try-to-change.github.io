@@ -3306,7 +3306,7 @@ h1.page-title + .tag-cloud-list {
   }
 }
 #page-header.post-bg {
-  height: 1600px;
+  height: 400px;
 }
 @media screen and (max-width: 768px) {
   #page-header.post-bg {
@@ -3400,7 +3400,7 @@ h1.page-title + .tag-cloud-list {
   margin-bottom: 30px;
 }
 #post > #post-info .post-title {
-  padding-bottom: 150px;
+  padding-bottom: 4px;
   border-bottom: 1px solid var(--light-grey);
   color: var(--text-highlight-color);
 }
@@ -3412,10 +3412,10 @@ h1.page-title + .tag-cloud-list {
   color: #78818a;
 }
 #post-info .post-title {
-  margin-bottom: 100px;
-  color: var(--black);
+  margin-bottom: 8px;
+  color: var(--white);
   font-weight: normal;
-  font-size: 4em;
+  font-size: 2.5em;
   line-height: 1.5;
   -webkit-line-clamp: 3;
 }
@@ -3428,9 +3428,8 @@ h1.page-title + .tag-cloud-list {
   padding-left: 10px;
 }
 #post-info #post-meta {
-  color: var(--black);
-  font-size: 150%;
-  margin-bottom: 600px;
+  color: var(--light-grey);
+  font-size: 95%;
 }
 @media screen and (min-width: 768px) {
   #post-info #post-meta > .meta-secondline > span:first-child {

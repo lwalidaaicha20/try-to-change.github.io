@@ -3,9 +3,7 @@
   background: transparent !important;
 } 
 #page-header {
-  background: fixed top;
-  background-size: cover;
-  background-repeat: no-repeat;
+  background: transparent !important;
 } 
 
 /* 白天模式遮罩透明 */
